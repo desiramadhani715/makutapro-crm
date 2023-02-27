@@ -74,4 +74,16 @@ class HistoryProspect extends Model
                     ->get();
     }
 
+    public static function CountLeadsByRole($src, $start_date, $end_date){
+        $query = HistoryProspect::total_leads()
+                    ->select(DB::raw('DATE(prospect.created_at) as date'), DB::raw('COUNT(*) as total'))
+                    ->whereBetween('prospect.created_at', [$start_date, $end_date]);
+                    if ($src == 'Digital Source')
+                        $query->where('prospect.role_by','!=',6);
+                    if ($src == 'Sales Source')
+                        $query->where('prospect.role_by',6);
+
+        return $query->groupBy('date')->get();
+    }
+
 }

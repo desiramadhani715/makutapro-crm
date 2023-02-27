@@ -61,6 +61,7 @@ Route::get('/get_campaign', [CampaignController::class, 'get_campaign']);
 Route::get('/historyCs', [HistoryController::class, 'historyCs']);
 Route::get('/historyMp', [HistoryController::class, 'historyMp']);
 Route::get('/historyFu', [HistoryController::class, 'historyFu']);
+Route::get('/refresh_chart', [DashboardController::class, 'refreshChart']);
 
 
 Route::get('/reset', function () {

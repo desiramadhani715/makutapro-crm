@@ -74,9 +74,9 @@ class Helper
         $message = "Hallo ".strtoupper($NextSales[0]->nama_sales)." Anda telah menerima database baru an. ".$request['nama_prospect']." untuk project $project->nama_project. Harap segera Follow Up database tersebut. \n\nKlik link dibawah ini untuk login :\nhttps://sales-beta.makutapro.id";
 
         // WA
-        Helper::SendWA($destination, $message);
+        // Helper::SendWA($destination, $message);
         // FCM
-        $this->pushNotif($NextSales[0]->UsernameKP, $kodeproject, $namaprospect);
+        // $this->pushNotif($NextSales[0]->UsernameKP, $kodeproject, $namaprospect);
 
         return "Data berhasil di tambahkan.";
 

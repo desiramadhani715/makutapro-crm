@@ -1,5 +1,5 @@
 @extends('layouts.simple.master')
-@section('title', 'Basic DataTables')
+@section('title', 'Agent')
 
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/datatables.css')}}">
@@ -10,20 +10,36 @@
 @endsection
 
 @section('breadcrumb-title')
-<h3>Basic DataTables</h3>
+<h3>Agent</h3>
 @endsection
 
 @section('breadcrumb-items')
-<li class="breadcrumb-item">Data Tables</li>
-<li class="breadcrumb-item active">Basic DataTables</li>
+<li class="breadcrumb-item">Agent</li>
 @endsection
 
 @section('content')
 <div class="container-fluid">
 	<div class="row">
+		<div class="col-md-12 project-list">
+		   <div class="card">
+			  <div class="row">
+				 <div class="col-md-6">
+					<div class="left-header col horizontal-wrapper ps-0">
+						<ul class="horizontal-menu">
+							<li class="mega-menu outside"><a class="nav-link" href="#!"><i data-feather="download"></i><span>Download Excel</span></a></li>
+						</ul>
+					</div>
+				 </div>
+				 <div class="col-md-6">
+					<div class="form-group mb-0 me-0"></div>
+					<a class="btn btn-primary px-2" href="{{ route('prospect.create') }}" id="addButton"> <i data-feather="plus-square"> </i>Add</a>
+				 </div>
+			  </div>
+		   </div>
+		</div>
 		<div class="col-sm-12">
 			<div class="card">
-				<div class="card-header">
+				<div class="card-header d-flex justify-content-between">
 					<h5>Data Agent</h5>
 				</div>
 				<div class="card-body">

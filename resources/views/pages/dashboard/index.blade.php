@@ -106,23 +106,23 @@
 							<div class="row m-0 chart-left">
 								<div class="col-xl-12 p-0 left_side_earning">
 									<h5>Dashboard</h5>
-									<p class="font-roboto">Overview of last month</p>
+									<p class="font-roboto" id="summaryLabel"></p>
 								</div>
 								<div class="col-xl-12 p-0 left_side_earning">
-									<h5>413</h5>
-									<p class="font-roboto">Leads Total</p>
+									<h5 id="totalLeads"></h5>
+									<p class="font-roboto">Total</p>
 								</div>
 								<div class="col-xl-12 p-0 left_side_earning">
-									<h5>10</h5>
-									<p class="font-roboto">Leads in Process</p>
+									<h5 id="processLeads"></h5>
+									<p class="font-roboto">On Process</p>
 								</div>
 								<div class="col-xl-12 p-0 left_side_earning">
-									<h5>400</h5>
-									<p class="font-roboto">Leads not Interest</p>
+									<h5 id="notInterestLeads"></h5>
+									<p class="font-roboto">Not Interest</p>
 								</div>
 								<div class="col-xl-12 p-0 left_side_earning">
-									<h5>3</h5>
-									<p class="font-roboto">Leads Closing</p>
+									<h5 id="closingLeads"></h5>
+									<p class="font-roboto">Closing</p>
 								</div>
 							</div>
 						</div>
@@ -131,20 +131,24 @@
 								<div class="row m-0 p-tb">
 									<div class="col-xl-8 col-md-8 col-sm-8 col-12 p-0">
 										<div class="inner-top-left">
-											<ul class="d-flex list-unstyled">
-												<li>Daily</li>
-												<li>Weekly</li>
-												<li class="active">Monthly</li>
-												<li>Yearly</li>
+											<ul class="d-flex list-unstyled" style="cursor: pointer;">
+												<li id="daily" onclick="refreshChart(1)">Daily</li>
+												<li id="weekly" onclick="refreshChart(7)">Weekly</li>
+												<li id="monthly" onclick="refreshChart(30)">Monthly</li>
+												<li id="yearly" onclick="refreshChart(365)">Yearly</li>
 											</ul>
 										</div>
 									</div>
 									<div class="col-xl-4 col-md-4 col-sm-4 col-12 p-0 justify-content-end">
 										<div class="inner-top-right">
-											<ul class="d-flex list-unstyled justify-content-end">
-												<li>Digital Source</li>
-												<li>Sales</li>
-											</ul>
+											<div class="row d-flex list-unstyled justify-content-end">
+												<div class="col-6">
+													<input class="form-control form-control-sm datepicker-here since" name="since" id="since" placeholder="Since" type="text" data-language="en" onchange="refreshDatatable()">
+												</div>
+												<div class="col-6">
+													<input class="form-control form-control-sm datepicker-here " name="to" id="to" placeholder="To" type="text" data-language="en" onchange="refreshDatatable()">
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -157,32 +161,13 @@
 										</div>
 									</div>
 								</div>
-							</div>
-							<div class="row border-top m-0">
-								<div class="col-xl-4 ps-0 col-md-6 col-sm-6">
-									<div class="media p-0">
-										<div class="media-left"><i class="icofont icofont-crown"></i></div>
-										<div class="media-body">
-											<h6>Referral Earning</h6>
-											<p>$5,000.20</p>
-										</div>
-									</div>
-								</div>
-								<div class="col-xl-4 col-md-6 col-sm-6">
-									<div class="media p-0">
-										<div class="media-left bg-secondary"><i class="icofont icofont-heart-alt"></i></div>
-										<div class="media-body">
-											<h6>Cash Balance</h6>
-											<p>$2,657.21</p>
-										</div>
-									</div>
-								</div>
-								<div class="col-xl-4 col-md-12 pe-0">
-									<div class="media p-0">
-										<div class="media-left"><i class="icofont icofont-cur-dollar"></i></div>
-										<div class="media-body">
-											<h6>Sales forcasting</h6>
-											<p>$9,478.50     </p>
+								<div class="row border-top m-0">
+									<div class="col justify-content-center">
+										<div class="inner-top-right">
+											<ul class="d-flex list-unstyled justify-content-center">
+												<li>Digital Source</li>
+												<li>Sales</li>
+											</ul>
 										</div>
 									</div>
 								</div>
@@ -306,101 +291,151 @@
 <script src="{{asset('assets/js/tooltip-init.js')}}"></script>
 
 <script>
-	// report chart leads
-	var options = {
-		series: [{
-			name: 'Digital Source',
-			data: [20, 20, 15, 40, 18, 20, 18, 23, 18, 35, 30, 55, 0]
-		}, {
-			name: 'Sales Source',
-			data: [0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0]
-		}],
-		chart: {
-			height: 240,
-			type: 'area',
-			toolbar: {
-				show: false
-			},
-		},
-		dataLabels: {
-			enabled: false
-		},
-		stroke: {
-			curve: 'smooth'
-		},
-		xaxis: {
-			type: 'category',
-			low: 0,
-			offsetX: 0,
-			offsetY: 0,
-			show: false,
-			categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan"],
-			labels: {
-				low: 0,
-				offsetX: 0,
-				show: false,
-			},
-			axisBorder: {
-				low: 0,
-				offsetX: 0,
-				show: false,
-			},
-		},
-		markers: {
-			strokeWidth: 3,
-			colors: "#ffffff",
-			strokeColors: [ CubaAdminConfig.primary , CubaAdminConfig.secondary ],
-			hover: {
-				size: 6,
-			}
-		},
-		yaxis: {
-			low: 0,
-			offsetX: 0,
-			offsetY: 0,
-			show: false,
-			labels: {
-				low: 0,
-				offsetX: 0,
-				show: true,
-			},
-			axisBorder: {
-				low: 0,
-				offsetX: 0,
-				show: false,
-			},
-		},
-		grid: {
-			show: false,
-			padding: {
-				left: 0,
-				right: 0,
-				bottom: -15,
-				top: -40
-			}
-		},
-		colors: [ CubaAdminConfig.primary , CubaAdminConfig.secondary ],
-		fill: {
-			type: 'gradient',
-			gradient: {
-				shadeIntensity: 1,
-				opacityFrom: 0.7,
-				opacityTo: 0.5,
-				stops: [0, 80, 100]
-			}
-		},
-		legend: {
-			show: false,
-		},
-		tooltip: {
-			x: {
-				format: 'MM'
-			},
-		},
-	};
+	function refreshChart($days){
+		$("#daily").removeClass('active');
+		$("#weekly").removeClass('active');
+		$("#monthly").removeClass('active');
+		$("#yearly").removeClass('active');
+		$("#chart-currently").empty();
 
-	var chart = new ApexCharts(document.querySelector("#chart-currently"), options);
-	chart.render();
+		var days = $days;
+        $.ajax({
+			type:"GET",
+			url:`/refresh_chart?days=${days}`,
+			dataType: 'JSON',
+			success:function(res){
+				if(res){
+					$("#totalLeads").html(res.total);
+					$("#processLeads").html(res.inProcess);
+					$("#notInterestLeads").html(res.notInterest);
+					$("#closingLeads").html(res.closing);
+					$("#summaryLabel").html(`Overview of ${res.summaryLabel}`);
+					if (days == 1)
+						$("#daily").addClass('active');
+					if (days == 7)
+						$("#weekly").addClass('active');
+					if (days == 30)
+						$("#monthly").addClass('active');
+					if (days == 365)
+						$("#yearly").addClass('active');
+
+					var leadsChart = {
+						series: [{
+							name: 'Digital Source',
+							data: res.countDigitalSource
+						}, {
+							name: 'Sales Source',
+							data: res.countSalesSource
+						}],
+						chart: {
+							height: 280,
+							type: 'area',
+							toolbar: {
+								show: false
+							},
+						},
+						dataLabels: {
+							enabled: false
+						},
+						stroke: {
+							curve: 'smooth'
+						},
+						xaxis: {
+							type: 'category',
+							low: 0,
+							offsetX: 0,
+							offsetY: 0,
+							show: false,
+							categories: res.dates,
+							labels: {
+								low: 0,
+								offsetX: 0,
+								show: false,
+							},
+							axisBorder: {
+								low: 0,
+								offsetX: 0,
+								show: false,
+							},
+						},
+						markers: {
+							strokeWidth: 3,
+							colors: "#ffffff",
+							strokeColors: [ CubaAdminConfig.primary , CubaAdminConfig.secondary ],
+							hover: {
+								size: 6,
+							}
+						},
+						yaxis: {
+							low: 0,
+							offsetX: 0,
+							offsetY: 0,
+							show: false,
+							labels: {
+								low: 0,
+								offsetX: 0,
+								show: true,
+							},
+							axisBorder: {
+								low: 0,
+								offsetX: 0,
+								show: false,
+							},
+						},
+						grid: {
+							show: false,
+							padding: {
+								left: 0,
+								right: 0,
+								bottom: -15,
+								top: -20
+							}
+						},
+						colors: [ CubaAdminConfig.primary , CubaAdminConfig.secondary ],
+						fill: {
+							type: 'gradient',
+							gradient: {
+								shadeIntensity: 1,
+								opacityFrom: 0.7,
+								opacityTo: 0.5,
+								stops: [0, 80, 100]
+							}
+						},
+						legend: {
+							show: false,
+						},
+						tooltip: {
+							x: {
+								format: 'dd-mm-yyy'
+							},
+							y: {
+								formatter: function(val) {
+									return val;
+								}
+							}
+						},
+					};
+
+					var chart = new ApexCharts(document.querySelector("#chart-currently"), leadsChart);
+					chart.render();
+
+					// call this function to show the loading state
+					function showLoading() {
+						chart.showDataLabels();
+					}
+
+					// call this function to hide the loading state and display the actual chart data
+					function hideLoading() {
+						chart.hideDataLabels();
+					}
+				}
+			}
+        });
+
+	}
+
+	refreshChart(7);
+	
 </script>
 
 <script>

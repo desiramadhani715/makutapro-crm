@@ -19,6 +19,7 @@ use App\Models\LeadsClosing;
 use App\Models\LeadsNotInterested;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -96,7 +97,84 @@ class DashboardController extends Controller
 
         return view('pages.dashboard.index',compact(
             'total','process','closing','notinterest'
-        ));
+        ));          
+    }
+
+    public function refreshChart(Request $request){
+        
+        if($request->days == 1)
+            $summaryLabel = "Today";
+        if($request->days == 7)
+            $summaryLabel = "a Week ago";
+        if($request->days == 30)
+            $summaryLabel = "a Month ago";
+        if($request->days == 365)
+            $summaryLabel = "a Year ago";
+            
+        $start_date = Carbon::now()->subDays($request->days);
+        $end_date = Carbon::now();
+
+        $digSource = HistoryProspect::CountLeadsByRole('Digital Source', $start_date, $end_date);
+        $salesSource = HistoryProspect::CountLeadsByRole('Sales Source', $start_date, $end_date);
+        
+        $resultDigital = [];
+        $resultSales = [];
+        $dates = [];
+        $countDigitalSource = [];
+        $countSalesSource = [];
+        
+        $current_date = $start_date;
+        while ($current_date->lte($end_date)) {
+            $resultDigital[$current_date->format('Y-m-d')] = 0;
+            $resultSales[$current_date->format('Y-m-d')] = 0;
+            $current_date->addDay();
+        }
+        
+        foreach ($digSource as $x) {
+            $resultDigital[$x->date] = $x->total;
+        }
+        
+        foreach ($salesSource as $x) {
+            $resultSales[$x->date] = $x->total;
+        }
+
+        foreach ($resultDigital as $date => $total) {
+            $dates[] = $date; //untuk mendapatkan tanggal
+            $countDigitalSource[] = $total;
+        }  
+
+        foreach ($resultSales as $date => $total) {
+            $countSalesSource[] = $total;
+        }  
+
+        $formattedDates = array_map(function ($date) {
+            return Carbon::createFromFormat('Y-m-d', $date)->translatedFormat('d F Y');
+        }, $dates);
+
+        $start_date = Carbon::now()->subDays($request->days);
+        $end_date = Carbon::now();
+
+        $leads = HistoryProspect::total_leads()->whereBetween('prospect.created_at', [$start_date, $end_date]);
+
+        $data = [
+            "summaryLabel" => $summaryLabel,
+
+            "total" => $leads->count(),
+    
+            "inProcess" => $leads->whereBetween('prospect.status_id',[2, 4])->count(),
+    
+            "closing" => $leads->where('prospect.status_id',5)->count(),
+    
+            "notInterest" => $leads->where('prospect.status_id',6)->count(),
+
+            "dates" => $formattedDates,
+
+            "countDigitalSource" => $countDigitalSource,
+
+            "countSalesSource" => $countSalesSource
+        ];
+
+        return $data;
     }
 
     /**
