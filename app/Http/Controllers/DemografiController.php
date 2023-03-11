@@ -11,4 +11,8 @@ class DemografiController extends Controller
         $kota = City::where('province_id',$request->province_id)->pluck('city','id');
         return response()->json($kota);
     }
+
+    public function index(){
+        return view('pages.demografi.index');
+    }
 }

@@ -114,8 +114,10 @@ class DashboardController extends Controller
         $start_date = Carbon::now()->subDays($request->days);
         $end_date = Carbon::now();
 
-        $digSource = HistoryProspect::CountLeadsByRole('Digital Source', $start_date, $end_date);
         $salesSource = HistoryProspect::CountLeadsByRole('Sales Source', $start_date, $end_date);
+        $digSource = HistoryProspect::CountLeadsByRole('Digital Source', $start_date, $end_date);
+
+        // dd($salesSource); source sales blm ke get
         
         $resultDigital = [];
         $resultSales = [];
@@ -129,6 +131,7 @@ class DashboardController extends Controller
             $resultSales[$current_date->format('Y-m-d')] = 0;
             $current_date->addDay();
         }
+        // dd($digSource);
         
         foreach ($digSource as $x) {
             $resultDigital[$x->date] = $x->total;
@@ -171,7 +174,11 @@ class DashboardController extends Controller
 
             "countDigitalSource" => $countDigitalSource,
 
-            "countSalesSource" => $countSalesSource
+            "countSalesSource" => $countSalesSource,
+
+            "digSource" => $digSource->count(),
+
+            "salesSource" => $salesSource->count()
         ];
 
         return $data;

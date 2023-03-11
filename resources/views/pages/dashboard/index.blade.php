@@ -164,9 +164,9 @@
 								<div class="row border-top m-0">
 									<div class="col justify-content-center">
 										<div class="inner-top-right">
-											<ul class="d-flex list-unstyled justify-content-center">
-												<li>Digital Source</li>
-												<li>Sales</li>
+											<ul class="d-flex list-unstyled justify-content-around">
+												<li id="totalDigSource"></li>
+												<li id="totalSalesSource"></li>
 											</ul>
 										</div>
 									</div>
@@ -310,6 +310,8 @@
 					$("#notInterestLeads").html(res.notInterest);
 					$("#closingLeads").html(res.closing);
 					$("#summaryLabel").html(`Overview of ${res.summaryLabel}`);
+					$("#totalDigSource").html(`Digital Source (${res.digSource} leads)`);
+					$("#totalSalesSource").html(`Sales Source (${res.salesSource} leads)`);
 					if (days == 1)
 						$("#daily").addClass('active');
 					if (days == 7)

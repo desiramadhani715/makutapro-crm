@@ -34,7 +34,7 @@
 
 					<li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav {{ Route::currentRouteName()=='agent.index' ? 'active' : '' }}" href="{{route('agent.index')}}"><i data-feather="users"> </i><span>Agent</span></a></li>
 
-					<li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{route('demografi.index')}}"><i data-feather="pie-chart"> </i><span>Demographics</span></a></li>
+					<li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav {{ Route::currentRouteName()=='demografi.index' ? 'active' : '' }}" href="{{route('demografi.index')}}"><i data-feather="pie-chart"> </i><span>Demographics</span></a></li>
 
 					<li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{route('agent.index')}}"><i data-feather="dollar-sign"> </i><span>ROAS</span></a></li>
 

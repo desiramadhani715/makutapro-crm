@@ -223,8 +223,6 @@ require(
                 enabled: true
             },
             title : {
-                text: 'Source of user visits to a site',
-                subtext: 'Purely fictitious',
                 x:'center'
             },
             tooltip : {
@@ -234,7 +232,7 @@ require(
             legend: {
                 orient: 'vertical',
                 left: 'left',
-                data: ['direct interview','Email marketing','Affiliate advertising','Video ad(value is null)','search engine']
+                data: ['21-25','25-30','30-35','35-40','40-45']
             },
             series : [
                 {
@@ -244,11 +242,11 @@ require(
                     center: ['50%', '60%'],
                     selectedMode: 'single',
                     data:[
-                        {value:335, name:'direct interview'},
-                        {value:310, name:'Email marketing'},
-                        {value:234, name:'Affiliate advertising'},
-                        {value:null, name:'Video ad(value is null)'},
-                        {value:1548, name:'search engine'}
+                        {value:335, name:'21-25'},
+                        {value:310, name:'25-30'},
+                        {value:234, name:'30-35'},
+                        {value:null, name:'35-40'},
+                        {value:1548, name:'40-45'}
                     ],
                     emphasis: {
                         itemStyle: {
