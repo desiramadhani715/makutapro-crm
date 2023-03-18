@@ -157,7 +157,7 @@ require(
             legend: {
                 orient: 'vertical',
                 left: 'left',
-                data: ['21-25','25-30','30-35','35-40','40-45']
+                data: {!!JSON_encode($categoryAge)!!}
             },
             series : [
                 {
@@ -166,13 +166,7 @@ require(
                     radius : '55%',
                     center: ['50%', '60%'],
                     selectedMode: 'single',
-                    data:[
-                        {value:335, name:'21-25'},
-                        {value:310, name:'25-30'},
-                        {value:234, name:'30-35'},
-                        {value:null, name:'35-40'},
-                        {value:1548, name:'40-45'}
-                    ],
+                    data:{!!JSON_encode($leadsByAge)!!},
                     emphasis: {
                         itemStyle: {
                             shadowBlur: 10,
@@ -252,15 +246,10 @@ require(['echarts'/*, 'map/js/china' */], function (echarts) {
         })
         return result
     }
-    let data = [{
-        'name': 'Male',
-        'value': 25
-    }, {
-        'name': 'Female',
-        'value': 20
-    }].sort((a, b) => {
+    let data = {!!JSON_encode($leadsByGender)!!}.sort((a, b) => {
         return b.value - a.value
     })
+    
     data.forEach((v, i) => {
         v.labelLine = {
             lineStyle: {

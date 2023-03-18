@@ -80,6 +80,53 @@ class AuthController extends Controller
         ], $code);
     }
 
+    public function changePassword(Request $request)
+    {
+        $input = $request->all();
+        $user = Auth::user();
+        
+        $rules = array(
+            'recent_password' => 'required',
+            'new_password' => 'required',
+            'confirm_password' => 'required|same:new_password',
+        );
+
+        $validator = Validator::make($input, $rules);
+        
+        if (!$validator->fails()) {
+
+            try {
+                if ((Hash::check(request('recent_password'), Auth::user()->password)) == false) {
+
+                    return ResponseFormatter::error(null, 'Check your recent password',200);
+
+                } else if ((Hash::check(request('new_password'), Auth::user()->password)) == true) {
+
+                    return ResponseFormatter::error(null, 'Please enter a password which is not similar then current password',200);
+
+                } else {
+
+                    $user->password = Hash::make($request->new_password);
+                    $user->api_token = null;
+                    $user->save();
+
+                    return ResponseFormatter::success(null, 'Password updated successfully');
+                }
+            } catch (\Exception $ex) {
+
+                if (isset($ex->errorInfo[2])) {
+                    $msg = $ex->errorInfo[2];
+                } else {
+                    $msg = $ex->getMessage();
+                }
+                return ResponseFormatter::error(null, $msg, 400);
+            }
+            
+        } 
+
+        return ResponseFormatter::error(null, $validator->errors()->first(), 400);
+    }
+
     // coming soon
     public function register(){
 

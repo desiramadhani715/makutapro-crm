@@ -301,7 +301,7 @@
 		var days = $days;
         $.ajax({
 			type:"GET",
-			url:`/refresh_chart?days=${days}`,
+			url:`/loadLeadsChart?days=${days}`,
 			dataType: 'JSON',
 			success:function(res){
 				if(res){
@@ -459,10 +459,10 @@
 			enabled: true
 		},
 		series: [{
-			data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380]
+			data: {!!JSON_encode($countPlatform)!!}
 		}],
 		xaxis: {
-			categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan', 'United States', 'China', 'Germany'],
+			categories: {!!JSON_encode($categoryPlatform)!!},
 		},
 		colors:[ CubaAdminConfig.orange_mkt ]
 	}
@@ -495,10 +495,10 @@
 			enabled: true
 		},
 		series: [{
-			data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380]
+			data: {!!JSON_encode($countSource)!!}
 		}],
 		xaxis: {
-			categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan', 'United States', 'China', 'Germany'],
+			categories: {!!JSON_encode($categorySource)!!},
 		},
 		colors:[ CubaAdminConfig.blue_mkt ]
 	}

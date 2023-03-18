@@ -30,7 +30,7 @@ class HistoryProspect extends Model
         return $this->hasOne(Prospect::class, 'id');
     }
 
-    public static function total_leads(){
+    public static function leads(){
         return DB::table('history_prospect')
                     ->join('prospect','prospect.id','history_prospect.prospect_id')
                     ->join('pt','pt.id','history_prospect.pt_id')
@@ -74,16 +74,47 @@ class HistoryProspect extends Model
                     ->get();
     }
 
-    public static function CountLeadsByRole($src, $start_date, $end_date){
-        $query = HistoryProspect::total_leads()
+    public static function count_leads_by_role($src, $start_date, $end_date){
+        $query = HistoryProspect::leads()
                     ->select(DB::raw('DATE(prospect.created_at) as date'), DB::raw('COUNT(*) as total'))
                     ->whereBetween('prospect.created_at', [$start_date, $end_date]);
-                    if ($src == 'Digital Source')
-                        $query->where('prospect.role_by','!=',6);
-                    if ($src == 'Sales Source')
-                        $query->where('prospect.role_by',6);
+
+        if ($src == 'Digital Source')
+            $query->where('prospect.role_by','!=',6);
+        if ($src == 'Sales Source')
+            $query->where('prospect.role_by',6);
 
         return $query->groupBy('date')->get();
+    }
+
+    public static function count_leads_by_src($src){
+        $query = HistoryProspect::leads();
+
+        if ($src == 'Platform'){
+            $query->join('sumber_platform','sumber_platform.id','prospect.sumber_platform_id')
+                    ->select('sumber_platform.nama_platform', DB::raw('count(prospect.id) as total'))
+                    ->groupBy('prospect.sumber_platform_id');
+        }
+
+        if ($src == 'Source'){
+            $query->join('sumber_data','sumber_data.id','prospect.sumber_data_id')
+                    ->select('sumber_data.nama_sumber', DB::raw('count(prospect.id) as total'))
+                    ->groupBy('prospect.sumber_data_id');
+        }
+
+        if ($src == 'Age'){
+            $query->join('usia','usia.id','prospect.usia_id')
+                    ->select(DB::raw('count(prospect.id) as value'),'usia.range_usia as name')
+                    ->groupBy('prospect.usia_id');
+        }
+
+        if ($src == 'Gender'){
+            $query->join('gender','gender.id','prospect.gender_id')
+                    ->select(DB::raw('count(prospect.id) as value'), 'gender.jenis_kelamin as name')
+                    ->groupBy('prospect.gender_id');
+        }
+
+        return $query->get();
     }
 
 }

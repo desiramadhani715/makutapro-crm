@@ -35,22 +35,22 @@ class ProjectController extends Controller
                 
         if(count($data) > 0){
             for ($i=0; $i < count($data[0]->project) ; $i++) { 
-                $data[0]->project[$i]->new = HistoryProspect::total_leads()
+                $data[0]->project[$i]->new = HistoryProspect::leads()
                                     ->where('prospect.status_id',1)
                                     ->where('history_prospect.project_id','=',$data[0]->project[$i]->id)
                                     ->count();
     
-                $data[0]->project[$i]->process = HistoryProspect::total_leads()
+                $data[0]->project[$i]->process = HistoryProspect::leads()
                                     ->whereBetween('prospect.status_id',[2,3,4])
                                     ->where('history_prospect.project_id','=',$data[0]->project[$i]->id)
                                     ->count();
     
-                $data[0]->project[$i]->notinterested = HistoryProspect::total_leads()
+                $data[0]->project[$i]->notinterested = HistoryProspect::leads()
                                     ->where('prospect.status_id',6)
                                     ->where('history_prospect.project_id','=',$data[0]->project[$i]->id)
                                     ->count();
     
-                $data[0]->project[$i]->closing = HistoryProspect::total_leads()
+                $data[0]->project[$i]->closing = HistoryProspect::leads()
                                     ->where('prospect.status_id',5)
                                     ->where('history_prospect.project_id','=',$data[0]->project[$i]->id)
                                     ->count();
@@ -192,13 +192,13 @@ class ProjectController extends Controller
 
         $data = [
             'draw' => $request->draw,
-            'recordsTotal' => HistoryProspect::total_leads()->count(),
+            'recordsTotal' => HistoryProspect::leads()->count(),
             // nampilin count data
             'recordsFiltered' => $query->count(),
             // nampilin semua data 
             'data' => $query->skip($request->start)->take($request->length)->get()
         ];
-        // $data = HistoryProspect::total_leads()->get();
+        // $data = HistoryProspect::leads()->get();
         return response()->json($data);
     }
 }

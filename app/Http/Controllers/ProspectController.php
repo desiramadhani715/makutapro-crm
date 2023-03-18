@@ -34,7 +34,7 @@ class ProspectController extends Controller
      */
     public function index()
     {
-        $data = HistoryProspect::total_leads()->get();
+        $data = HistoryProspect::leads()->get();
         $project = Project::get_project()->select('project.*')->get();
         $platform = DB::table('sumber_platform')->get();
         $source = DB::table('sumber_data')->get();
@@ -94,13 +94,13 @@ class ProspectController extends Controller
         $data = [
             'draw' => $request->draw,
             // nampilin count data total
-            'recordsTotal' => HistoryProspect::total_leads()->count(),
+            'recordsTotal' => HistoryProspect::leads()->count(),
             // nampilin count data terfilter
             'recordsFiltered' => $query->count(),
             // nampilin semua data 
             'data' => $query->skip($request->start)->take($request->length)->get()
         ];
-        // $data = HistoryProspect::total_leads()->get();
+        // $data = HistoryProspect::leads()->get();
         return response()->json($data);
     }
 

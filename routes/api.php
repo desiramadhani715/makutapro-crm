@@ -33,6 +33,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:api'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
 
     Route::get('/projects', [DashboardController::class, 'projects']);
     Route::get('/project_detail/{project_id}', [DashboardController::class, 'project_detail']);

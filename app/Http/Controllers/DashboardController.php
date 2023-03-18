@@ -83,24 +83,40 @@ class DashboardController extends Controller
 
         // dd($all->get(), $totalDs, $totalSs);
 
-        $total = HistoryProspect::total_leads()->count();
-        $process = HistoryProspect::total_leads()
+        $total = HistoryProspect::leads()->count();
+        $process = HistoryProspect::leads()
                 ->whereBetween('prospect.status_id',[2, 4])
                 ->count();
-        $closing = HistoryProspect::total_leads()
+        $closing = HistoryProspect::leads()
                 ->where('prospect.status_id',5)
                 ->count();
-        $notinterest = HistoryProspect::total_leads()
+        $notinterest = HistoryProspect::leads()
                 ->where('prospect.status_id',6)
                 ->count();
         // dd($closing,$notinterest);
 
+        
+        $platformLeads = HistoryProspect::count_leads_by_src("Platform");
+        $categoryPlatform = $platformLeads->pluck('nama_platform')->toArray();
+        $countPlatform = $platformLeads->pluck('total')->toArray();
+
+        $sourceLeads = HistoryProspect::count_leads_by_src("Source");
+        $categorySource= $sourceLeads->pluck('nama_sumber')->toArray();
+        $countSource= $sourceLeads->pluck('total')->toArray();
+
         return view('pages.dashboard.index',compact(
-            'total','process','closing','notinterest'
+            'total',
+            'process',
+            'closing',
+            'notinterest',
+            'categoryPlatform',
+            'countPlatform',
+            'categorySource',
+            'countSource'
         ));          
     }
 
-    public function refreshChart(Request $request){
+    public function loadLeadsChart(Request $request){
         
         if($request->days == 1)
             $summaryLabel = "Today";
@@ -114,8 +130,8 @@ class DashboardController extends Controller
         $start_date = Carbon::now()->subDays($request->days);
         $end_date = Carbon::now();
 
-        $salesSource = HistoryProspect::CountLeadsByRole('Sales Source', $start_date, $end_date);
-        $digSource = HistoryProspect::CountLeadsByRole('Digital Source', $start_date, $end_date);
+        $salesSource = HistoryProspect::count_leads_by_role('Sales Source', $start_date, $end_date);
+        $digSource = HistoryProspect::count_leads_by_role('Digital Source', $start_date, $end_date);
 
         // dd($salesSource); source sales blm ke get
         
@@ -157,7 +173,7 @@ class DashboardController extends Controller
         $start_date = Carbon::now()->subDays($request->days);
         $end_date = Carbon::now();
 
-        $leads = HistoryProspect::total_leads()->whereBetween('prospect.created_at', [$start_date, $end_date]);
+        $leads = HistoryProspect::leads()->whereBetween('prospect.created_at', [$start_date, $end_date]);
 
         $data = [
             "summaryLabel" => $summaryLabel,
@@ -182,6 +198,18 @@ class DashboardController extends Controller
         ];
 
         return $data;
+    }
+
+    public function loadSrcLeadsChart(Request $request){
+        $platformLeads = HistoryProspect::count_leads_by_src("Platform");
+        $sourceLeads = HistoryProspect::count_leads_by_src("Source");
+        dd($platformLeads->pluck('nama_platform')->toArray());
+        // $categoryPlatform = [];
+        // $countPlatform= [];
+
+        // foreach ($platformLeads as $x) {
+        //     $categoryPlatform[$x->nama_platform] = $x->total;
+        // }
     }
 
     /**

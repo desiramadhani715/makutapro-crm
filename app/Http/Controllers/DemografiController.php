@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\City;
 use Illuminate\Http\Request;
+use App\Models\HistoryProspect;
 
 class DemografiController extends Controller
 {
@@ -13,6 +14,20 @@ class DemografiController extends Controller
     }
 
     public function index(){
-        return view('pages.demografi.index');
+
+        $leadsByAge = HistoryProspect::count_leads_by_src("Age");
+        $categoryAge= $leadsByAge->pluck('name')->toArray();
+
+        $leadsByGender = HistoryProspect::count_leads_by_src("Gender");
+        $categoryGender= $leadsByGender->pluck('name')->toArray();
+
+        
+
+        return view('pages.demografi.index', compact(
+            'leadsByAge',
+            'categoryAge',
+            'leadsByGender',
+            'categoryGender'
+        ));
     }
 }

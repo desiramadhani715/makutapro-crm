@@ -19,12 +19,6 @@ use App\Models\LeadsClosing;
 class ProspectController extends Controller
 {
     public function all(Request $request){
-        
-        // $leads = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')
-        //                     ->join('sumber_platform as sp','sp.id','prospect.sumber_platform_id')
-        //                     ->where('hp.project_id', $request->project_id)
-        //                     ->select('prospect.id','prospect.nama_prospect','prospect.created_at','sp.nama_platform','prospect.catatan_admin','prospect.status_id')
-        //                     ->orderBy('prospect.id','desc');
 
         $leads = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')
                         ->join('sumber_platform as sp','sp.id','prospect.sumber_platform_id')
@@ -229,6 +223,5 @@ class ProspectController extends Controller
         return ResponseFormatter::success($ProspectID,'Data berhasil di update'); 
 
     }
-
 
 }
