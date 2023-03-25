@@ -1172,12 +1172,12 @@
 
 .bg-light {
     background-color: #f4f4f4 !important;
-    color: #fff;
+    color: #020202;
 }
 
 .bg-light-light {
     background-color: rgba(244, 244, 244, 0.2) !important;
-    color: #fff;
+    color: #2c323f;
 }
 
 .bg-dark {

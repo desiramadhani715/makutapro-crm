@@ -11,6 +11,31 @@
 	.unverified{
 		background-color: #c9c9c91e
 	}
+
+	.dropdown {
+	position: relative;
+	display: inline-block;
+	}
+
+	.dropdown-content {
+	display: none;
+	position: absolute;
+	background-color: #f1f1f1;
+	min-width: 160px;
+	z-index: 1;
+	}
+
+	.dropdown-content a {
+	color: black;
+	padding: 12px 16px;
+	text-decoration: none;
+	display: block;
+	}
+
+	.dropdown:hover .dropdown-content {
+	display: block;
+	}
+
 </style>
 @endsection
 
@@ -403,6 +428,16 @@
 				},
 				{
 					mRender: function(data,type,row){
+						// return `<td class="text-center">
+						// 			<div class="dropdown">
+						// 				<img src="{{asset('assets/images/button/action.png')}}" class="btn-action" alt="action">
+						// 				<div class="dropdown-content">
+						// 					<a href="#">Action 1</a>
+						// 					<a href="#">Action 2</a>
+						// 					<a href="#">Action 3</a>
+						// 				</div>
+						// 			</div>
+						// 		</td>`
 						var btn_detail = `<a href="prospect/${row.id}"><img src="{{asset('assets/images/button/info.png')}}" class="me-2 mt-1" alt="info"></a>`
 						var btn_delete = `<form action="{{url('prospect/${row.id}')}}" method="post" onsubmit="return confirm('Apakah anda yakin ?')">
 										@method('delete')

@@ -8,6 +8,7 @@ use App\Http\Controllers\AgentController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\DemografiController;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\HistoryController;
 use Illuminate\Support\Facades\Artisan;
@@ -64,6 +65,7 @@ Route::get('/historyFu', [HistoryController::class, 'historyFu']);
 Route::get('/loadLeadsChart', [DashboardController::class, 'loadLeadsChart']);
 Route::get('/loadSrcLeadsChart', [DashboardController::class, 'loadSrcLeadsChart']);
 
+Route::get('/settings', [SettingController::class, 'index'])->name('setting.index');
 
 Route::get('/reset', function () {
     Artisan::call('route:clear');

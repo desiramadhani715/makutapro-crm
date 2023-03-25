@@ -36,11 +36,13 @@
 
 					<li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav {{ Route::currentRouteName()=='demografi.index' ? 'active' : '' }}" href="{{route('demografi.index')}}"><i data-feather="pie-chart"> </i><span>Demographics</span></a></li>
 
-					<li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{route('agent.index')}}"><i data-feather="dollar-sign"> </i><span>ROAS</span></a></li>
+					<li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav {{ Route::currentRouteName()=='setting.index' ? 'active' : '' }}" href="{{route('setting.index')}}"><i data-feather="settings"> </i><span>Setting</span></a></li>
+
+					{{-- <li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{route('agent.index')}}"><i data-feather="dollar-sign"> </i><span>ROAS</span></a></li>
 
 					<li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{route('agent.index')}}"><i data-feather="codepen"> </i><span>Campaign Management</span></a></li>
 
-					<li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{route('agent.index')}}"><i data-feather="map"> </i><span>Unit Type</span></a></li>
+					<li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav" href="{{route('agent.index')}}"><i data-feather="map"> </i><span>Unit Type</span></a></li> --}}
 
 
 				</ul>
