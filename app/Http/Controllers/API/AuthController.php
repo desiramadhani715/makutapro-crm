@@ -29,11 +29,10 @@ class AuthController extends Controller
             if($user){
                 if (Hash::check($request->password, $user->password)) {
                     $user->generateToken();
-                    $userData = Auth::user();
                     return ResponseFormatter::success([
                         'token' => $user->api_token,
                         'token_type' => 'Bearer',
-                        'user' => $userData
+                        'user' => $user
                     ],'Authenticated');
                     
                 }
