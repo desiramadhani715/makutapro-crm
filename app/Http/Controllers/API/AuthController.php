@@ -31,7 +31,8 @@ class AuthController extends Controller
                     $user->generateToken();
                     return ResponseFormatter::success([
                         'token' => $user->api_token,
-                        'token_type' => 'Bearer'
+                        'token_type' => 'Bearer',
+                        'user' => Auth::user()
                     ],'Authenticated');
                     
                 }

@@ -32,8 +32,69 @@
 				 </div>
 				 <div class="col-md-6">
 					<div class="form-group mb-0 me-0"></div>
-					<a class="btn btn-primary px-2" href="{{ route('prospect.create') }}" id="addButton"> <i data-feather="plus-square"> </i>Add</a>
-				 </div>
+					<a class="btn btn-primary px-2" title="Create New" data-bs-toggle="modal" data-bs-target="#add"> <i data-feather="plus-square"> </i>Add</a>
+					<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+						<div class="modal-dialog" role="document">
+						   <div class="modal-content"  style="border-radius: 20px;">
+							  <div class="modal-header" style="background-color: #6F9CD3; border-top-left-radius: 20px;border-top-right-radius: 20px;">
+								<h2 class="modal-title text-white" style="font-family: Montserrat ,
+								sans-serif Medium 500; font-size: 25px;"><strong>MAKUTA</strong> Pro</h2>
+								 <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+							  </div>
+							  <form action="{{route('agent.store')}}" method="POST" enctype="multipart/form-data">
+								@csrf
+								<div class="modal-body form">
+									<div class="row">
+										<div class="user-profile">
+											<div class="card hovercard text-center">
+												<div class="user-image" style="margin-top: 80px">
+													<div class="avatar"><img alt="photo" src="{{asset('assets/images/avtar/user.jpg')}}" id="photoPreview"></div>
+													<div class="icon-wrapper" id="changePhoto"><i class="icofont icofont-pencil-alt-5"></i></div>
+													<input type="file" id="photo" style="display:none;" accept="image/*" onchange="loadFile(event)" name="photo"/>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row mb-2">
+										<div class="col">
+											<label class="control-label">Project</label>
+											<select id="project" class="form-select digits" name="project">
+												<option value="">All</option>
+												@foreach ($project as $item)
+												<option value="{{$item->id}}">{{$item->nama_project}}</option>
+												@endforeach
+											</select>
+										</div>
+									</div>
+									<div class="row mb-2">
+										<div class="col-lg-6">
+											<label  style="color: #827575">PIC</label>
+											<input class="form-control mb-2" type="text" name="pic">
+										</div>
+										<div class="col-lg-6">
+											<label  style="color: #827575">Nama</label>
+											<input class="form-control mb-2" type="text" name="nama_agent" required>
+										</div>
+									</div>
+									<div class="row mb-2">
+										<div class="col-lg-6">
+											<label  style="color: #827575">Email</label>
+											<input class="form-control mb-2" type="email" name="email" required>
+										</div>
+										<div class="col-lg-6">
+											<label  style="color: #827575">No. Handphone</label>
+											<input class="form-control mb-2" type="text" name="hp" placeholder="cth: 0812345678" required>
+										</div>
+									</div>
+								</div>
+							  <div class="modal-footer">
+								<button class="btn  modal-close " style="background-color: #6F9CD3; border-radius: 50px; color: #fff;" type="submit">Save Change</button>
+							  </div>
+							  </form>
+						   </div>
+						</div>
+					</div>
+				</div>
 			  </div>
 		   </div>
 		</div>

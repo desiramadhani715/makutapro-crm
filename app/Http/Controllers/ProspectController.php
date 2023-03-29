@@ -35,7 +35,7 @@ class ProspectController extends Controller
     public function index()
     {
         $data = HistoryProspect::leads()->get();
-        $project = Project::get_project()->select('project.*')->get();
+        $project = Project::get_project()->get();
         $platform = DB::table('sumber_platform')->get();
         $source = DB::table('sumber_data')->get();
         $status = DB::table('status')->get();

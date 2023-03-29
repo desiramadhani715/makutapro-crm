@@ -140,4 +140,8 @@ class Helper
             curl_close($ch);
         }
     }
+
+    public static function UsernameGenerator(){
+        
+    }
 }

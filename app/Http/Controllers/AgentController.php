@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Agent;
 use App\Models\ProjectAgent;
+use App\Models\Project;
 use App\Models\Sales;
 use App\Models\User;
 use App\Models\Fu;
@@ -46,6 +47,7 @@ class AgentController extends Controller
 
 
         $data = Agent::agent()->get();
+        $project = Project::get_project()->get();
         // dd($data);
 
         for ($i=0; $i < count($data); $i++) { 
@@ -59,7 +61,7 @@ class AgentController extends Controller
         }
         // dd($data);
 
-        return view('pages.agent.index', compact('data'));
+        return view('pages.agent.index', compact('data','project'));
     }
 
     public function active(Request $request){
@@ -145,7 +147,27 @@ class AgentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // dd($request->all());
+        $imageName = '';
+        if ($request->photo) {
+            $imageName = $request->file('photo')->getClientOriginalName();
+            $request->file('photo')->storeAs('public/user', `agent$imageName`);
+        }
+
+        User::create([
+            'role_id' => 3,
+            'name' => $request->name(),
+            'username',
+            'password',
+            'email',
+            'hp',
+            'photo',
+            'ktp',
+            'api_token',
+            'active'
+        ]);
+
+        Agent::create($request->all());
     }
 
     /**
