@@ -15,6 +15,25 @@
 @endsection
 
 @section('style')
+<style>
+	.sales-activity {
+		height: 400px;
+		width: 500;
+		overflow-y: scroll;
+	}
+	.sales-activity::-webkit-scrollbar {
+		width: 0.5em;
+	}
+
+	.sales-activity::-webkit-scrollbar-thumb {
+		background-color: #3178b62f;
+		border-radius: 0.5em;
+	}
+
+	.sales-activity::-webkit-scrollbar-track {
+		background-color: transparent;
+	}
+</style>
 @endsection
 
 @section('breadcrumb-title')
@@ -215,40 +234,31 @@
 			<div class="card">
 				<div class="card-header card-no-border">
 					<div class="header-top">
-						<h5 class="m-0">notification</h5>
+						<h5 class="m-0">Sales Activity</h5>
 						<div class="card-header-right-icon">
 							<select class="button btn btn-primary">
 								<option>Today</option>
-								<option>Tomorrow</option>
 								<option>Yesterday</option>
 							</select>
 						</div>
 					</div>
 				</div>
-				<div class="card-body pt-0">
+				<div class="card-body pt-0 mb-5 sales-activity">
+					@forelse ($historySales as $item)
 					<div class="media">
 						<div class="media-body">
-							<p>20-04-2020 <span>10:10</span></p>
-							<h6>Updated Product<span class="dot-notification"></span></h6>
-							<span>Quisque a consequat ante sit amet magna...</span>
+							<p>{{ date("M j, Y",strtotime($item->created_at)) }} <span>| {{ date('h:i:s A', strtotime($item->created_at)) }}</span></p>
+							<h6>{{ $item->subject_dev }}<span class="dot-notification"></span></h6>
+							<span>{{ $item->notes_dev }}</span>
 						</div>
 					</div>
-					<div class="media">
-						<div class="media-body">
-							<p>20-04-2020<span class="ps-1">Today</span><span class="badge badge-secondary">New</span></p>
-							<h6>Tello just like your product<span class="dot-notification"></span></h6>
-							<span>Quisque a consequat ante sit amet magna... </span>
-						</div>
-					</div>
-					<div class="media">
-						<div class="media-body">
-							<div class="d-flex mb-3">
-								<div class="inner-img"><img class="img-fluid" src="{{asset('assets/images/notification/1.jpg')}}" alt="Product-1"></div>
-								<div class="inner-img"><img class="img-fluid" src="{{asset('assets/images/notification/2.jpg')}}" alt="Product-2"></div>
+					@empty
+						<div class="media">
+							<div class="media-body text-center">
+								<span>No Activity.</span>
 							</div>
-							<span class="mt-3">Quisque a consequat ante sit amet magna...</span>
 						</div>
-					</div>
+					@endforelse
 				</div>
 			</div>
 		</div>

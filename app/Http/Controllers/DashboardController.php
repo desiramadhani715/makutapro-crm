@@ -104,6 +104,8 @@ class DashboardController extends Controller
         $categorySource= $sourceLeads->pluck('nama_sumber')->toArray();
         $countSource= $sourceLeads->pluck('total')->toArray();
 
+        $historySales = HistorySales::SalesActivity()->take(10);
+
         return view('pages.dashboard.index',compact(
             'total',
             'process',
@@ -112,7 +114,8 @@ class DashboardController extends Controller
             'categoryPlatform',
             'countPlatform',
             'categorySource',
-            'countSource'
+            'countSource',
+            'historySales'
         ));          
     }
 
@@ -198,18 +201,6 @@ class DashboardController extends Controller
         ];
 
         return $data;
-    }
-
-    public function loadSrcLeadsChart(Request $request){
-        $platformLeads = HistoryProspect::count_leads_by_src("Platform");
-        $sourceLeads = HistoryProspect::count_leads_by_src("Source");
-        dd($platformLeads->pluck('nama_platform')->toArray());
-        // $categoryPlatform = [];
-        // $countPlatform= [];
-
-        // foreach ($platformLeads as $x) {
-        //     $categoryPlatform[$x->nama_platform] = $x->total;
-        // }
     }
 
     /**

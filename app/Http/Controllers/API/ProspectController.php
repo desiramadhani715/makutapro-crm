@@ -23,10 +23,11 @@ class ProspectController extends Controller
 
         $leads = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')
                         ->join('sumber_platform as sp','sp.id','prospect.sumber_platform_id')
-                        ->select('prospect.id','prospect.nama_prospect','prospect.created_at','prospect.status_id','sp.nama_platform','prospect.catatan_admin','fu.created_at as fudate')
+                        ->select('prospect.id','prospect.nama_prospect','prospect.hp','prospect.email','prospect.is_pin','prospect.date_pin','prospect.created_at','prospect.status_id','sp.nama_platform','prospect.catatan_admin','fu.created_at as fudate')
                         ->leftJoin('fu','fu.id',DB::raw('(select max(`id`) as fuid from fu where fu.prospect_id = prospect.id)'))
                         ->whereRaw('(fu.created_at >= DATE_ADD(NOW(), INTERVAL -30 DAY))')
                         ->where('hp.project_id', $request->project_id)
+                        ->orderBy('prospect.date_pin','desc')
                         ->orderBy('prospect.id','desc');
 
 
@@ -50,10 +51,6 @@ class ProspectController extends Controller
             $leads[$i]->project = Project::find($request->project_id);
             $leads[$i]->status = Status::find($leads[$i]->status_id);
         }
-        // foreach ($$l as $key => $value) {
-        //     # code...
-        // }
-
         return ResponseFormatter::success($leads);
         
     }

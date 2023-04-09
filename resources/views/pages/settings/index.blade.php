@@ -289,12 +289,38 @@
                            <div class="card mb-0">
                               <div class="card-header d-flex">
                                  <h5 class="mb-0">Unit Type</h5>
-                                 <a href="#"><i class="me-2" data-feather="printer"></i>Print</a>
+                                 <a href="#"><i class="me-2 mb-1" data-feather="plus-square"></i>Add</a>
                               </div>
                               <div class="card-body">
-                                 <div class="details-bookmark text-center">
-                                    <div class="row" id="favouriteData"></div>
-                                    <div class="no-favourite"><span>No task due today.</span></div>
+                                 <div class="card-block row">
+                                    <div class="col-sm-12 col-lg-12 col-xl-12">
+                                       <div class="table-responsive">
+                                          <table class="table">
+                                             <thead class="thead-dark">
+                                                <tr>
+                                                   <th scope="col">No</th>
+                                                   <th scope="col">Unit Name</th>
+                                                   <th scope="col">Project</th>
+                                                </tr>
+                                             </thead>
+                                             <tbody>
+                                                @forelse ($units as $unit)
+                                                   <tr>
+                                                      <th scope="row">{{ $loop->iteration }}</th>
+                                                      <td>{{ $unit->unit_name }}</td>
+                                                      <td>{{ $unit->nama_project }}</td>
+                                                   </tr>
+                                                @empty
+                                                   <tr>
+                                                      <th></th>
+                                                      <td class="text-center">Unit Type Not Available.</td>
+                                                      <td></td>
+                                                   </tr>
+                                                @endforelse
+                                             </tbody>
+                                          </table>
+                                       </div>
+                                    </div>
                                  </div>
                               </div>
                            </div>
@@ -303,10 +329,57 @@
                            <div class="card mb-0">
                               <div class="card-header d-flex">
                                  <h5 class="mb-0">Return on Ad Spend</h5>
-                                 <a href="#"><i class="me-2" data-feather="printer"></i>Print</a>
+                                 <a href="#"><i class="me-2 mb-1" data-feather="plus-square"></i>Add</a>
                               </div>
                               <div class="card-body">
-                                 <div class="details-bookmark text-center"><span>No tasks found.</span></div>
+                                 <div class="card-block row">
+                                    <div class="col-sm-12 col-lg-12 col-xl-12">
+                                       <div class="table-responsive">
+                                          <table class="table">
+                                             <thead class="thead-dark">
+                                                <tr>
+                                                   <th scope="col">No.</th>
+                                                   <th scope="col">Budget</th>
+                                                   <th scope="col">Bulan/Tahun</th>
+                                                   <th scope="col">Project</th>
+                                                   <th scope="col" class="text-center">CPL <br> <small>(Cost Per Leads)</small></th>
+                                                   <th scope="col" class="text-center">CPA <br> <small>(Cost Per Acquisition)</small></th>
+                                                </tr>
+                                             </thead>
+                                             <tbody>
+                                                @php
+                                                   $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+                                                @endphp
+                                                @forelse ($roas as $item)
+                                                   <tr>
+                                                      <th scope="row">{{ $loop->iteration }}</th>
+                                                      <td>Rp. {{ number_format($item->budget == null ? $item->google + $item->sosmed + $item->detik : $item->budget, 0,',','.') }}</td>
+                                                      @php
+                                                         if ($item->bulan != "10" and $item->bulan != "11" and $item->bulan != "12")
+                                                               $idxbulan = str_replace('0','',$item->bulan);
+                                                         else
+                                                               $idxBulan = $item->bulan;
+                                                      @endphp
+                                                      <td>{{ $bulan[$item->bulan - 1] , $item->tahun }}</td>
+                                                      <td>{{ $item->nama_project }}</td>
+                                                      <td class="text-center">Rp. {{number_format($item->cpl,0, ',' , '.')}}</td>
+                                                      <td class="text-center">Rp. {{number_format($item->cpa,0, ',' , '.')}}</td>
+                                                   </tr>
+                                                @empty
+                                                   <tr>
+                                                      <th></th>
+                                                      <td></td>
+                                                      <td></td>
+                                                      <td class="text-center">Roas Data Not Available.</td>
+                                                      <td></td>
+                                                      <td></td>
+                                                   </tr>
+                                                @endforelse
+                                             </tbody>
+                                          </table>
+                                       </div>
+                                    </div>
+                                 </div>
                               </div>
                            </div>
                         </div>

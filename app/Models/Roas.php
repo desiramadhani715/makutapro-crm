@@ -7,18 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-class Unit extends Model
+class Roas extends Model
 {
     use HasFactory;
-    protected $table = 'unit';
+    protected $table = 'roas';
 
-    public static function getUnits(){
-        return DB::table('unit as u')
-                ->join('project as p','p.id','u.project_id')
+    public static function getRoas(){
+        return DB::table('roas as r')
+                ->join('project as p','p.id','r.project_id')
                 ->join('pt','pt.id','p.pt_id')
                 ->where('pt.user_id',Auth::user()->id)
-                ->select('p.nama_project','u.unit_name')
-                ->orderBy('u.id','desc')
+                ->select('p.nama_project','r.*')
+                ->orderBy('r.id','desc')
                 ->get();
     }
 }
