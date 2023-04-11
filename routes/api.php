@@ -6,6 +6,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\ProspectController;
+use App\Http\Controllers\API\AppointmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,5 +49,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/activity/{project_id}', [UserController::class, 'activity']);
     Route::get('/archieve/{project_id}', [UserController::class, 'archieve']);
 
+    Route::get('/appointment/{project_id}',[AppointmentController::class, 'index']);
+    Route::post('/appointment',[AppointmentController::class, 'store']);
 
 });
