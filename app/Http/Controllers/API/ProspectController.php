@@ -46,6 +46,10 @@ class ProspectController extends Controller
             $leads->where('prospect.hp','like',"%$request->hp%");
         }
 
+        if ($request->status_id) {
+            $leads->where('prospect.status_id',$request->status_id);
+        }
+
         $leads = $leads->get();
         for ($i=0; $i < count($leads); $i++) { 
             $leads[$i]->project = Project::find($request->project_id);
