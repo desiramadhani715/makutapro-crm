@@ -14,8 +14,10 @@ use App\Models\Prospect;
 use App\Models\Sales;
 use App\Models\Project;
 use App\Models\Fu;
+use App\Models\MediaFU;
 use App\Models\LeadsClosing;
 use App\Models\Status;
+use App\Models\RemindStatus;
 use Carbon\Carbon;
 
 
@@ -245,6 +247,53 @@ class ProspectController extends Controller
 
         return ResponseFormatter::success($ProspectID,'Data berhasil di update'); 
 
+    }
+
+    public function FollowUpLeads(Request $request){
+
+        $ProspectID = $request->input('prospect_id');
+        $prospect = Prospect::find($ProspectID);
+        $sales = Sales::where('user_id',Auth::user()->id)->get();
+        $project = Project::find($sales[0]->project_id);
+        $mediaFU = MediaFu::find($request->media_fu_id);
+
+        if($prospect->status_id == 1 || $prospect->status_id == 7){
+
+            $prospect->status_id = 2;
+            $prospect->status_date = date('Y-m-d H:i:s');
+            $prospect->accept_at = date('Y-m-d H:i:s');
+            $prospect->save();
+
+            RemindStatus::create([
+                'sales_id' => $sales[0]->id,
+                'prospect_id' => $ProspectID
+            ]);
+
+            HistoryChangeStatus::create([
+                'user_id' => $sales[0]->user_id,
+                'prospect_id' => $ProspectID,
+                'status_id' => 2,
+                'standard_id' => 23,
+                'role_id' => 6
+            ]);
+        }
+
+        Fu::create([
+            'prospect_id' => $ProspectID,
+            'agent_id' => $sales[0]->agent_id,
+            'sales_id' => $sales[0]->id,
+            'media_fu_id' => $mediaFU->id,
+        ]);
+
+        HistorySales::create([
+            'project_id' => $sales[0]->project_id,
+            'sales_id'=> $sales[0]->id,
+            'notes_dev' => $sales[0]->nama_sales.' baru saja Follow Up Leads melalui '.$mediaFU->nama_media.'.',
+            'subject_dev' => 'Leads : '.$sales[0]->KodeProject.' - '.$prospect->nama_prospect,
+            'history_by' => 'Sales'
+        ]);
+
+        return ResponseFormatter::success($ProspectID, 'Data Prospect');
     }
 
 }

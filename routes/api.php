@@ -43,6 +43,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/leads/{project_id}', [ProspectController::class, 'store']);
     Route::post('/leads/{project_id}/update', [ProspectController::class, 'update']);
     Route::post('/change-status',[ProspectController::class, 'changeStatus']);
+    Route::post('/fu-leads',[ProspectController::class, 'FollowUpLeads']);
+    
 
     Route::get('/user', [UserController::class, 'user']);
     Route::get('/performance/{project_id}', [UserController::class, 'performance']);
