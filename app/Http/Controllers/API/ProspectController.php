@@ -16,6 +16,8 @@ use App\Models\Project;
 use App\Models\Fu;
 use App\Models\LeadsClosing;
 use App\Models\Status;
+use Carbon\Carbon;
+
 
 class ProspectController extends Controller
 {
@@ -55,6 +57,7 @@ class ProspectController extends Controller
             $leads[$i]->project = Project::find($request->project_id);
             $leads[$i]->status = Status::find($leads[$i]->status_id);
         }
+        
         return ResponseFormatter::success($leads);
         
     }
@@ -156,6 +159,11 @@ class ProspectController extends Controller
                         
         $prospect = Prospect::find($request->prospect_id);
 
+        $date_pin = null;
+        if ($request->is_pin == 1) {
+           $date_pin = Carbon::now();
+        }
+
         Prospect::where(['id'=> $request->prospect_id])->update([
             'gender_id' => $request->gender_id,
             'sumber_data_id' => $request->sumber_data_id,
@@ -166,7 +174,10 @@ class ProspectController extends Controller
             'penghasilan_id' => $request->penghasilan_id,
             'tertarik_tipe_unit_id' => $request->unit_id,
             'catatan_sales' => $request->catatan_sales,
+            'is_pin' => $request->is_pin,
+            'date_pin' => $date_pin
         ]);
+
         
         HistorySales::create([
             'project_id' => $request->project_id,
