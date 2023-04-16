@@ -17,6 +17,7 @@ use App\Models\Fu;
 use App\Models\MediaFU;
 use App\Models\LeadsClosing;
 use App\Models\Status;
+use App\Models\Standard;
 use App\Models\RemindStatus;
 use Carbon\Carbon;
 
@@ -195,6 +196,16 @@ class ProspectController extends Controller
 
 
         return ResponseFormatter::success($data, 'Data Prospect');
+    }
+
+    public function getChangeStatus(){
+
+        $data = [
+            'status' => Status::all(),
+            'reason' => Standard::all()
+        ];
+       
+        return ResponseFormatter::success($data);
     }
 
     public function changeStatus(Request $request){
