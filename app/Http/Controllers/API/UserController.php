@@ -115,8 +115,9 @@ class UserController extends Controller
                         ->get();
 
         $data = collect($historyCS)->merge($historyFU);
+        $data = $data->sortByDesc('created_at');
 
-        return ResponseFormatter::success($data->all());
+        return ResponseFormatter::success($data->values()->all());
 
     }
 
