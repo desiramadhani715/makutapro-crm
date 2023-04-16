@@ -19,6 +19,12 @@ use App\Models\LeadsClosing;
 use App\Models\Status;
 use App\Models\Standard;
 use App\Models\RemindStatus;
+use App\Models\Age;
+use App\Models\Domicile;
+use App\Models\Income;
+use App\Models\Occupation;
+use App\Models\WorkLocation;
+use App\Models\Province;
 use Carbon\Carbon;
 
 
@@ -305,6 +311,20 @@ class ProspectController extends Controller
         ]);
 
         return ResponseFormatter::success($ProspectID, 'Data Prospect');
+    }
+
+    public function addLeadsData(){
+        $data = [
+            'age' => Age::all(),
+            'occupation' => Occupation::all(),
+            'income' => Income::all(),
+            'domicileProvince' => Province::all(),
+            'domicileCity' => Domicile::all(),
+            'workProvince' => Province::all(),
+            'workCity' => WorkLocation::all()
+        ];
+
+        return ResponseFormatter::success($data);
     }
 
 }
