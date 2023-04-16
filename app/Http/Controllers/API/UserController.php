@@ -14,6 +14,8 @@ use App\Models\Prospect;
 use App\Models\Fu;
 use App\Models\HistoryChangeStatus;
 
+use \stdClass;
+
 class UserController extends Controller
 {
     public function user(){
@@ -112,9 +114,9 @@ class UserController extends Controller
                         ->orderBy('fu.created_at','desc')
                         ->get();
 
-        $data = array_merge((array) $historyCS, (array) $historyFU);
+        $data = collect($historyCS)->merge($historyFU);
 
-        return $data;
+        return ResponseFormatter::success($data->all());
 
     }
 
