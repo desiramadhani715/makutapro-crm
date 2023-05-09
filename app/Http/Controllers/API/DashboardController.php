@@ -40,7 +40,7 @@ class DashboardController extends Controller
                         ->select('id','banner')
                         ->get()
                         ->map(function ($item) {
-                            $item->banner = Config::get('app.url').'/public/banner/'.$item->banner;
+                            $item->banner = Config::get('app.url').'/public/storage/banner/'.$item->banner;
                             return $item;
                         });
 
