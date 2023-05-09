@@ -50,7 +50,7 @@
               <div class="row">
                 <div class="col">
                   <div class="mb-3">
-                    <label>Project Banner</label>
+                    <label>Project Banner <sup> *Can Choose more than one</sup></label>
                     <input class="form-control" type="file" id="banner" name="banner[]" multiple="multiple" required>
                   </div>
                 </div>

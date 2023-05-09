@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
+use App\Models\Project;
+use App\Models\Prospect;
 use Illuminate\Support\Facades\Auth;
 
 class AppointmentController extends Controller
@@ -17,7 +19,13 @@ class AppointmentController extends Controller
     public function index(Request $request)
     {
         if ($request->project_id) {
-            $appointment = Appointment::where('project_id',$request->project_id)->get();
+            $appointment = Appointment::where('project_id',$request->project_id)
+                                        ->get()
+                                        ->map(function ($item) {
+                                            $item->prospect = Prospect::find($item->prospect_id, 'nama_prospect');
+                                            $item->project = Project::find($item->project_id,'nama_project');
+                                            return $item;
+                                        });
         }
 
         return ResponseFormatter::success($appointment);

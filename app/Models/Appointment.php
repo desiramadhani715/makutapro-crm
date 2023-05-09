@@ -18,4 +18,14 @@ class Appointment extends Model
         'app_time',
         'app_date'
     ];
+
+    public function project()
+    {
+        return $this->hasOne(Project::class,'id');
+    }
+
+    public function prospect()
+    {
+        return $this->hasOne(Prospect::class,'id');
+    }
 }

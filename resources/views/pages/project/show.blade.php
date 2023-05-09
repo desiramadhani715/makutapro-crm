@@ -52,7 +52,7 @@
 				</div>
 			</div>
 		</div>
-        <div class="col-sm-12">
+        {{-- <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
 					<h5>Prospect Project</h5>
@@ -62,7 +62,6 @@
 					<div class="row mb-4">
 						<div class="col-12 col-lg-3 table-filters ">
 							<div class="filter-container">
-								{{-- <label class="control-label" style="color: grey">Select Agent</label> --}}
 								<select id="agent" class="js-example-disabled-results" name="agent"  onchange="refreshDatatable()">
 									<option value="">Select Agent</option>
 									@foreach ($agent as $item)
@@ -73,7 +72,6 @@
 						</div>
 						<div class="col-12 col-lg-3 table-filters ">
 							<div class="filter-container">
-								{{-- <label class="control-label">Select Sales</label> --}}
 								<select id="sales" class="js-example-disabled-results" name="sales"  onchange="refreshDatatable()">
 									<option value="">Select Sales</option>
 								</select>
@@ -81,7 +79,6 @@
 						</div>
 						<div class="col-12 col-lg-3 table-filters ">
 							<div class="filter-container">
-								{{-- <label class="control-label">Select Status</label> --}}
 								<select id="status" class="js-example-disabled-results" name="status"  onchange="refreshDatatable()">
 									<option value="">Select Status</option>
 									@foreach ($status as $item)
@@ -95,7 +92,6 @@
 						<table class="display datatables" id="prospect-project-datatable">
 							<thead>
 								<tr>
-									{{-- <th>No</th> --}}
 									<th>ID</th>
 									<th>Nama & No Hp</th>
 									<th>Source</th>
@@ -106,13 +102,10 @@
 									<th>Status</th>
 									<th>Input Date</th>
 									<th>Process Date</th>
-									{{-- <th>Closing</th> --}}
-									{{-- <th>Action</th> --}}
 								</tr>
 							</thead>
 							<tfoot>
 								<tr>
-									{{-- <th>No</th> --}}
 									<th>
 										ID
 									</th>
@@ -125,15 +118,13 @@
 									<th>Status</th>
 									<th>Input Date</th>
 									<th>Process Date</th>
-									{{-- <th>Closing</th> --}}
-									{{-- <th>Action</th> --}}
 								</tr>
 							</tfoot>
 						</table>
 					</div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 	</div>
 </div>
 @endsection
@@ -228,7 +219,7 @@
 		});
 	}
 
-	refreshDatatable();
+	// refreshDatatable();
 
 	$('#agent').change(function(){
             var agent = $(this).val();

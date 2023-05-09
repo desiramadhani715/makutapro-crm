@@ -29,6 +29,11 @@ class Project extends Model
         return $this->belongsTo(Pt::class, 'pt_id');
     }
 
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class);
+    }
+
     public static function get_project(){
         return DB::table('project')
                     ->join('pt','pt.id','=','project.pt_id')
