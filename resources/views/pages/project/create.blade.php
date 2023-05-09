@@ -6,6 +6,19 @@
 @endsection
 
 @section('style')
+<style>
+  .preview-image {
+      display: flex;
+      flex-wrap: wrap;
+  }
+
+  .preview-image img {
+      width: 200px;
+      height: auto;
+      margin-right: 10px;
+      margin-bottom: 10px;
+  }
+</style>
 @endsection
 
 @section('breadcrumb-title')
@@ -24,7 +37,7 @@
       <div class="card">
         <div class="card-body">
           <div class="form theme-form">
-            <form action="{{route('project.store')}}" method="post">
+            <form action="{{route('project.store')}}" method="post" enctype="multipart/form-data">
               @csrf
               <div class="row">
                 <div class="col">
@@ -34,6 +47,15 @@
                   </div>
                 </div>
               </div>
+              <div class="row">
+                <div class="col">
+                  <div class="mb-3">
+                    <label>Project Banner</label>
+                    <input class="form-control" type="file" id="banner" name="banner[]" multiple="multiple" required>
+                  </div>
+                </div>
+              </div>
+              <div class="preview-image"></div>
               <div class="row">
                 <div class="col">
                   <div class="mb-3">
@@ -73,4 +95,28 @@
 @section('script')
 <script src="{{asset('assets/js/sweet-alert/sweetalert.min.js')}}"></script>
 <script src="{{asset('assets/js/sweet-alert/app.js')}}"></script>
+<script>
+  function previewImages() {
+      var previewContainer = document.querySelector('.preview-image');
+      var files = document.querySelector('#banner').files;
+
+      function readAndPreview(file) {
+          var reader = new FileReader();
+          reader.addEventListener('load', function() {
+              var image = new Image();
+              image.src = this.result;
+              image.width = 200;
+              image.height = 200;
+              previewContainer.appendChild(image);
+          });
+          reader.readAsDataURL(file);
+      }
+
+      if (files) {
+          [].forEach.call(files, readAndPreview);
+      }
+  }
+
+  document.querySelector('#banner').addEventListener('change', previewImages);
+</script>
 @endsection

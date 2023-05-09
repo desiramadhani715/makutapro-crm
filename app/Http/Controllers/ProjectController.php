@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Models\Agent;
 use App\Models\Pt;
+use App\Models\Banner;
 use App\Models\HistoryProspect;
 use Illuminate\Http\Request;
 use App\Http\Traits\GlobalTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+
 
 class ProjectController extends Controller
 {
@@ -83,6 +85,8 @@ class ProjectController extends Controller
         $data = Pt::with('project')
                 ->where('user_id',Auth::user()->id)
                 ->get();
+                
+        // dd($request->all());
 
         // =====> Generate Kode Project <===== //
 
@@ -97,12 +101,25 @@ class ProjectController extends Controller
         
         // =====> End of Generate Kode Project <===== //
 
-        Project::create([
-            'pt_id' => $data[0]->id,
-            'nama_project' => $request->nama_project,
-            'description' => $request->description,
-            'send_by' => $request->send_by
-        ]);
+        $newproject = new Project();
+        $newproject->pt_id = $data[0]->id;
+        $newproject->nama_project = $request->nama_project;
+        $newproject->description = $request->description;
+        $newproject->send_by = $request->send_by;
+        $newproject->save();
+
+        if ($request->hasFile('banner')) {
+            $projectId = $newproject->id;
+            collect($request->file('banner'))->each(function ($file, $sort) use ($projectId){
+                $bannerName =time() . rand(1, 100) . '.' . $file->getClientOriginalExtension();
+                $file->storeAs('public/banner', $bannerName);
+                $newBanner = new Banner();
+                $newBanner->project_id = $projectId;
+                $newBanner->banner = $bannerName;   
+                $newBanner->sort = $sort+1;
+                $newBanner->save();
+            }); 
+        }
 
         return redirect('/project')->with('status','Success !');
     }

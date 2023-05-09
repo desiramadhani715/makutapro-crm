@@ -9,4 +9,9 @@ class Banner extends Model
 {
     use HasFactory;
     protected $table = 'banner';
+    protected $filable = [
+        'project_id',
+        'banner',
+        'sort'
+    ];
 }

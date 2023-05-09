@@ -67,7 +67,7 @@
 										</div>
 									</div>
 									<div class="row mb-2">
-										<div class="col-lg-6">
+										<div class="col-xl-6">
 											<label  style="color: #827575">PIC</label>
 											<input class="form-control mb-2" type="text" name="pic">
 										</div>

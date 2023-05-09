@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -37,7 +38,11 @@ class DashboardController extends Controller
 
         $banner = Banner::where('project_id', $project_id)
                         ->select('id','banner')
-                        ->get();
+                        ->get()
+                        ->map(function ($item) {
+                            $item->banner = Config::get('app.url').'/public/banner/'.$item->banner;
+                            return $item;
+                        });
 
         $leadSum = HistoryProspect::join('project','project.id','history_prospect.project_id')
                                     ->join('prospect','prospect.id','history_prospect.prospect_id')
