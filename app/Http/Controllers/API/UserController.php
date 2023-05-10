@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Sales;
 use App\Models\Prospect;
+use App\Models\Project;
+use App\Models\Status;
 use App\Models\Fu;
 use App\Models\HistoryChangeStatus;
 
@@ -130,7 +132,12 @@ class UserController extends Controller
                         ->whereRaw('(fu.created_at <= DATE_ADD(NOW(), INTERVAL -30 DAY) OR (fu.id is null AND prospect.status_id !=1))')
                         ->where('hp.project_id', $request->project_id)
                         ->orderBy('prospect.id','desc')
-                        ->get();
+                        ->get()
+                        ->map(function ($item) use ($request) {
+                            $item->project = Project::find($request->project_id,'nama_project');
+                            $item->status = Status::find($item->status_id);
+                            return $item;
+                        });
         
         return ResponseFormatter::success($leads);
             

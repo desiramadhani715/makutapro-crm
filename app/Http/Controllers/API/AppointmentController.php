@@ -20,6 +20,7 @@ class AppointmentController extends Controller
     {
         if ($request->project_id) {
             $appointment = Appointment::where('project_id',$request->project_id)
+                                        ->orderBy('appointment.id','desc')
                                         ->get()
                                         ->map(function ($item) {
                                             $item->prospect = Prospect::find($item->prospect_id, 'nama_prospect');
