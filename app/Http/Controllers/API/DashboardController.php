@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Sales;
 use App\Models\Project;
 use App\Models\Banner;
+use App\Models\Status;
 use App\Models\HistoryProspect;
 
 class DashboardController extends Controller
@@ -44,18 +45,22 @@ class DashboardController extends Controller
                             return $item;
                         });
 
-        $leadSum = HistoryProspect::join('project','project.id','history_prospect.project_id')
-                                    ->join('prospect','prospect.id','history_prospect.prospect_id')
-                                    ->join('status','status.id','prospect.status_id')
-                                    ->where('history_prospect.project_id', $project_id)
-                                    ->select(DB::raw('count(*) as total'),'status.status')
-                                    ->groupBy('status.status')
-                                    ->get();
+        $leadSum = Status::leftJoin('prospect', 'status.id', 'prospect.status_id')
+                            ->leftJoin('history_prospect', function ($join) use ($project_id) {
+                                $join->on('history_prospect.prospect_id', 'prospect.id')
+                                    ->where('history_prospect.project_id', $project_id);})
+                            ->select(DB::raw('count(history_prospect.id) as total'), 'status.status')
+                            ->groupBy('status.status');
+        
+        if($request->start_date && $request->end_date)
+            $leadSum->whereBetween('prospect.created_at',[$request->start_date, $request->end_date]);
+        else
+            $leadSum->whereRaw('prospect.created_at >= DATE_ADD(NOW(), INTERVAL -30 DAY) OR prospect.id IS NULL');
 
         return ResponseFormatter::success([
             'teams' => $teams,
             'banner' => $banner,
-            'leadSum' => $leadSum
+            'leadSum' => $leadSum->get()
         ]);
     }
 }
