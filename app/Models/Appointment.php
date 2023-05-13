@@ -15,7 +15,8 @@ class Appointment extends Model
         'user_id',
         'app_note',
         'app_location',
-        'app_time',
+        'start_app_time',
+        'end_app_time',
         'app_date'
     ];
 
@@ -27,5 +28,10 @@ class Appointment extends Model
     public function prospect()
     {
         return $this->hasOne(Prospect::class,'id');
+    }
+
+    public function reminders()
+    {
+        return $this->hasMany(AppReminder::class, 'appointment_id');
     }
 }

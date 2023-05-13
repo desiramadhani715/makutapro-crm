@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Appointment;
+use App\Models\AppReminder;
 use App\Models\Project;
 use App\Models\Prospect;
 use Illuminate\Support\Facades\Auth;
@@ -18,15 +19,16 @@ class AppointmentController extends Controller
      */
     public function index(Request $request)
     {
+        $appointment = Appointment::where('user_id',Auth::user()->id)
+                                    ->orderBy('appointment.id','desc')
+                                    ->get()
+                                    ->map(function ($item) {
+                                        $item->prospect = Prospect::find($item->prospect_id, 'nama_prospect');
+                                        $item->project = Project::find($item->project_id,'nama_project');
+                                        return $item;
+                                    });
         if ($request->project_id) {
-            $appointment = Appointment::where('project_id',$request->project_id)
-                                        ->orderBy('appointment.id','desc')
-                                        ->get()
-                                        ->map(function ($item) {
-                                            $item->prospect = Prospect::find($item->prospect_id, 'nama_prospect');
-                                            $item->project = Project::find($item->project_id,'nama_project');
-                                            return $item;
-                                        });
+            $appointment->where('project_id',$request->project_id);
         }
 
         return ResponseFormatter::success($appointment);
@@ -40,24 +42,32 @@ class AppointmentController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'project_id' => 'required',
-            'prospect_id' => 'required',
-            'app_time' => 'required',
-            'app_date' => 'required',
-        ]);
+        $data = $request->json()->all();
 
+        // Simpan data appointment
         $appointment = new Appointment();
-        $appointment->project_id = $validatedData['project_id'];
-        $appointment->prospect_id = $validatedData['prospect_id'];
+        $appointment->project_id = $data['project_id'];
+        $appointment->prospect_id = $data['prospect_id'];
         $appointment->user_id = Auth::user()->id;
-        $appointment->app_note = $request->app_note;
-        $appointment->app_location = $request->app_location;
-        $appointment->app_time = $validatedData['app_time'];
-        $appointment->app_date = $validatedData['app_date'];
+        $appointment->app_note = $data['app_note'];
+        $appointment->app_location = $data['app_location'];
+        $appointment->start_app_time = $data['start_app_time'];
+        $appointment->end_app_time = $data['end_app_time'];
+        $appointment->app_date = $data['app_date'];
         $appointment->save();
 
-        return ResponseFormatter::success($appointment);
+        // Simpan data reminders
+        $reminders = $data['reminders'];
+        foreach ($reminders as $reminder) {
+            $appReminder = new AppReminder();
+            $appReminder->appointment_id = $appointment->id;
+            $appReminder->time_period = $reminder['time_period'];
+            $appReminder->app_time = $reminder['app_time'];
+            $appReminder->app_date = $reminder['app_date'];
+            $appReminder->save();
+        }
+
+        return ResponseFormatter::success('Appointment berhasil disimpan');
     }
 
     /**
@@ -66,20 +76,11 @@ class AppointmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($appointmentId)
     {
-        //
-    }
+        $appointment = Appointment::with('reminders')->findOrFail($appointmentId);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return ResponseFormatter::success($appointment);
     }
 
     /**
@@ -89,9 +90,38 @@ class AppointmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $appointmentId)
     {
-        //
+        $data = $request->json()->all();
+
+        // Perbarui data appointment
+        $appointment = Appointment::findOrFail($appointmentId);
+        $appointment->project_id = $data['project_id'];
+        $appointment->prospect_id = $data['prospect_id'];
+        $appointment->user_id = Auth::user()->id;
+        $appointment->app_note = $data['app_note'];
+        $appointment->app_location = $data['app_location'];
+        $appointment->start_app_time = $data['start_app_time'];
+        $appointment->end_app_time = $data['end_app_time'];
+        $appointment->app_date = $data['app_date'];
+        $appointment->save();
+
+        // Hapus semua reminder yang terkait dengan appointment ini
+        AppReminder::where('appointment_id', $appointmentId)->delete();
+
+        // Simpan data reminders yang baru
+        $reminders = $data['reminders'];
+        foreach ($reminders as $reminder) {
+            $appReminder = new AppReminder();
+            $appReminder->appointment_id = $appointmentId;
+            $appReminder->time_period = $reminder['time_period'];
+            $appReminder->app_time = $reminder['app_time'];
+            $appReminder->app_date = $reminder['app_date'];
+            $appReminder->save();
+        }
+
+        return ResponseFormatter::success('Appointment berhasil diubah');
+
     }
 
     /**
@@ -100,8 +130,19 @@ class AppointmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($appointmentId)
     {
-        //
+        $appointment = Appointment::find($appointmentId);
+
+        if(!$appointment){
+            return ResponseFormatter::error('Appointment '.$appointmentId.' tidak dapat ditemukan');
+        }
+        // Hapus appointment
+        Appointment::where('id', $appointmentId)->delete();
+
+        // Hapus semua reminder yang terkait dengan appointment ini
+        AppReminder::where('appointment_id', $appointmentId)->delete();
+
+        return ResponseFormatter::success('Appointment berhasil dihapus');
     }
 }

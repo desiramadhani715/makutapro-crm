@@ -53,7 +53,10 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/archieve/{project_id}', [UserController::class, 'archieve']);
     Route::get('/history/{project_id}', [UserController::class, 'history_sales']);
 
-    Route::get('/appointment/{project_id}',[AppointmentController::class, 'index']);
+    Route::get('/appointment',[AppointmentController::class, 'index']);
+    Route::get('/appointment/show/{appointment_id}',[AppointmentController::class, 'show']);
     Route::post('/appointment',[AppointmentController::class, 'store']);
+    Route::post('/appointment/{appointment_id}',[AppointmentController::class, 'update']);
+    Route::delete('/appointment/{appointment_id}',[AppointmentController::class, 'destroy']);
 
 });
