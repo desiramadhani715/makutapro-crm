@@ -51,6 +51,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/performance/{project_id}', [UserController::class, 'performance']);
     Route::get('/activity/{project_id}', [UserController::class, 'activity']);
     Route::get('/archieve/{project_id}', [UserController::class, 'archieve']);
+    Route::get('/history/{project_id}', [UserController::class, 'history_sales']);
 
     Route::get('/appointment/{project_id}',[AppointmentController::class, 'index']);
     Route::post('/appointment',[AppointmentController::class, 'store']);

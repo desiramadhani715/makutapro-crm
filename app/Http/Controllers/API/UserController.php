@@ -15,6 +15,7 @@ use App\Models\Project;
 use App\Models\Status;
 use App\Models\Fu;
 use App\Models\HistoryChangeStatus;
+use App\Models\HistorySales;
 
 use \stdClass;
 
@@ -141,5 +142,23 @@ class UserController extends Controller
         
         return ResponseFormatter::success($leads);
             
+    }
+
+    public function history_sales(Request $request){
+
+        $sales = Sales::join('users','users.id','sales.user_id')
+                        ->where('users.id',Auth::user()->id)
+                        ->where('sales.project_id',$request->project_id)
+                        ->select('sales.*')
+                        ->get();
+
+        $history = HistorySales::select('*',DB::raw('MonthName(created_at) month, day(created_at) day, Hour(created_at) hour, minute(created_at) minute'))
+                                ->where('sales_id','=',$sales[0]->id)
+                                ->where('project_id',$request->project_id)
+                                ->where('history_by','=','Developer')
+                                ->orderBy('id','desc')
+                                ->get();
+
+        return ResponseFormatter::success($history);
     }
 }
