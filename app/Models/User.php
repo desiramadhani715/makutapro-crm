@@ -22,6 +22,7 @@ class User extends Authenticatable
     protected $fillable = [
         'role_id',
         'name',
+        'nick_name',
         'username',
         'password',
         'email',
@@ -29,7 +30,9 @@ class User extends Authenticatable
         'photo',
         'ktp',
         'api_token',
-        'active'
+        'active',
+        'gender',
+        'birthday'
     ];
     // public $timestamps = false;
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -126,6 +127,35 @@ class AuthController extends Controller
         } 
 
         return ResponseFormatter::error(null, $validator->errors()->first(), 400);
+    }
+
+    public function updateProfile(Request $request){
+
+        $user = Auth::user();
+
+        if ($request->hasFile('photo')) {
+            $photo =time() . rand(1, 100) . '.' . $request->file('photo')->getClientOriginalExtension();
+            $request->file('photo')->storeAs('public/user', $photo);
+            $user->photo = $photo;
+        }else {
+            $user->name = $request->name;
+            $user->nick_name = $request->nick_name;
+            $user->username = $request->username;
+            $user->email = $request->email;
+            $user->hp = $request->hp;
+            $user->gender = $request->gender;
+            $user->birthday = $request->birthday;
+        }
+
+        $user->save();
+
+        $user = User::where('id',$user->id)->get()->map(function ($item) {
+            $item->photo = Config::get('app.url').'/public/storage/user/'.$item->photo;
+            return $item;
+        });
+
+
+        return ResponseFormatter::success($user,'Data User berhasil di ubah');
     }
 
     // coming soon
