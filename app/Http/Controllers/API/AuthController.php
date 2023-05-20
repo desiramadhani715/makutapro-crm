@@ -184,7 +184,7 @@ class AuthController extends Controller
 
         Mail::to($request->email)->send(new SendOtp($otpCode));
 
-        return ResponseFormatter::success($otpCode,'Otp berhasil dikirim.');
+        return ResponseFormatter::success(['otp_code' => $otpCode, 'email' => $request->email],'Otp berhasil dikirim.');
     }
 
 

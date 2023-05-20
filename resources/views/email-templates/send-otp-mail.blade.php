@@ -57,11 +57,12 @@
                       <tbody>
                         <tr>
                           <td style="padding: 30px"> 
-                            <p>Hi There, </p>
-                            <p>you forgot your password for Makutapro. If this is true, this is the otp Code</p>
+                            <p>Hallo, </p>
+                            <p>Anda baru saja melakukan permohonan untuk pembuatan password baru. Masukan OTP code dibawah ini pada aplikasi Makutapro Anda:</p>
                             <h3>{{ $data }}</h3>
-                            <p>If you dont want to changes your password, just ignore it.</p>
-                            <p style="margin-bottom: 0">Good luck! Hope it works.</p>
+                            <p>Jika Anda tidak ingin membuat password baru, silahkan abaikan pesan ini.</p>
+                            <p style="margin-bottom: 0">Terimakasih.</p>
+                            <p style="margin-bottom: 0">Makutapro's Team.</p>
                           </td>
                         </tr>
                       </tbody>
