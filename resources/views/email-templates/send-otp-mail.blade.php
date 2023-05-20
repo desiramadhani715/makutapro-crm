@@ -48,7 +48,7 @@
                   <td>
                     <table style="width: 650px; margin: 0 auto; margin-bottom: 30px">
                       <tbody>
-                        <tr>
+                        <tr class="text-center">
                           <td><img src="{{ asset(env('APP_URL') . 'assets/img/logo-email.png') }}" alt=""></td>
                         </tr>
                       </tbody>
@@ -59,7 +59,7 @@
                           <td style="padding: 30px"> 
                             <p>Hi There, </p>
                             <p>you forgot your password for Makutapro. If this is true, this is the otp Code</p>
-                            {{-- <h3>{{ $data }}</h3> --}}
+                            <h3>{{ $data }}</h3>
                             <p>If you dont want to changes your password, just ignore it.</p>
                             <p style="margin-bottom: 0">Good luck! Hope it works.</p>
                           </td>
