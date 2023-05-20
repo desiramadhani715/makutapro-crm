@@ -63,3 +63,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::delete('/appointment/{appointment_id}',[AppointmentController::class, 'destroy']);
 
 });
+
+// forget Password
+Route::post('/sendEmailOtpCode', [AuthController::class, 'sendEmailOtpCode']);
+
+

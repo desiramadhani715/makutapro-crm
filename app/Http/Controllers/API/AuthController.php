@@ -14,6 +14,8 @@ use App\Models\Sales;
 use App\Models\Prospect;
 use App\Models\Fu;
 use App\Models\HistoryChangeStatus;
+use App\Mail\SendOtp;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -166,9 +168,24 @@ class AuthController extends Controller
         return ResponseFormatter::success($user);
     }
 
-    // coming soon
-    public function register(){
+    //Forget Password
+    public function sendEmailOtpCode(Request $request){
 
+        $user = User::where(['email' => $request->email,'role_id' => 6])->first();
+        
+        if(!$user){
+            return ResponseFormatter::error($request->email, 'Email tidak terdaftar', 200);
+        }
+
+        $otpCode = rand(1000, 9999);
+
+        $user->otp_code = $otpCode;
+        $user->save();
+
+        Mail::to($request->email)->send(new SendOtp($otpCode));
+
+        return ResponseFormatter::success($otpCode,'Otp berhasil dikirim.');
     }
+
 
 }

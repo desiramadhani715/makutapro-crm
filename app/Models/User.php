@@ -32,7 +32,8 @@ class User extends Authenticatable
         'api_token',
         'active',
         'gender',
-        'birthday'
+        'birthday',
+        'otp_code'
     ];
     // public $timestamps = false;
 
