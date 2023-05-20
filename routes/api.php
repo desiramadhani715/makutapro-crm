@@ -35,6 +35,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware(['auth:api'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/change-password', [AuthController::class, 'changePassword']);
+    Route::post('/new-password', [AuthController::class, 'newPassword']);
     Route::post('/account', [AuthController::class, 'updateProfile']);
     Route::get('/account', [AuthController::class, 'getDataUser']);
 
@@ -66,5 +67,6 @@ Route::middleware(['auth:api'])->group(function () {
 
 // forget Password
 Route::post('/sendEmailOtpCode', [AuthController::class, 'sendEmailOtpCode']);
+Route::post('/checkOtpCode', [AuthController::class, 'checkOtpCode']);
 
 

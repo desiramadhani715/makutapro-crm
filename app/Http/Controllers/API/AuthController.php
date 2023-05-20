@@ -90,7 +90,6 @@ class AuthController extends Controller
         $user = Auth::user();
         
         $rules = array(
-            'recent_password' => 'required',
             'new_password' => 'required',
             'confirm_password' => 'required|same:new_password',
         );
@@ -104,7 +103,8 @@ class AuthController extends Controller
 
                     return ResponseFormatter::error(null, 'Check your recent password',200);
 
-                } else if ((Hash::check(request('new_password'), Auth::user()->password)) == true) {
+                }  
+                if ((Hash::check(request('new_password'), Auth::user()->password)) == true) {
 
                     return ResponseFormatter::error(null, 'Please enter a password which is not similar then current password',200);
 
@@ -187,5 +187,65 @@ class AuthController extends Controller
         return ResponseFormatter::success(['otp_code' => $otpCode, 'email' => $request->email],'Otp berhasil dikirim.');
     }
 
+    public function checkOtpCode(Request $request){
+
+        $user = User::where(['email' => $request->email,'otp_code' => $request->otp_code,'role_id' => 6,])->first();
+        
+        if(!$user){
+            return ResponseFormatter::error($request->email, 'Kode OTP salah.', 200);
+        }
+
+        $user->otp_code = null;
+        $user->save();
+        $user->generateToken();
+
+        return ResponseFormatter::success([
+            'token' => $user->api_token,
+            'token_type' => 'Bearer',
+            'user' => $user
+        ],'Authenticated');
+
+    }
+
+    public function newPassword(Request $request){
+        $input = $request->all();
+        $user = Auth::user();
+        
+        $rules = array(
+            'new_password' => 'required',
+            'confirm_password' => 'required|same:new_password',
+        );
+
+        $validator = Validator::make($input, $rules);
+        
+        if (!$validator->fails()) {
+
+            try {
+                if ((Hash::check(request('new_password'), Auth::user()->password)) == true) {
+
+                    return ResponseFormatter::error(null, 'Please enter a password which is not similar then current password',200);
+
+                } else {
+
+                    $user->password = Hash::make($request->new_password);
+                    $user->api_token = null;
+                    $user->save();
+
+                    return ResponseFormatter::success($user, 'Password baru berhasil dibuat.');
+                }
+            } catch (\Exception $ex) {
+
+                if (isset($ex->errorInfo[2])) {
+                    $msg = $ex->errorInfo[2];
+                } else {
+                    $msg = $ex->getMessage();
+                }
+                return ResponseFormatter::error(null, $msg, 400);
+            }
+            
+        } 
+
+        return ResponseFormatter::error(null, $validator->errors()->first(), 400);
+    }
 
 }
