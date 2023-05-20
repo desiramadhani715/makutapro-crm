@@ -80,6 +80,11 @@ class AppointmentController extends Controller
     {
         $appointment = Appointment::with('reminders')->findOrFail($appointmentId);
 
+        if($appointment){
+            $appointment->prospect = Prospect::find($appointment->prospect_id,'nama_prospect');
+            $appointment->project = Project::find($appointment->project_id,'nama_project');
+        }
+
         return ResponseFormatter::success($appointment);
     }
 
