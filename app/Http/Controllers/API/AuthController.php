@@ -158,6 +158,14 @@ class AuthController extends Controller
         return ResponseFormatter::success($user,'Data User berhasil di ubah');
     }
 
+    public function getDataUser(){
+        $user = User::where('id',Auth::user()->id)->get()->map(function ($item) {
+            $item->photo = Config::get('app.url').'/public/storage/user/'.$item->photo;
+            return $item;
+        });
+        return ResponseFormatter::success($user);
+    }
+
     // coming soon
     public function register(){
 
