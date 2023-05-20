@@ -38,17 +38,12 @@ class AuthController extends Controller
                         'user' => $user
                     ],'Authenticated');
                     
-                }
-                else{
-                    return ResponseFormatter::error([
-                        'message' => 'Unauthorized'
-                    ],`Hp & Password doesn't match`, 200);
+                }else{
+                    return ResponseFormatter::error(null,'Password tidak sesuai.');
                 }
             }
             else{
-                return ResponseFormatter::error([
-                    'message' => 'Unauthorized'
-                ],`Hp & Password doesn't match`, 200);
+                return ResponseFormatter::error(null,'No. Hp tidak terdaftar');
             }
 
         } catch (\Throwable $th) {
