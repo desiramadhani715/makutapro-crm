@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\HistoryProspect;
+use App\Models\HistoryProspectMove;
 use App\Models\HistoryInputSales;
 use App\Models\HistorySales;
 use App\Models\HistoryChangeStatus;
@@ -325,6 +326,24 @@ class ProspectController extends Controller
         ];
 
         return ResponseFormatter::success($data);
+    }
+
+    public function destroy($id){
+        
+        $leads = Prospect::find($id);
+
+        if ($leads) {
+            if ($leads->role_by == 6) { 
+                $hp = HistoryProspect::where('prospect_id', $id)->delete();
+                $p  = HistoryChangeStatus::where('prospect_id', $id)->delete();
+                $his = HistoryInputSales::where('prospect_id', $id)->delete();
+                $hi = HistoryProspectMove::where('prospect_id',$id)->delete();
+        
+                Prospect::destroy($id);
+
+                return ResponseFormatter::success($id,'Data berhasil di hapus'); 
+            }
+        }
     }
 
 }
