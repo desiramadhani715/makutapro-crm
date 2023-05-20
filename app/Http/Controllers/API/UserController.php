@@ -128,7 +128,7 @@ class UserController extends Controller
 
         $leads = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')
                         ->join('sumber_platform as sp','sp.id','prospect.sumber_platform_id')
-                        ->select('prospect.id','prospect.nama_prospect','prospect.created_at','sp.nama_platform','prospect.catatan_admin','prospect.status_id','fu.created_at as fudate')
+                        ->select('prospect.id','prospect.nama_prospect','prospect.hp','prospect.created_at','sp.nama_platform','prospect.catatan_admin','prospect.status_id','prospect.is_disable','fu.created_at as fudate')
                         ->leftJoin('fu','fu.id',DB::raw('(select max(`id`) as fuid from fu where fu.prospect_id = prospect.id)'))
                         ->whereRaw('(fu.created_at <= DATE_ADD(NOW(), INTERVAL -30 DAY) OR (fu.id is null AND prospect.status_id !=1))')
                         ->where('hp.project_id', $request->project_id)

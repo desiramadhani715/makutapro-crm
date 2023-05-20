@@ -47,7 +47,8 @@ class Prospect extends Model
         'utm_campaign',
         'full_path_ref',
         'is_pin',
-        'date_pin'
+        'date_pin',
+        'is_disable'
     ];
 
     public function historyProspect(){
