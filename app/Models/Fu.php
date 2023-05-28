@@ -22,6 +22,6 @@ class Fu extends Model
 
     public function media()
     {
-        return $this->belongsTo(MediaFu::class, 'media_fu_id');
+        return $this->belongsTo(MediaFU::class, 'media_fu_id');
     }
 }
