@@ -76,13 +76,16 @@ class ProspectController extends Controller
             $lead->project = Project::find($request->project_id);
             $lead->status = Status::find($lead->status_id);
 
-            $historyChangeStatus = $lead->historyChangeStatus;
-        
-            if (!empty($historyChangeStatus)) {
-                foreach ($historyChangeStatus as $changeStatus) {
-                    $changeStatus->chat_file = Config::get('app.url').'/public/storage/ChatEvidenceFile/'.$changeStatus->chat_file;
+            if($request->id){
+                $historyChangeStatus = $lead->historyChangeStatus;
+            
+                if (!empty($historyChangeStatus)) {
+                    foreach ($historyChangeStatus as $changeStatus) {
+                        $changeStatus->chat_file = Config::get('app.url').'/public/storage/ChatEvidenceFile/'.$changeStatus->chat_file;
+                    }
                 }
             }
+
         }
         
         return ResponseFormatter::success($leads);
