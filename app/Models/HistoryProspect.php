@@ -17,6 +17,7 @@ class HistoryProspect extends Model
         'project_id',
         'agent_id',
         'sales_id',
+        'user_id',
         'blast_agent_id',
         'blast_sales_id',
         'move_id',

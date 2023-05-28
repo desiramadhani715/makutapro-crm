@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +32,7 @@ use Carbon\Carbon;
 
 class ProspectController extends Controller
 {
-    public function all(Request $request){
+    public function all(Request $request){  
 
         $leads = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')
                         ->join('sumber_platform as sp','sp.id','prospect.sumber_platform_id')
@@ -39,6 +40,8 @@ class ProspectController extends Controller
                         ->leftJoin('fu','fu.id',DB::raw('(select max(`id`) as fuid from fu where fu.prospect_id = prospect.id)'))
                         ->whereRaw('(fu.created_at >= DATE_ADD(NOW(), INTERVAL -30 DAY))')
                         ->where('hp.project_id', $request->project_id)
+                        ->where('hp.user_id', Auth::user()->id)
+                        ->with('notesAdmin')
                         ->orderBy('prospect.date_pin','desc')
                         ->orderBy('prospect.id','desc');
 
@@ -47,7 +50,12 @@ class ProspectController extends Controller
             $leads->join('project','project.id','hp.project_id')
                     ->join('status','status.id','prospect.status_id')
                     ->where('prospect.id',$request->id)
-                    ->addSelect('project.nama_project','prospect.catatan_admin','status.status','prospect.message','prospect.hp');
+                    ->addSelect('project.nama_project','prospect.catatan_admin','status.status','prospect.message','prospect.hp')
+                    ->with(['historyFollowUp' => function ($query) {
+                        $query->with('media');
+                    }])
+                    ->with('historyChangeStatus')
+                    ->with('notesAdmin');
         }
 
         if($request->nama_prospect){
@@ -63,9 +71,18 @@ class ProspectController extends Controller
         }
 
         $leads = $leads->get();
-        for ($i=0; $i < count($leads); $i++) { 
-            $leads[$i]->project = Project::find($request->project_id);
-            $leads[$i]->status = Status::find($leads[$i]->status_id);
+
+        foreach ($leads as $lead) {
+            $lead->project = Project::find($request->project_id);
+            $lead->status = Status::find($lead->status_id);
+
+            $historyChangeStatus = $lead->historyChangeStatus;
+        
+            if (!empty($historyChangeStatus)) {
+                foreach ($historyChangeStatus as $changeStatus) {
+                    $changeStatus->chat_file = Config::get('app.url').'/public/storage/ChatEvidenceFile/'.$changeStatus->chat_file;
+                }
+            }
         }
         
         return ResponseFormatter::success($leads);
@@ -76,11 +93,12 @@ class ProspectController extends Controller
         
         $prospect = Prospect::join('history_prospect as hpr','hpr.prospect_id','prospect.id')
                             ->where('prospect.hp', $request->hp)
+                            ->where('prospect.is_disable',0)
                             ->where('hpr.project_id',$request->project_id)
                             ->get();
                             
         if(count($prospect) > 0) {
-            return ResponseFormatter::error(['data' => "Nomor Handphone Sudah terdaftar"], 'Nomor Handphone Sudah terdaftar', 200);
+            return ResponseFormatter::error(null, 'Nomor Handphone Sudah terdaftar');
         }
 
         $sales = Sales::join('users','users.id','sales.user_id')
@@ -155,7 +173,7 @@ class ProspectController extends Controller
         ]);
         
         
-        return ResponseFormatter::success(['data' => "Prospect berhasil diinput", 'message' => 'Prospect berhasil diinput']);
+        return ResponseFormatter::success(null,'Prospect berhasil diinput');
     
     }
 

@@ -59,6 +59,18 @@ class Prospect extends Model
         return $this->hasMany(HistoryBlast::class, 'prospect_id');
     }
 
+    public function historyFollowUp(){
+        return $this->hasMany(Fu::class, 'prospect_id');
+    }
+
+    public function historyChangeStatus(){
+        return $this->hasMany(HistoryChangeStatus::class, 'prospect_id');
+    }
+
+    public function notesAdmin(){
+        return $this->hasMany(NotesAdmin::class, 'prospect_id');
+    }
+
     public static function archieve(){
         // $data =  DB::select("select * from (
         //     select p.*, (select max(id) from fu f where f.prospect_id = p.id) as pid from prospect p

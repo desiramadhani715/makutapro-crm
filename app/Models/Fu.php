@@ -15,4 +15,13 @@ class Fu extends Model
         'sales_id',
         'media_fu_id',
     ];
+
+    public function prospect(){
+        return $this->belongsTo(Prospect::class);
+    }
+
+    public function media()
+    {
+        return $this->belongsTo(MediaFu::class, 'media_fu_id');
+    }
 }

@@ -9,4 +9,6 @@ class MediaFU extends Model
 {
     use HasFactory;
     protected $table = 'media_fu';
+
+
 }

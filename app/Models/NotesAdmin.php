@@ -5,21 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class HistoryChangeStatus extends Model
+class NotesAdmin extends Model
 {
     use HasFactory;
-    protected $table = 'history_change_status';
+    protected $table = 'notes_admin';
     protected $fillable = [
+        'project_id',
         'user_id',
         'prospect_id',
-        'status_id',
-        'standard_id',
-        'note_standard',
-        'chat_file',
-        'role_id',
+        'notes',
     ];
-    public $timestamps = ["created_at"];
-    const UPDATED_AT = NULL;
 
     public function prospect(){
         return $this->belongsTo(Prospect::class, 'prospect_id');
