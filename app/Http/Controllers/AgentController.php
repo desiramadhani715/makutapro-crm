@@ -153,7 +153,7 @@ class AgentController extends Controller
         $imageName = '';
         if ($request->photo) {
             $imageName = $request->file('photo')->getClientOriginalName();
-            $request->file('photo')->storeAs('public/user', `agent-$imageName`);
+            $request->file('photo')->storeAs('public/user', $imageName);
         }
 
         $kodeAgent = substr(strtoupper($request->nama_agent), 0, 3) . str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
