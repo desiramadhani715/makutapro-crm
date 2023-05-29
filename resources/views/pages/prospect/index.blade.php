@@ -305,9 +305,10 @@
 <script>
     // alert 
     window.setTimeout(function() {
-    $(".alert").fadeTo(200, 0).slideUp(200, function(){
-        $(this).remove(); 
-    });
+		$(".alert").fadeTo(200, 0).slideUp(200, function(){
+			$(this).remove(); 
+		});
+		
     }, 5000);
 </script>
 

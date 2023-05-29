@@ -39,6 +39,10 @@ use Illuminate\Support\Facades\Artisan;
 // Route::get('/getsales', [AgentController::class, 'getSales'])->name('agent.getsales');
 // Route::get('/get_agent', [AgentController::class, 'get_agent'])->name('agent.getagent');
 
+Route::get('/email', function (){
+    return view('email-templates/send-otp-mail');
+});
+
 Route::match(['get', 'post'], '/', [DashboardController::class, 'index'])->name('/')->middleware(['auth']);
 
 Route::get('prospect/getall', [ProspectController::class, 'get_all'])->middleware(['auth'])->name('prospect.all');

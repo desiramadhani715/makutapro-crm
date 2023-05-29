@@ -29,7 +29,28 @@ class Agent extends Model
                     ->join('pt','pt.id','project.pt_id')
                     ->join('users','users.id','agent.user_id')
                     ->where('pt.user_id',Auth::user()->id)
-                    ->select('agent.*','project.nama_project','users.username','users.hp','users.email','users.created_at','users.active');
+                    ->select('agent.*','project.nama_project','users.username','users.hp','users.email','users.created_at','users.active','users.photo');
 
+    }
+
+    public static function getNextAgentSort($projectId)
+    {
+        $currentSort = 0;
+
+        // Mengambil nilai sort dari agent saat ini
+        $currentAgent = Agent::where('project_id', $projectId)->first();
+        if ($currentAgent) {
+            $currentSort = $currentAgent->urut_agent;
+        }
+
+        // Mendapatkan nilai sort untuk agent selanjutnya
+        $nextAgent = Agent::where('urut_agent', '>', $currentSort)->where('project_id', $projectId)->orderBy('urut_agent', 'asc')->first();
+        $nextSort = $currentSort;
+
+        if ($nextAgent) {
+            $nextSort = $nextAgent->urut_agent;
+        }
+
+        return $nextSort;
     }
 }

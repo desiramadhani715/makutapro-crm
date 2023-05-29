@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Config;
 use App\Models\Agent;
 use App\Models\ProjectAgent;
 use App\Models\Project;
@@ -11,6 +13,7 @@ use App\Models\Fu;
 use App\Models\HistoryChangeStatus;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Helper\Helper;
 use Illuminate\Http\Request;
 
 class AgentController extends Controller
@@ -48,18 +51,17 @@ class AgentController extends Controller
 
         $data = Agent::agent()->get();
         $project = Project::get_project()->get();
-        // dd($data);
 
-        for ($i=0; $i < count($data); $i++) { 
+        foreach ($data as $key) {
             $closingAmount = Agent::agent()   
                                 ->join('leads_closing','leads_closing.agent_id','agent.id')
                                 ->select(DB::raw('sum(leads_closing.closing_amount) as closing_amount'))
-                                ->where('leads_closing.agent_id',$data[$i]->id)
+                                ->where('leads_closing.agent_id',$key->id)
                                 ->get();
 
-            $data[$i]->closing_amount = $closingAmount[0]->closing_amount;
+            $key->closing_amount = $closingAmount[0]->closing_amount;
+            $key->photo = $key->photo ? Config::get('app.url').'/public/storage/user/'.$key->photo : null;
         }
-        // dd($data);
 
         return view('pages.agent.index', compact('data','project'));
     }
@@ -136,7 +138,7 @@ class AgentController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
@@ -147,27 +149,65 @@ class AgentController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
+        // dd(ucwords($request->nama_agent));
         $imageName = '';
         if ($request->photo) {
             $imageName = $request->file('photo')->getClientOriginalName();
-            $request->file('photo')->storeAs('public/user', `agent$imageName`);
+            $request->file('photo')->storeAs('public/user', `agent-$imageName`);
         }
 
-        User::create([
-            'role_id' => 3,
-            'name' => $request->name(),
-            'username',
-            'password',
-            'email',
-            'hp',
-            'photo',
-            'ktp',
-            'api_token',
-            'active'
-        ]);
+        $kodeAgent = substr(strtoupper($request->nama_agent), 0, 3) . str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+        $username = substr($request->nama_agent, 0, 3) . str_pad(mt_rand(1000, 9999), 4, '0', STR_PAD_LEFT);
+        $pass = substr($request->hp, strlen($request->hp)-6, 6);
+        $sort = Agent::getNextAgentSort($request->project_id);
 
-        Agent::create($request->all());
+        $project = Project::find($request->project_id);
+        
+        try {
+
+            DB::beginTransaction();
+
+            $user = new User();
+            $user->role_id = 3;
+            $user->name = $request->nama_agent;   
+            $user->username = $username;   
+            $user->password = bcrypt($pass);
+            $user->email = $request->email;
+            $user->hp = $request->hp;
+            $user->photo = $imageName;
+            $user->save();
+            
+            $agent = new Agent();
+            $agent->user_id = $user->id;
+            $agent->project_id = $request->project_id;
+            $agent->kode_agent = $kodeAgent;
+            $agent->nama_agent = $request->nama_agent;
+            $agent->urut_agent = $sort + 1;
+            $agent->save();
+
+            $projectAgent = new ProjectAgent();
+            $projectAgent->project_id = $request->project_id;
+            $projectAgent->agent_id = $agent->id;
+            $projectAgent->urut_project_agent = $sort + 1;
+            $projectAgent->save();
+
+
+            // Commit the transaction if everything was successful
+            DB::commit();
+
+            $destination = '62'.substr($request->hp,1);
+            $message = "Hallo " .ucwords($request->nama_agent). " Anda telah terdaftar sebagai salah satu Koordinator sales di project $project->nama_project, berikut akses untuk login \n\nUsername : $username \nPassword : $pass \nLink : https://agent.makutapro.id/login.php";
+
+            Helper::SendWA($destination, $message);
+
+        } catch (\Throwable $th) {
+            // If an error occurred, rollback the transaction
+            DB::rollback();
+            return redirect()->route('agent.index')->with('alertFailed',true);
+        }
+
+        return redirect()->route('agent.index')->with('alertSuccess',true);
+
     }
 
     /**
@@ -212,7 +252,27 @@ class AgentController extends Controller
      */
     public function destroy(Agent $agent)
     {
-        //
+        $sales = Sales::where('agent_id', $agent->id)->get();
+        
+        if(count($sales) == 0) { 
+            try {
+                DB::beginTransaction();
+
+                $projectAgent = ProjectAgent::where('agent_id', $agent->id)->delete();
+                $agent = Agent::find($agent->id);
+                $user = User::find($agent->user_id);
+                $agent->delete();
+                $user->delete();
+
+                DB::commit();
+
+            } catch (\Throwable $th) {
+                DB::rollback();
+                return redirect()->route('agent.index')->with('alertFailed',true);
+            }
+            return redirect()->route('agent.index')->with('alertDeleted',true);
+        }
+        return redirect()->route('agent.index')->with('alertFailed',true);
     }
 
     public function get_agent(Request $request)

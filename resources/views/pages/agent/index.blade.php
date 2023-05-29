@@ -6,6 +6,7 @@
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/photoswipe.css')}}">
 @endsection
 
+
 @section('style')
 @endsection
 
@@ -33,8 +34,8 @@
 				 <div class="col-md-6">
 					<div class="form-group mb-0 me-0"></div>
 					<a class="btn btn-primary px-2" title="Create New" data-bs-toggle="modal" data-bs-target="#add"> <i data-feather="plus-square"> </i>Add</a>
-					<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-						<div class="modal-dialog" role="document">
+					<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+						<div class="modal-dialog modal-lg" role="document">
 						   <div class="modal-content"  style="border-radius: 20px;">
 							  <div class="modal-header" style="background-color: #6F9CD3; border-top-left-radius: 20px;border-top-right-radius: 20px;">
 								<h2 class="modal-title text-white" style="font-family: Montserrat ,
@@ -58,7 +59,7 @@
 									<div class="row mb-2">
 										<div class="col">
 											<label class="control-label">Project</label>
-											<select id="project" class="form-select digits" name="project">
+											<select id="project" class="form-select digits" name="project_id">
 												<option value="">All</option>
 												@foreach ($project as $item)
 												<option value="{{$item->id}}">{{$item->nama_project}}</option>
@@ -102,6 +103,33 @@
 			<div class="card">
 				<div class="card-header d-flex justify-content-between">
 					<h5>Data Agent</h5>
+					@if (session('alertSuccess'))
+						<div class="col-4">
+							<div class="alertSuccess alert alert-primary outline alert-dismissible fade show" role="alert">
+								<i data-feather="check"></i>
+								<span>Agent account created successfully!</span>
+								<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+							 </div>
+						</div>
+					@endif
+					@if (session('alertDeleted'))
+						<div class="col-4">
+							<div class="alertDeleted alert alert-primary outline alert-dismissible fade show" role="alert">
+								<i data-feather="check"></i>
+								<span>Agent account deleted successfully!</span>
+								<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+							 </div>
+						</div>
+					@endif
+					@if (session('alertFailed'))
+						<div class="col-4">
+							<div class="alertFailed alert alert-danger outline alert-dismissible fade show" role="alert">
+								<i data-feather="alert-triangle"></i>
+								<span>Failed!. Please contact Support</span>
+								<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+							 </div>
+						</div>
+					@endif
 				</div>
 				<div class="card-body">
 					<div class="table-responsive">
@@ -164,26 +192,31 @@
 									<td>
 										<a title="Show Detail" data-bs-toggle="modal" data-bs-target="#detail{{$agent->id}}"><img src="{{asset('assets/images/button/info.png')}}" alt="info"></a>
 										<a title="Sales" class="ms-1" href="{{route('sales.index', $agent->id)}}"><img src="{{asset('assets/images/button/users.png')}}" alt="Sales"></a>
-										<a title="Delete Agent" class="ms-1" href=""><img src="{{asset('assets/images/button/trash.png')}}" alt="Delete Agent"></a>
+										{{-- <a title="Delete Agent" class="ms-1" href=""><img src="{{asset('assets/images/button/trash.png')}}" alt="Delete Agent"></a> --}}
+										<form action="{{url('agent/'.$agent->id)}}" method="post" onsubmit="return confirm('Apakah anda yakin ?')">
+											@method('delete')
+											@csrf
+											<button type="submit" class="btn p-0"><a><img src="{{asset('assets/images/button/trash.png')}}" alt="Delete Agent"></a></button>
+										</form>
 									</td>
 								</tr>
 
 								<div class="modal fade" id="detail{{$agent->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-									<div class="modal-dialog" role="document">
+									<div class="modal-dialog modal-lg" role="document">
 									   <div class="modal-content"  style="border-radius: 20px;">
 										  <div class="modal-header" style="background-color: #6F9CD3; border-top-left-radius: 20px;border-top-right-radius: 20px;">
 											<h2 class="modal-title text-white" style="font-family: Montserrat ,
 											sans-serif Medium 500; font-size: 25px;"><strong>MAKUTA</strong> Pro</h2>
 											 <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
 										  </div>
-										  <form action='' method="POST" enctype="multipart/form-data">
+										  <form action="{{route('agent.update', $agent->id)}}" method="POST" enctype="multipart/form-data">
 											@csrf
 											<div class="modal-body form">
 												<div class="row">
 													<div class="user-profile">
 														<div class="card hovercard text-center">
 															<div class="user-image" style="margin-top: 80px">
-																<div class="avatar"><img alt="photo" src="{{asset('assets/images/avtar/user.jpg')}}" id="photoPreview"></div>
+																<div class="avatar"><img alt="photo" src={{ $agent->photo ? $agent->photo : asset('assets/images/avtar/user.jpg')}} id="photoPreview"></div>
 																<div class="icon-wrapper" id="changePhoto"><i class="icofont icofont-pencil-alt-5"></i></div>
 																<input type="file" id="photo" style="display:none;" accept="image/*" onchange="loadFile(event)"/>
 															</div>
@@ -238,9 +271,6 @@
 	</div>
 </div>
 
-
-
- 
 @endsection
 
 @section('script')
@@ -256,6 +286,28 @@
 		URL.revokeObjectURL(output.src) // free memory
 		}
 	};
+
+    // alert success
+    window.setTimeout(function() {
+		$(".alertSuccess").fadeTo(200, 0).slideUp(200, function(){
+			$(this).remove(); 
+		});
+    }, 5000);
+
+    // alert failed
+    window.setTimeout(function() {
+		$(".alertFailed").fadeTo(200, 0).slideUp(200, function(){
+			$(this).remove(); 
+		});
+    }, 5000);
+
+    // alert deleted
+    window.setTimeout(function() {
+		$(".alertDeleted").fadeTo(200, 0).slideUp(200, function(){
+			$(this).remove(); 
+		});
+    }, 5000);
+
 </script>
 <script src="{{asset('assets/js/datatable/datatables/jquery.dataTables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatable/datatables/datatable.custom.js')}}"></script>
