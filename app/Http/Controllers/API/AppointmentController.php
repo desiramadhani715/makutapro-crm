@@ -19,19 +19,22 @@ class AppointmentController extends Controller
      */
     public function index(Request $request)
     {
-        $appointment = Appointment::where('user_id',Auth::user()->id)
-                                    ->orderBy('appointment.id','desc')
-                                    ->get()
-                                    ->map(function ($item) {
-                                        $item->prospect = Prospect::find($item->prospect_id, 'nama_prospect');
-                                        $item->project = Project::find($item->project_id,'nama_project');
-                                        return $item;
-                                    });
-        if ($request->project_id) {
-            $appointment->where('project_id',$request->project_id);
-        }
+        $appointments = Appointment::where('user_id',Auth::user()->id)
+                                    ->orderBy('appointment.id','desc');
+                                    
+        if ($request->has('project_id')) {
+            $projectIds = explode(',', $request->input('project_id'));
+            $appointments->whereIn('project_id', $projectIds);
+        } 
 
-        return ResponseFormatter::success($appointment);
+        $appointments = $appointments->get()
+                        ->map(function ($item) {
+                            $item->prospect = Prospect::find($item->prospect_id, 'nama_prospect');
+                            $item->project = Project::find($item->project_id,'nama_project');
+                            return $item;
+                        });
+
+        return ResponseFormatter::success($appointments);
     }
 
     /**
