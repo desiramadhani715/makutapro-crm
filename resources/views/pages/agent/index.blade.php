@@ -27,14 +27,14 @@
 			  <div class="row">
 				 <div class="col-md-6">
 					<div class="left-header col horizontal-wrapper ps-0">
-						<div class="row my-0">
+						{{-- <div class="row my-0">
 							<div class="col-3">
 								<input class="form-control form-control-sm datepicker-here since" name="since" id="since" type="text" data-language="en" placeholder="Since">
 							</div>
 							<div class="col-3">
 								<input class="form-control form-control-sm datepicker-here " name="to" id="to" type="text" data-language="en" placeholder="To">
 							</div>
-						</div>	
+						</div>	 --}}
 					</div>
 				 </div>
 				 <div class="col-md-6">
