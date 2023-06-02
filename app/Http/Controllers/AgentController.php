@@ -241,7 +241,40 @@ class AgentController extends Controller
      */
     public function update(Request $request, Agent $agent)
     {
-        //
+        try {
+            $agent = Agent::findOrFail($agent->id);
+            $user = User::find($agent->user_id);
+
+            // Update the agent data
+            $agent->nama_agent = $request->nama_agent;
+
+            $user->hp = $request->hp;
+            $user->email = $request->email;
+            
+            // Update the password if it's provided
+            if ($request->password) {
+                $user->password = bcrypt($request->password);
+            }
+            
+            // Update the photo if it's provided
+            if ($request->hasFile('photo')) {
+                // Delete the old photo if it exists
+                if ($user->photo) {
+                    Storage::delete('public/user'.$user->photo);
+                }
+
+                $imgName = time().'.'.$request->file('photo')->extension();
+                $request->photo->storeAs('public/user', $imgName);
+                $user->photo = $imgName;
+            }
+            
+            $agent->save();
+            $user->save();
+    
+            return redirect()->back()->with('success', 'Agent data updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update agent data.')->withErrors($e->getMessage());
+        }
     }
 
     /**

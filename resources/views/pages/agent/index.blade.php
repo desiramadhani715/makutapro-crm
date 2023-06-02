@@ -8,6 +8,7 @@
 
 
 @section('style')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 @endsection
 
 @section('breadcrumb-title')
@@ -26,9 +27,14 @@
 			  <div class="row">
 				 <div class="col-md-6">
 					<div class="left-header col horizontal-wrapper ps-0">
-						<ul class="horizontal-menu">
-							<li class="mega-menu outside"><a class="nav-link" href="#!"><i data-feather="download"></i><span>Download Excel</span></a></li>
-						</ul>
+						<div class="row my-0">
+							<div class="col-3">
+								<input class="form-control form-control-sm datepicker-here since" name="since" id="since" type="text" data-language="en" placeholder="Since">
+							</div>
+							<div class="col-3">
+								<input class="form-control form-control-sm datepicker-here " name="to" id="to" type="text" data-language="en" placeholder="To">
+							</div>
+						</div>	
 					</div>
 				 </div>
 				 <div class="col-md-6">
@@ -151,7 +157,7 @@
 									<td>{{$loop->iteration}}</td>
 									<td class="text-start">
 										<div class="d-inline-block align-middle">
-											<img class="img-40 m-r-15 rounded-circle align-top" src="{{asset('assets/images/avtar/7.jpg')}}" alt="">
+											{{-- <img class="img-40 m-r-15 rounded-circle align-top img-thumbnail" src="{{ $agent->photo ? $agent->photo : asset('assets/images/avtar/user.jpg')}}" alt="Pict"> --}}
 											<div class="d-inline-block">
 												<strong>{{$agent->nama_agent}}</strong><br>
 												<a href="https://api.whatsapp.com/send?phone=62{{substr($agent->hp, 1)}}" target="_blank"><span class="card-subtitle font-roboto" style="color: #827575; font-size:11px;">{{$agent->hp}}</span></a>
@@ -210,20 +216,22 @@
 											 <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
 										  </div>
 										  <form action="{{route('agent.update', $agent->id)}}" method="POST" enctype="multipart/form-data">
+											@method('PUT')
 											@csrf
 											<div class="modal-body form">
 												<div class="row">
 													<div class="user-profile">
 														<div class="card hovercard text-center">
 															<div class="user-image" style="margin-top: 80px">
-																<div class="avatar"><img alt="photo" src={{ $agent->photo ? $agent->photo : asset('assets/images/avtar/user.jpg')}} id="photoPreview"></div>
-																<div class="icon-wrapper" id="changePhoto"><i class="icofont icofont-pencil-alt-5"></i></div>
-																<input type="file" id="photo" style="display:none;" accept="image/*" onchange="loadFile(event)"/>
+																<div class="avatar"><img alt="photo" src="{{ $agent->photo ? $agent->photo : asset('assets/images/avtar/user.jpg')}}" id="photoPreviewEdit{{ $agent->id }}"></div>
+																<div class="icon-wrapper" id="changePhotoEdit{{ $agent->id }}"><i class="icofont icofont-pencil-alt-5"></i></div>
+																<input type="file" id="photoEdit{{ $agent->id }}" style="display:none;" accept="image/*" onchange="loadFileEdit(event)"  name="photo" value="{{  $agent->photo }}"/>
 															</div>
 														</div>
 													</div>
 													<h6 class="text-center mb-0">{{$agent->pic}}</h6>
 													<p class="text-center mb-3" style="color: #827575">{{$agent->nama_agent}}</p>
+													<input type="hidden" name="nama_agent" value="{{ $agent->nama_agent }}">
 												</div>
 												<div class="row mb-2">
 													<div class="col-lg-6">
@@ -262,6 +270,31 @@
 							@empty
 								
 							@endforelse
+
+							<script>
+								$(document).ready(function() {
+									@forelse ($data as $agent)
+										$('#changePhotoEdit{{ $agent->id }}').click(function() {
+											$('#photoEdit{{ $agent->id }}').click();
+										});
+							
+										$('#photoEdit{{ $agent->id }}').change(function(event) {
+											var agentId = '{{ $agent->id }}';
+											var output = $('#photoPreviewEdit' + agentId)[0];
+											var file = event.target.files[0];
+											var reader = new FileReader();
+							
+											reader.onload = function(e) {
+												output.src = e.target.result;
+											};
+							
+											reader.readAsDataURL(file);
+										});
+									@empty
+										// Handle the case when $data is empty
+									@endforelse
+								});
+							</script>
                             </tbody>
 						</table>
 					</div>
@@ -270,7 +303,6 @@
 		</div>
 	</div>
 </div>
-
 @endsection
 
 @section('script')
@@ -286,6 +318,7 @@
 		URL.revokeObjectURL(output.src) // free memory
 		}
 	};
+
 
     // alert success
     window.setTimeout(function() {
