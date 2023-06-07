@@ -45,7 +45,7 @@ class Helper
             'agent_id' => $NextAgent[0]->id,
             'sales_id' => $NextSales[0]->id,
             'blast_agent_id' =>  $NextAgent[0]->urut_agent,
-            'blast_sales_id' => $NextSales[0]->urut_agent_sales,
+            'blast_sales_id' => $NextSales[0]->sort,
         ]);
 
         $pt = pt::with('user')->where('user_id',Auth::user()->id)->get()[0];
@@ -57,7 +57,7 @@ class Helper
             'agent_id' => $NextAgent[0]->id,
             'sales_id' => $NextSales[0]->id,
             'blast_agent_id' => $NextAgent[0]->urut_agent,
-            'blast_sales_id' => $NextSales[0]->urut_agent_sales
+            'blast_sales_id' => $NextSales[0]->sort
         ]);
 
         HistorySales::create([

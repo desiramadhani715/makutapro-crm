@@ -22,7 +22,7 @@ class CreateSalesTable extends Migration
             $table->string('kode_sales');
             $table->string('nama_sales');
             $table->string('urut_kode_sales');
-            $table->string('urut_agent_sales');
+            $table->string('sort');
             $table->string('hp');
             $table->string('email')->nullable();
             $table->string('ktp')->nullable();

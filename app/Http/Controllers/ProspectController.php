@@ -143,7 +143,7 @@ class ProspectController extends Controller
                         'urut_agent' => 1, 
                         'active' => 1])->get();
 
-        $NextSales = Sales::with('user')->where(['agent_id' => $NextAgent[0]->id, 'urut_agent_sales' => 1, 'active' => 1])->get();
+        $NextSales = Sales::with('user')->where(['agent_id' => $NextAgent[0]->id, 'sort' => 1, 'active' => 1])->get();
 
         // dd($NextAgent[0], $NextSales[0]);
         
@@ -153,7 +153,7 @@ class ProspectController extends Controller
             
             $NextAgent = Agent::with('user')->where(['project_id' => $lastBlast->max()->project_id,'urut_agent' => 1, 'active' => 1])->get();
             
-            $NextSales = Sales::with('user')->where(['agent_id' => $NextAgent[0]->id, 'urut_agent_sales' => 1, 'active' => 1])->get();
+            $NextSales = Sales::with('user')->where(['agent_id' => $NextAgent[0]->id, 'sort' => 1, 'active' => 1])->get();
 
             if ($lastBlast->max()->blast_agent_id < $agent->max('urut_agent')) {
                 $NextAgent = Agent::with('user')->where([
@@ -164,15 +164,15 @@ class ProspectController extends Controller
 
             $sales = Sales::with('user')->where(['agent_id' => $NextAgent[0]->id, 'active' => 1])->get(); // get all sales aktif dari next agent id
             // dd($sales);
-            $NextSales = Sales::with('user')->where(['agent_id' => $NextAgent[0]->id, 'urut_agent_sales' => 1, 'active' => 1])->get();
+            $NextSales = Sales::with('user')->where(['agent_id' => $NextAgent[0]->id, 'sort' => 1, 'active' => 1])->get();
 
             $lastBlastAgent = HistoryBlast::with('prospect')->where('agent_id',$NextAgent[0]->id)->get();
 
-            if(count($lastBlastAgent) > 0 && $lastBlastAgent->max()->blast_sales_id < $sales->max('urut_agent_sales')){
+            if(count($lastBlastAgent) > 0 && $lastBlastAgent->max()->blast_sales_id < $sales->max('sort')){
                 
                 $NextSales = Sales::with('user')->where([
                     'agent_id' => $NextAgent[0]->id, 
-                    'urut_agent_sales' => $lastBlast->max()->blast_sales_id + 1, 
+                    'sort' => $lastBlast->max()->blast_sales_id + 1, 
                     'active' => 1])->get();
             }
 

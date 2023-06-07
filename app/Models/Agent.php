@@ -38,7 +38,7 @@ class Agent extends Model
         $currentSort = 0;
 
         // Mengambil nilai sort dari agent saat ini
-        $currentAgent = Agent::where('project_id', $projectId)->first();
+        $currentAgent = Agent::where('project_id', $projectId)->orderBy('id', 'desc')->first();
         if ($currentAgent) {
             $currentSort = $currentAgent->urut_agent;
         }

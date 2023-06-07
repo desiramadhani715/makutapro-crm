@@ -54,6 +54,7 @@ Route::resource('demografi', DemografiController::class)->middleware(['auth']);
 Route::post('agent/active', [AgentController::class, 'active'])->middleware(['auth'])->name('agent.active');
 Route::post('agent/nonactive', [AgentController::class, 'nonactive'])->middleware(['auth'])->name('agent.nonactive');
 Route::get('sales/{agent_id}', [SalesController::class, 'index'])->middleware(['auth'])->name('sales.index');
+Route::post('sales/{agent_id}', [SalesController::class, 'store'])->middleware(['auth'])->name('sales.store');
 Route::post('sales/update', [SalesController::class, 'update'])->middleware(['auth'])->name('sales.update');
 
 

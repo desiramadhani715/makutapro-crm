@@ -149,7 +149,6 @@ class AgentController extends Controller
      */
     public function store(Request $request)
     {
-        // dd(ucwords($request->nama_agent));
         $imageName = '';
         if ($request->photo) {
             $imageName = $request->file('photo')->getClientOriginalName();
@@ -198,7 +197,7 @@ class AgentController extends Controller
             $destination = '62'.substr($request->hp,1);
             $message = "Hallo " .ucwords($request->nama_agent). " Anda telah terdaftar sebagai salah satu Koordinator sales di project $project->nama_project, berikut akses untuk login \n\nUsername : $username \nPassword : $pass \nLink : https://agent.makutapro.id/login.php";
 
-            Helper::SendWA($destination, $message);
+            // Helper::SendWA($destination, $message);
 
         } catch (\Throwable $th) {
             // If an error occurred, rollback the transaction

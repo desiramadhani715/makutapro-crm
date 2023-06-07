@@ -195,14 +195,14 @@
 										</form>
 										@endif
 									</td>
-									<td>
-										<a title="Show Detail" data-bs-toggle="modal" data-bs-target="#detail{{$agent->id}}"><img src="{{asset('assets/images/button/info.png')}}" alt="info"></a>
-										<a title="Sales" class="ms-1" href="{{route('sales.index', $agent->id)}}"><img src="{{asset('assets/images/button/users.png')}}" alt="Sales"></a>
+									<td class="d-flex justify-content-center">
+										<a title="Show Detail" data-bs-toggle="modal" data-bs-target="#detail{{$agent->id}}" class="mt-1"><img src="{{asset('assets/images/button/info.png')}}" alt="info"></a>
+										<a title="Sales" class="ms-2 mt-1" href="{{route('sales.index', $agent->id)}}"><img src="{{asset('assets/images/button/users.png')}}" alt="Sales"></a>
 										{{-- <a title="Delete Agent" class="ms-1" href=""><img src="{{asset('assets/images/button/trash.png')}}" alt="Delete Agent"></a> --}}
 										<form action="{{url('agent/'.$agent->id)}}" method="post" onsubmit="return confirm('Apakah anda yakin ?')">
 											@method('delete')
 											@csrf
-											<button type="submit" class="btn p-0"><a><img src="{{asset('assets/images/button/trash.png')}}" alt="Delete Agent"></a></button>
+											<button type="submit" class="btn p-0"><a title="Delete Agent" class="ms-1" href=""><img src="{{asset('assets/images/button/trash.png')}}" alt="Delete Agent"></a></button>
 										</form>
 									</td>
 								</tr>

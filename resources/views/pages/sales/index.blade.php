@@ -4,6 +4,7 @@
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/datatables.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/photoswipe.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/date-picker.css')}}">
 @endsection
 
 @section('style')
@@ -21,10 +22,114 @@
 @section('content')
 <div class="container-fluid">
 	<div class="row">
+		<div class="col-md-12 project-list">
+		   <div class="card">
+			  <div class="row">
+				 <div class="col-md-6">
+					<div class="left-header col horizontal-wrapper ps-0">
+						{{-- <div class="row my-0">
+							<div class="col-3">
+								<input class="form-control form-control-sm datepicker-here since" name="since" id="since" type="text" data-language="en" placeholder="Since">
+							</div>
+							<div class="col-3">
+								<input class="form-control form-control-sm datepicker-here " name="to" id="to" type="text" data-language="en" placeholder="To">
+							</div>
+						</div>	 --}}
+					</div>
+				 </div>
+				 <div class="col-md-6">
+					<div class="form-group mb-0 me-0"></div>
+					<a class="btn btn-primary px-2" title="Create New" data-bs-toggle="modal" data-bs-target="#add"> <i data-feather="plus-square"> </i>Add</a>
+					<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+						<div class="modal-dialog modal-lg" role="document">
+						   <div class="modal-content"  style="border-radius: 20px;">
+							  <div class="modal-header" style="background-color: #6F9CD3; border-top-left-radius: 20px;border-top-right-radius: 20px;">
+								<h2 class="modal-title text-white" style="font-family: Montserrat ,
+								sans-serif Medium 500; font-size: 25px;"><strong>MAKUTA</strong> Pro</h2>
+								 <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+							  </div>
+							  <form action="{{route('sales.store', $agent_id)}}" method="POST" enctype="multipart/form-data">
+								@csrf
+								<div class="modal-body form">
+									<div class="row">
+										<div class="user-profile">
+											<div class="card hovercard text-center">
+												<div class="user-image" style="margin-top: 80px">
+													<div class="avatar"><img alt="photo" src="{{asset('assets/images/avtar/user.jpg')}}" id="photoPreview"></div>
+													<div class="icon-wrapper" id="changePhoto"><i class="icofont icofont-pencil-alt-5"></i></div>
+													<input type="file" id="photo" style="display:none;" accept="image/*" onchange="loadFile(event)" name="photo"/>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row mb-2">
+										<div class="col-xl-6">
+											<label  style="color: #827575">Nick Name</label>
+											<input class="form-control mb-2" type="text" name="nick_name">
+										</div>
+										<div class="col-lg-6">
+											<label  style="color: #827575">Full Name</label>
+											<input class="form-control mb-2" type="text" name="full_name" required>
+										</div>
+									</div>
+									<div class="row mb-2">
+										<div class="col-lg-6">
+											<label  style="color: #827575">No. Handphone</label>
+											<input class="form-control mb-2" type="text" name="hp" placeholder="cth: 0812345678" required>
+										</div>
+										<div class="col-lg-6">
+											<label  style="color: #827575">Email</label>
+											<input class="form-control mb-2" type="email" name="email" required>
+										</div>
+									</div>
+									<div class="row mb-2">
+										<div class="col-lg-6">
+											<label style="color: #827575">Birthday</label>
+											<div class="col">
+												<input class="datepicker-here form-control digits" type="text" data-language="en" data-position="top left" name="birthday">
+											</div>
+										</div>
+										<div class="col-lg-6">
+											<label style="color: #827575">Gender</label>
+											<div class="col">
+												<div class="m-t-10 m-checkbox-inline custom-radio-ml">
+													<div class="form-check form-check-inline radio radio-primary">
+														<input class="form-check-input" id="radioinline1" type="radio" name="gender" value="Female">
+														<label class="form-check-label mb-0" for="radioinline1">Female</label>
+													</div>
+													<div class="form-check form-check-inline radio radio-primary">
+														<input class="form-check-input" id="radioinline2" type="radio" name="gender" value="Male">
+														<label class="form-check-label mb-0" for="radioinline2">Male</label>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							  <div class="modal-footer">
+								<button class="btn  modal-close " style="background-color: #6F9CD3; border-radius: 50px; color: #fff;" type="submit">Save Change</button>
+							  </div>
+							  </form>
+						   </div>
+						</div>
+					</div>
+				</div>
+			  </div>
+		   </div>
+		</div>
 		<div class="col-sm-12">
 			<div class="card">
-				<div class="card-header">
+				<div class="card-header d-flex justify-content-between">
 					<h5>Data Sales</h5>
+                    @if (session('success'))
+						<div class="col-4">
+							<div class="alertSuccess alert alert-primary outline alert-dismissible fade show" role="alert">
+								<i data-feather="check"></i>
+								<span>{{ session('success') }}</span>
+								<button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+							 </div>
+						</div>
+					@endif
 				</div>
 				<div class="card-body">
 					<div class="table-responsive">
@@ -55,7 +160,7 @@
 											</div>
 										  </div>
 									</td>
-									<td>{{$sales->urut_agent_sales}}</td>
+									<td>{{$sales->sort}}</td>
 									<td>{{$sales->total_prospect}}</td>
 									<td>
 										@if ($sales->closing_amount > 0)
@@ -63,7 +168,7 @@
 										@else
 										<span style="color:#f73164" class="font-roboto">Rp. {{number_format($sales->closing_amount,0, ',' , '.')}}</span>
 										@endif
-										
+
 									</td>
 									<td>
 										@if (!$sales->active)
@@ -74,7 +179,7 @@
 									</td>
 									<td>
 										<a title="Show Detail" data-bs-toggle="modal" data-bs-target="#detail{{$sales->id}}"><img src="{{asset('assets/images/button/info.png')}}" alt="info"></a>
-										
+
 										<a title="Delete Sales" class="ms-1" href=""><img src="{{asset('assets/images/button/trash.png')}}" alt="Delete Sales"></a>
 									</td>
 								</tr>
@@ -141,7 +246,7 @@
 								</div>
 
 							@empty
-								
+
 							@endforelse
                             </tbody>
 						</table>
@@ -154,7 +259,7 @@
 
 
 
- 
+
 @endsection
 
 @section('script')
@@ -170,6 +275,13 @@
 		URL.revokeObjectURL(output.src) // free memory
 		}
 	};
+
+    // alert success
+    window.setTimeout(function() {
+		$(".alertSuccess").fadeTo(200, 0).slideUp(200, function(){
+			$(this).remove();
+		});
+    }, 5000);
 </script>
 <script src="{{asset('assets/js/datatable/datatables/jquery.dataTables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatable/datatables/datatable.custom.js')}}"></script>
@@ -179,5 +291,9 @@
 <script src="{{asset('assets/js/photoswipe/photoswipe.min.js')}}"></script>
 <script src="{{asset('assets/js/photoswipe/photoswipe-ui-default.min.js')}}"></script>
 <script src="{{asset('assets/js/photoswipe/photoswipe.js')}}"></script>
+
+<script src="{{asset('assets/js/datepicker/date-picker/datepicker.js')}}"></script>
+<script src="{{asset('assets/js/datepicker/date-picker/datepicker.en.js')}}"></script>
+<script src="{{asset('assets/js/datepicker/date-picker/datepicker.custom.js')}}"></script>
 
 @endsection
