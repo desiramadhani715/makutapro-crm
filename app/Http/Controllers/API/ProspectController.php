@@ -33,7 +33,6 @@ use Carbon\Carbon;
 class ProspectController extends Controller
 {
     public function all(Request $request){  
-
         $leads = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')
                         ->join('sumber_platform as sp','sp.id','prospect.sumber_platform_id')
                         ->select('prospect.id','prospect.nama_prospect','prospect.hp','prospect.email','prospect.is_pin','prospect.date_pin','prospect.created_at','prospect.status_id','sp.nama_platform','prospect.catatan_admin','fu.created_at as fudate')
@@ -158,6 +157,7 @@ class ProspectController extends Controller
             'prospect_id' => Prospect::max('id'),
             'agent_id' => $sales[0]->agent_id,
             'sales_id' => $sales[0]->id,
+            'user_id' => $sales[0]->user_id
         ]);
 
         Fu::create([
