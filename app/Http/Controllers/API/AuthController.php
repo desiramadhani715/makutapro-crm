@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\Sales;
 use App\Models\Prospect;
 use App\Models\Fu;
+use App\Models\TokenFcm;
 use App\Models\HistoryChangeStatus;
 use App\Mail\SendOtp;
 use Illuminate\Support\Facades\Mail;
@@ -37,7 +38,7 @@ class AuthController extends Controller
                         'token_type' => 'Bearer',
                         'user' => $user
                     ],'Authenticated');
-                    
+
                 }else{
                     return ResponseFormatter::error(null,'Password tidak sesuai.');
                 }
@@ -54,7 +55,7 @@ class AuthController extends Controller
             ],'Authentication Failed', 500);
 
         }
-        
+
     }
 
     public function logout(Request $request){
@@ -83,14 +84,14 @@ class AuthController extends Controller
     {
         $input = $request->all();
         $user = Auth::user();
-        
+
         $rules = array(
             'new_password' => 'required',
             'confirm_password' => 'required|same:new_password',
         );
 
         $validator = Validator::make($input, $rules);
-        
+
         if (!$validator->fails()) {
 
             try {
@@ -98,7 +99,7 @@ class AuthController extends Controller
 
                     return ResponseFormatter::error(null, 'Check your recent password',200);
 
-                }  
+                }
                 if ((Hash::check(request('new_password'), Auth::user()->password)) == true) {
 
                     return ResponseFormatter::error(null, 'Please enter a password which is not similar then current password',200);
@@ -120,8 +121,8 @@ class AuthController extends Controller
                 }
                 return ResponseFormatter::error(null, $msg, 400);
             }
-            
-        } 
+
+        }
 
         return ResponseFormatter::error(null, $validator->errors()->first(), 400);
     }
@@ -163,11 +164,29 @@ class AuthController extends Controller
         return ResponseFormatter::success($user);
     }
 
+    public function storeTokenFcm(Request $request){
+        try {
+            $token = new TokenFcm();
+            DB::transaction(function () use ($request, $token){
+                $token->user_id = Auth::user()->id;
+                $token->device_id = $request->device_id;
+                $token->token_fcm = $request->token_fcm;
+                $token->save();
+            });
+
+            return ResponseFormatter::success($token);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            return ResponseFormatter::error($th->getMessage());
+        }
+    }
+
     //Forget Password
     public function sendEmailOtpCode(Request $request){
 
         $user = User::where(['email' => $request->email,'role_id' => 6])->first();
-        
+
         if(!$user){
             return ResponseFormatter::error($request->email, 'Email tidak terdaftar', 200);
         }
@@ -185,7 +204,7 @@ class AuthController extends Controller
     public function checkOtpCode(Request $request){
 
         $user = User::where(['email' => $request->email,'otp_code' => $request->otp_code,'role_id' => 6,])->first();
-        
+
         if(!$user){
             return ResponseFormatter::error($request->email, 'Kode OTP salah.', 200);
         }
@@ -205,14 +224,14 @@ class AuthController extends Controller
     public function newPassword(Request $request){
         $input = $request->all();
         $user = Auth::user();
-        
+
         $rules = array(
             'new_password' => 'required',
             'confirm_password' => 'required|same:new_password',
         );
 
         $validator = Validator::make($input, $rules);
-        
+
         if (!$validator->fails()) {
 
             try {
@@ -237,8 +256,8 @@ class AuthController extends Controller
                 }
                 return ResponseFormatter::error(null, $msg, 400);
             }
-            
-        } 
+
+        }
 
         return ResponseFormatter::error(null, $validator->errors()->first(), 400);
     }

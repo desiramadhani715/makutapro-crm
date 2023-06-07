@@ -33,6 +33,7 @@ Route::get('/reset', function () {
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:api'])->group(function () {
+    Route::post('/store-token-fcm', [AuthController::class, 'storeTokenFcm']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/change-password', [AuthController::class, 'changePassword']);
     Route::post('/new-password', [AuthController::class, 'newPassword']);
