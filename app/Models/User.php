@@ -33,6 +33,7 @@ class User extends Authenticatable
         'active',
         'gender',
         'birthday',
+        'token_fcm',
         'otp_code'
     ];
     // public $timestamps = false;
@@ -61,7 +62,7 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    
+
     public function generateToken()
     {
         $this->api_token = Str::random(60);

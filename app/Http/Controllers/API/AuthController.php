@@ -165,16 +165,14 @@ class AuthController extends Controller
     }
 
     public function storeTokenFcm(Request $request){
+        $user = Auth::user();
         try {
-            $token = new TokenFcm();
-            DB::transaction(function () use ($request, $token){
-                $token->user_id = Auth::user()->id;
-                $token->device_id = $request->device_id;
-                $token->token_fcm = $request->token_fcm;
-                $token->save();
+            DB::transaction(function () use ($request, $user){
+                $user->token_fcm = $request->token_fcm;
+                $user->save();
             });
 
-            return ResponseFormatter::success($token);
+            return response()->json(null, 204);
 
         } catch (\Throwable $th) {
             //throw $th;
