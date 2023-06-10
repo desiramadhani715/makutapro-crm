@@ -80,7 +80,7 @@ class Helper
         // FCM
         $title = 'Prospect : '.ucwords($request['nama_prospect']);
         $body = 'yeay! Kamu menerima Prospect baru, Follow Up sekarang!';
-        $this->pushNotif($title, $body, $NextSales[0]->user_id);
+        self::pushNotif($title, $body, $NextSales[0]->user_id);
 
         return "Data berhasil di tambahkan.";
 
