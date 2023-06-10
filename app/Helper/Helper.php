@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Helper;
 
 use App\Models\Prospect;
@@ -7,16 +7,17 @@ use App\Models\HistoryBlast;
 use App\Models\HistoryProspect;
 use App\Models\HistorySales;
 use App\Models\Pt;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class Helper
 {
-    
+
     public function blastToAgent(Request $request, $NextAgent){
         dd($request->all());
     }
-    
+
     public static function blastToSales($request, $NextAgent, $NextSales){
 
         $prospect = Prospect::create([
@@ -36,7 +37,7 @@ class Helper
                         'utm_campaign' => $request['utm_campaign'],
                         'full_path_ref' => $request['full_path_ref'],
                     ]);
-        
+
         // dd($prospect->id);
 
         HistoryBlast::create([
@@ -49,7 +50,7 @@ class Helper
         ]);
 
         $pt = pt::with('user')->where('user_id',Auth::user()->id)->get()[0];
-        
+
         HistoryProspect::create([
             'prospect_id' => $prospect->id,
             'pt_id' => $pt->id,
@@ -75,8 +76,11 @@ class Helper
 
         // WA
         // Helper::SendWA($destination, $message);
+
         // FCM
-        // $this->pushNotif($NextSales[0]->UsernameKP, $kodeproject, $namaprospect);
+        $title = 'Prospect : '.ucwords($request['nama_prospect']);
+        $body = 'yeay! Kamu menerima Prospect baru, Follow Up sekarang!';
+        $this->pushNotif($title, $body, $NextSales[0]->user_id);
 
         return "Data berhasil di tambahkan.";
 
@@ -91,57 +95,51 @@ class Helper
         $my_result_object = json_decode(file_get_contents($api_url, false));
     }
 
-    public static function PushNotif($title, $body){
+    public static function PushNotif($title, $body, $user_id){
         $url = 'https://fcm.googleapis.com/fcm/send';
-        $user_id = Auth::user()->id;
 
-        $FcmToken = DB::table('token_fcm')
-            ->select('token_fcm')
-            ->where('id', DB::raw("(select max(`id`) from token_fcm where `user_id` = '$user_id')"))
-            ->get();
+        $user = User::find($user_id);
 
-        if(count($FcmToken) > 0){
-            $serverKey = 'AAAA8QlsNCY:APA91bFXmxrGz5CMJxxXF_AzREaaHu4h6fW7zZv5I1T565gTSxPcEZJ1S3UgvQZkS4EmssM5IF9LkXViaBguvivjSxTxGdgNXWmbLvVJ6K2-NjNGFEIwheeEgBKjveZLrXs-Un4A255H';
+        $serverKey = 'AAAA8QlsNCY:APA91bFXmxrGz5CMJxxXF_AzREaaHu4h6fW7zZv5I1T565gTSxPcEZJ1S3UgvQZkS4EmssM5IF9LkXViaBguvivjSxTxGdgNXWmbLvVJ6K2-NjNGFEIwheeEgBKjveZLrXs-Un4A255H';
 
-            $data = [
-                "registration_ids" => [$FcmToken[0]->TokenFCM],
-                "notification" => [
-                    "title" => $title,
-                    "body" => $body,
-                ]
-            ];
-            $encodedData = json_encode($data);
-  
-            $headers = [
-                'Authorization:key=' . $serverKey,
-                'Content-Type: application/json',
-            ];
+        $data = [
+            "registration_ids" => [$user->token_fcm],
+            "notification" => [
+                "title" => $title,
+                "body" => $body,
+            ]
+        ];
+        $encodedData = json_encode($data);
 
-            $ch = curl_init();
+        $headers = [
+            'Authorization:key=' . $serverKey,
+            'Content-Type: application/json',
+        ];
 
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-            curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-            // Disabling SSL Certificate support temporarly
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $encodedData);
+        $ch = curl_init();
 
-            // Execute post
-            $result = curl_exec($ch);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        // Disabling SSL Certificate support temporarly
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $encodedData);
 
-            if ($result === FALSE) {
-                die('Curl failed: ' . curl_error($ch));
-            }
+        // Execute post
+        $result = curl_exec($ch);
 
-            // Close connection
-            curl_close($ch);
+        if ($result === FALSE) {
+            die('Curl failed: ' . curl_error($ch));
         }
+
+        // Close connection
+        curl_close($ch);
     }
 
     public static function UsernameGenerator(){
-        
+
     }
 }
