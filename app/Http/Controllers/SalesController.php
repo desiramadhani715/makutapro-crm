@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Config;
 use App\Models\Sales;
 use App\Models\Agent;
 use App\Models\User;
@@ -11,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Helper\Helper;
 use App\Mail\AccountAccessMail;
 use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
 
 class SalesController extends Controller
 {
@@ -56,7 +59,7 @@ class SalesController extends Controller
 
         $data = Sales::join('users','users.id','sales.user_id')
                         ->where('agent_id',$agent_id)
-                        ->select('sales.id','sales.kode_sales','sales.nama_sales','sales.sort','sales.created_at','users.hp','users.email','users.photo','users.ktp')
+                        ->select('sales.id','sales.kode_sales','sales.nama_sales','sales.sort','sales.active','sales.created_at','users.username','users.hp','users.email','users.photo','users.ktp','users.nick_name','users.gender','users.birthday')
                         ->get();
 
 
@@ -74,6 +77,7 @@ class SalesController extends Controller
             $data[$i]->closing_amount = $closingAmount[0]->closing_amount;
             $data[$i]->total_prospect = $prospect[0]->total_prospect;
             $data[$i]->agent_id  = $agent_id;
+            $data[$i]->photo = $data[$i]->photo ? Config::get('app.url').'/public/storage/user/'.$data[$i]->photo : null;
         }
 
         return view('pages.sales.index',compact('data','agent_id'));
@@ -99,7 +103,7 @@ class SalesController extends Controller
     {
         $imageName = '';
         if ($request->photo) {
-            $imageName = $request->file('photo')->getClientOriginalName();
+            $imageName = time().'.'.$request->file('photo')->getClientOriginalExtension();
             $request->file('photo')->storeAs('public/user', $imageName);
         }
         // cek apakah no hp tersebut sudah ada di tbl user sebagai role sales
@@ -107,7 +111,7 @@ class SalesController extends Controller
 
         $temp = strtolower(str_replace(' ','',$request->full_name));
         $temp_username = str_replace('-','',$temp);
-        $username = substr($temp_username,-strlen($temp_username),3) . substr($request->Hp, strlen($request->Hp)-4, 4);
+        $username = substr($temp_username,-strlen($temp_username),3) . substr($request->hp, strlen($request->hp)-4, 4);
         $password = substr($request->hp, strlen($request->hp)-6, 6);
         $kode_sales = substr(strtoupper($request->full_name), 0, 3) . str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
         $sort = Sales::getNextSalesSort($agent_id);
@@ -126,6 +130,8 @@ class SalesController extends Controller
                 $user->email = $request->email;
                 $user->hp = $request->hp;
                 $user->photo = $imageName;
+                $user->gender = $request->gender;
+                $user->birthday = Carbon::createFromFormat('m/d/Y', $request->birthday)->format('Y-m-d');
                 $user->save();
             }
 
@@ -194,9 +200,48 @@ class SalesController extends Controller
      * @param  \App\Models\Sales  $sales
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request)
+    public function update(Request $request, Sales $sales)
     {
-        dd($request->all());
+        // dd($request->all(), $sales);
+        try {
+            $sales = Sales::with('user')->find($sales->id);
+            $user = User::find($sales->user_id);
+
+            // Update the sales data
+            $sales->nama_sales = $request->nama_sales;
+
+            $user->hp = $request->hp;
+            $user->email = $request->email;
+            $user->nick_name = $request->nick_name;
+            $user->gender = $request->gender;
+            $user->birthday = $request->birthday;
+
+            // Update the password if it's provided
+            if ($request->password) {
+                $user->password = bcrypt($request->password);
+            }
+
+            // Update the photo if it's provided
+            if ($request->hasFile('photo')) {
+                // Delete the old photo if it exists
+                if ($user->photo) {
+                    Storage::delete('public/user'.$user->photo);
+                }
+
+                $imgName = time().'.'.$request->file('photo')->extension();
+                $request->photo->storeAs('public/user', $imgName);
+                $user->photo = $imgName;
+            }
+
+            $sales->save();
+            $user->save();
+
+            return redirect()->back()->with('success', 'Sales data updated successfully.');
+
+        } catch (\Throwable $th) {
+            //throw $th;
+            return redirect()->back()->with('error', 'Failed to update sales data.')->withErrors($e->getMessage());
+        }
     }
 
     /**
@@ -207,6 +252,47 @@ class SalesController extends Controller
      */
     public function destroy(Sales $sales)
     {
-        //
+        $agent_id = $sales->agent_id;
+        $data = HistoryProspect::where('sales_id', $sales->id)->count();
+
+        if ($data == 0) {
+            $salesUser = Sales::where('user_id', $sales->user_id)->count();
+
+            if ($salesUser == 1)
+                User::where('id',$sales->user_id)->delete();
+
+            Sales::where('id', $sales->id)->delete();
+            
+            $this->resortSales($agent_id);
+
+            return redirect()->back()->with('success', 'Sales data updated successfully.');
+        }
+        return redirect()->back()->with('error', 'Can not delete this Sales Data.');
+    }
+
+    public function activateSales(Request $request, Sales $sales)
+    {
+        $sort = Sales::getCurrentSalesSort($sales->agent_id);
+
+        $sales->sort = $sales->active ? 0 : $sort + 1;
+        $sales->active = $sales->active ? 0 : 1;
+        $sales->save();
+
+        $this->resortSales($sales->agent_id);
+
+        return redirect()
+            ->back()
+            ->with('status','Sales telah ' . ($sales->active ? 'diaktifkan' : 'dinonaktifkan') . '!');
+    }
+
+    public function resortSales($agent_id)
+    {
+        $activeSales = Sales::where(['active' => true, 'agent_id' => $agent_id])->orderBy('sort','asc')->get();
+
+        $sort = 1;
+
+        foreach ($activeSales as $sales) {
+            $sales->update(['sort' => $sort++]);
+        }
     }
 }

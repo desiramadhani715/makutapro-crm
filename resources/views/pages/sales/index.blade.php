@@ -8,6 +8,7 @@
 @endsection
 
 @section('style')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 @endsection
 
 @section('breadcrumb-title')
@@ -172,27 +173,42 @@
 									</td>
 									<td>
 										@if (!$sales->active)
-											<span class="badge rounded-pill badge-info">Active</span>
+										<form action="{{route('sales.activate', $sales->id)}}" method="POST" onsubmit="return confirm('Aktifkan Sales {{$sales->nama_sales}} ?')">
+											@method('POST')
+                                            @csrf
+											<button class="btn" type="submit">
+												<span class="badge rounded-pill round-badge-info">Active</span>
+											</button>
+										</form>
 										@else
-											<span class="badge rounded-pill badge-secondary">Non Active</span>
+										<form action="{{route('sales.activate', $sales->id)}}" method="POST" onsubmit="return confirm('Non Aktifkan Sales {{$sales->nama_sales}} ?')">
+											@csrf
+											<button class="btn" type="submit">
+												<span class="badge rounded-pill round-badge-secondary">Non Active</span>
+											</button>
+										</form>
 										@endif
 									</td>
-									<td>
-										<a title="Show Detail" data-bs-toggle="modal" data-bs-target="#detail{{$sales->id}}"><img src="{{asset('assets/images/button/info.png')}}" alt="info"></a>
-
-										<a title="Delete Sales" class="ms-1" href=""><img src="{{asset('assets/images/button/trash.png')}}" alt="Delete Sales"></a>
+									<td class="d-flex justify-content-center">
+										<a title="Show Detail" class="mt-1" data-bs-toggle="modal" data-bs-target="#detail{{$sales->id}}"><img src="{{asset('assets/images/button/info.png')}}" alt="info"></a>
+                                        <form action="{{url('sales/'.$sales->id)}}" method="post" onsubmit="return confirm('Apakah anda yakin ?')">
+											@method('delete')
+											@csrf
+											<button type="submit" class="btn p-0"><a title="Delete Sales" class="ms-1" href=""><img src="{{asset('assets/images/button/trash.png')}}" alt="Delete Agent"></a></button>
+										</form>
 									</td>
 								</tr>
 
 								<div class="modal fade" id="detail{{$sales->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-									<div class="modal-dialog" role="document">
+									<div class="modal-dialog modal-lg" role="document">
 									   <div class="modal-content"  style="border-radius: 20px;">
 										  <div class="modal-header" style="background-color: #6F9CD3; border-top-left-radius: 20px;border-top-right-radius: 20px;">
 											<h2 class="modal-title text-white" style="font-family: Montserrat ,
 											sans-serif Medium 500; font-size: 25px;"><strong>MAKUTA</strong> Pro</h2>
 											 <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
 										  </div>
-										  <form action="{{route('sales.update')}}" method="POST" enctype="multipart/form-data">
+										  <form action="{{route('sales.update', $sales->id)}}" method="POST" enctype="multipart/form-data">
+                                            @method('PUT')
 											@csrf
 											<input type="hidden" name="sales_id" value="{{$sales->id}}">
 											<input type="hidden" name="agent_id" value="{{$sales->agent_id}}">
@@ -201,9 +217,9 @@
 													<div class="user-profile">
 														<div class="card hovercard text-center">
 															<div class="user-image" style="margin-top: 80px">
-																<div class="avatar"><img alt="photo" src="{{asset('assets/images/avtar/user.jpg')}}" id="photoPreview"></div>
-																<div class="icon-wrapper" id="changePhoto"><i class="icofont icofont-pencil-alt-5"></i></div>
-																<input type="file" id="photo" style="display:none;" accept="image/*" onchange="loadFile(event)" name="photo"/>
+																<div class="avatar"><img alt="photo" src="{{ $sales->photo ? $sales->photo : asset('assets/images/avtar/user.jpg')}}" id="photoPreviewEdit{{ $sales->id }}"></div>
+																<div class="icon-wrapper" id="changePhotoEdit{{ $sales->id }}"><i class="icofont icofont-pencil-alt-5"></i></div>
+																<input type="file" id="photoEdit{{ $sales->id }}" style="display:none;" accept="image/*" onchange="loadFileEdit(event)" name="photo" value="{{  $sales->photo }}"/>
 															</div>
 														</div>
 													</div>
@@ -230,6 +246,39 @@
 														<input class="form-control mb-2" style="border-radius: 11px;color:#645d5d" type="email" value="{{$sales->email}}" name="email" >
 													</div>
 												</div>
+												<div class="row mb-2">
+													<div class="col-lg-6">
+														<label  style="color: #827575">Nick Name</label>
+														<input class="form-control mb-2" style="border-radius: 11px;color:#645d5d" type="text" value="{{$sales->nick_name}}" name="nick_name">
+													</div>
+													<div class="col-lg-6">
+														<label  style="color: #827575">Full Name</label>
+														<input class="form-control mb-2" style="border-radius: 11px;color:#645d5d" type="text" value="{{$sales->nama_sales}}" name="nama_sales" >
+													</div>
+												</div>
+                                                <div class="row mb-2">
+                                                    <div class="col-lg-6">
+                                                        <label style="color: #827575">Birthday</label>
+                                                        <div class="col">
+                                                            <input class="datepicker-here form-control digits" type="text" data-language="en" data-position="top left" name="birthday" value="{{ date_format(date_create($sales->birthday), "d/m/Y") }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <label style="color: #827575">Gender</label>
+                                                        <div class="col">
+                                                            <div class="m-t-10 m-checkbox-inline custom-radio-ml">
+                                                                <div class="form-check form-check-inline radio radio-primary">
+                                                                    <input class="form-check-input" id="radioinline1" type="radio" name="gender" value="Female" {{ $sales->gender == "Female" ? 'checked' : '' }}>
+                                                                    <label class="form-check-label mb-0" for="radioinline1">Female</label>
+                                                                </div>
+                                                                <div class="form-check form-check-inline radio radio-primary">
+                                                                    <input class="form-check-input" id="radioinline2" type="radio" name="gender" value="Male" {{ $sales->gender == "Male" ? 'checked' : '' }}>
+                                                                    <label class="form-check-label mb-0" for="radioinline2">Male</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
 												<div class="row">
 													<div class="col-lg-12">
 														<label  style="color: #827575">Change Password</label>
@@ -248,6 +297,30 @@
 							@empty
 
 							@endforelse
+                            <script>
+								$(document).ready(function() {
+									@forelse ($data as $sales)
+										$('#changePhotoEdit{{ $sales->id }}').click(function() {
+											$('#photoEdit{{ $sales->id }}').click();
+										});
+
+										$('#photoEdit{{ $sales->id }}').change(function(event) {
+											var salesId = '{{ $sales->id }}';
+											var output = $('#photoPreviewEdit' + salesId)[0];
+											var file = event.target.files[0];
+											var reader = new FileReader();
+
+											reader.onload = function(e) {
+												output.src = e.target.result;
+											};
+
+											reader.readAsDataURL(file);
+										});
+									@empty
+										// Handle the case when $data is empty
+									@endforelse
+								});
+							</script>
                             </tbody>
 						</table>
 					</div>

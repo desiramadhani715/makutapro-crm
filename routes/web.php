@@ -55,8 +55,9 @@ Route::post('agent/active', [AgentController::class, 'active'])->middleware(['au
 Route::post('agent/nonactive', [AgentController::class, 'nonactive'])->middleware(['auth'])->name('agent.nonactive');
 Route::get('sales/{agent_id}', [SalesController::class, 'index'])->middleware(['auth'])->name('sales.index');
 Route::post('sales/{agent_id}', [SalesController::class, 'store'])->middleware(['auth'])->name('sales.store');
-Route::post('sales/update', [SalesController::class, 'update'])->middleware(['auth'])->name('sales.update');
-
+Route::put('sales/{sales}', [SalesController::class, 'update'])->middleware(['auth'])->name('sales.update');
+Route::post('sales/activate/{sales}', [SalesController::class, 'activateSales'])->middleware(['auth'])->name('sales.activate');
+Route::delete('sales/{sales}', [SalesController::class, 'destroy'])->middleware(['auth'])->name('sales.delete');
 
 Route::get('/getsales', [AgentController::class, 'getSales'])->name('agent.getsales');
 Route::get('/get_agent', [AgentController::class, 'get_agent'])->name('agent.getagent');
@@ -81,7 +82,7 @@ Route::get('/reset', function () {
 
 // Route::get('/dashboard', function () {
 //     return view('pages.index');
-// })->middleware(['auth'])->name('dashboard'); 
+// })->middleware(['auth'])->name('dashboard');
 
 
 
@@ -90,12 +91,12 @@ Route::get('/reset', function () {
 Route::get('lang/{locale}', function ($locale) {
     if (! in_array($locale, ['en', 'de', 'es','fr','pt', 'cn', 'ae'])) {
         abort(400);
-    }   
+    }
     Session()->put('locale', $locale);
     Session::get('locale');
     return redirect()->back();
 })->name('lang');
-    
+
 
 
 // Route::prefix('widgets')->group(function () {
@@ -104,14 +105,14 @@ Route::get('lang/{locale}', function ($locale) {
 // });
 
 // Route::prefix('page-layouts')->group(function () {
-//     Route::view('box-layout', 'page-layout.box-layout')->name('box-layout');    
-//     Route::view('layout-rtl', 'page-layout.layout-rtl')->name('layout-rtl');    
-//     Route::view('layout-dark', 'page-layout.layout-dark')->name('layout-dark');    
-//     Route::view('hide-on-scroll', 'page-layout.hide-on-scroll')->name('hide-on-scroll');    
-//     Route::view('footer-light', 'page-layout.footer-light')->name('footer-light');    
-//     Route::view('footer-dark', 'page-layout.footer-dark')->name('footer-dark');    
-//     Route::view('footer-fixed', 'page-layout.footer-fixed')->name('footer-fixed');    
-// }); 
+//     Route::view('box-layout', 'page-layout.box-layout')->name('box-layout');
+//     Route::view('layout-rtl', 'page-layout.layout-rtl')->name('layout-rtl');
+//     Route::view('layout-dark', 'page-layout.layout-dark')->name('layout-dark');
+//     Route::view('hide-on-scroll', 'page-layout.hide-on-scroll')->name('hide-on-scroll');
+//     Route::view('footer-light', 'page-layout.footer-light')->name('footer-light');
+//     Route::view('footer-dark', 'page-layout.footer-dark')->name('footer-dark');
+//     Route::view('footer-fixed', 'page-layout.footer-fixed')->name('footer-fixed');
+// });
 
 // Route::prefix('project')->group(function () {
 //     Route::view('projects', 'project.projects')->name('projects');

@@ -51,4 +51,25 @@ class Sales extends Model
         return $nextSort;
     }
 
+    public static function getCurrentSalesSort($agentId)
+    {
+        $currentSort = 0;
+
+        // Mengambil nilai sort dari sales saat ini
+        $currentSales = Sales::where('agent_id', $agentId)->orderBy('sort', 'desc')->first();
+        if ($currentSales) {
+            $currentSort = $currentSales->sort;
+        }
+
+        // Mendapatkan nilai sort untuk sales selanjutnya
+        $nextSales = Sales::where('sort', '>', $currentSort)->where('agent_id', $agentId)->orderBy('sort', 'asc')->first();
+        $nextSort = $currentSort;
+
+        if ($nextSales) {
+            $nextSort = $nextSales->sort;
+        }
+
+        return $nextSort;
+    }
+
 }

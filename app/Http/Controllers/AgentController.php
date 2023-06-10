@@ -27,7 +27,7 @@ class AgentController extends Controller
     {
 
         // $fu = Fu::all();
-        // for ($i=0; $i < count($fu); $i++) { 
+        // for ($i=0; $i < count($fu); $i++) {
         //     $agent = Agent::where('kode_agent',$fu[$i]->KodeAgent)->get();
         //     $sales = Sales::where('kode_sales',$fu[$i]->KodeSales)->get();
         //     $data = Fu::find($fu[$i]->id);
@@ -40,8 +40,8 @@ class AgentController extends Controller
         //     // $data->save();
         // }die;
         // $agent = Agent::all();
-        
-        // for ($i=0; $i < count($agent); $i++) { 
+
+        // for ($i=0; $i < count($agent); $i++) {
         //     User::where('id',$agent[$i]->user_id)->update([
         //         'hp' => $agent[$i]->hp,
         //         'email' => $agent[$i]->email,
@@ -53,7 +53,7 @@ class AgentController extends Controller
         $project = Project::get_project()->get();
 
         foreach ($data as $key) {
-            $closingAmount = Agent::agent()   
+            $closingAmount = Agent::agent()
                                 ->join('leads_closing','leads_closing.agent_id','agent.id')
                                 ->select(DB::raw('sum(leads_closing.closing_amount) as closing_amount'))
                                 ->where('leads_closing.agent_id',$key->id)
@@ -69,7 +69,7 @@ class AgentController extends Controller
     public function active(Request $request){
         // ambil data agent yang ingin di aktifkan
         $agent = Agent::find($request->agent_id);
-        
+
         $UrutAgentMax = Agent::where(['project_id' => $agent->project_id])->max('urut_agent');
 
         $agent->urut_agent = $UrutAgentMax+1;
@@ -92,7 +92,7 @@ class AgentController extends Controller
     public function nonactive(Request $request){
         // ambil data agent yang ingin di non aktifkan
         $agent = Agent::find($request->agent_id);
-        
+
         // ambil data agent yang no urutnya lebih besar dari agent yg ingin di non aktifkan
         $data = Agent::where('project_id', $agent->project_id)
                         ->where('urut_agent','>',$agent->urut_agent)
@@ -112,7 +112,7 @@ class AgentController extends Controller
                 ]);
             }
         }
-        
+
         $agent->urut_agent = 0;
         $agent->active = 0;
         $agent->save();
@@ -125,7 +125,7 @@ class AgentController extends Controller
             'active' => 0,
         ]);
 
-        
+
         return redirect()
             ->back()
             ->with('status', 'Agent telah di non-aktifkan!');
@@ -138,7 +138,7 @@ class AgentController extends Controller
      */
     public function create()
     {
-        
+
     }
 
     /**
@@ -151,7 +151,8 @@ class AgentController extends Controller
     {
         $imageName = '';
         if ($request->photo) {
-            $imageName = $request->file('photo')->getClientOriginalName();
+            $imageName = time().rand(1, 100).'.'.$request->file('photo')->getClientOriginalExtension();
+            // $imageName = $request->file('photo')->getClientOriginalName();
             $request->file('photo')->storeAs('public/user', $imageName);
         }
 
@@ -161,21 +162,21 @@ class AgentController extends Controller
         $sort = Agent::getNextAgentSort($request->project_id);
 
         $project = Project::find($request->project_id);
-        
+
         try {
 
             DB::beginTransaction();
 
             $user = new User();
             $user->role_id = 3;
-            $user->name = $request->nama_agent;   
-            $user->username = $username;   
+            $user->name = $request->nama_agent;
+            $user->username = $username;
             $user->password = bcrypt($pass);
             $user->email = $request->email;
             $user->hp = $request->hp;
             $user->photo = $imageName;
             $user->save();
-            
+
             $agent = new Agent();
             $agent->user_id = $user->id;
             $agent->project_id = $request->project_id;
@@ -249,12 +250,12 @@ class AgentController extends Controller
 
             $user->hp = $request->hp;
             $user->email = $request->email;
-            
+
             // Update the password if it's provided
             if ($request->password) {
                 $user->password = bcrypt($request->password);
             }
-            
+
             // Update the photo if it's provided
             if ($request->hasFile('photo')) {
                 // Delete the old photo if it exists
@@ -266,10 +267,10 @@ class AgentController extends Controller
                 $request->photo->storeAs('public/user', $imgName);
                 $user->photo = $imgName;
             }
-            
+
             $agent->save();
             $user->save();
-    
+
             return redirect()->back()->with('success', 'Agent data updated successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to update agent data.')->withErrors($e->getMessage());
@@ -285,8 +286,8 @@ class AgentController extends Controller
     public function destroy(Agent $agent)
     {
         $sales = Sales::where('agent_id', $agent->id)->get();
-        
-        if(count($sales) == 0) { 
+
+        if(count($sales) == 0) {
             try {
                 DB::beginTransaction();
 
