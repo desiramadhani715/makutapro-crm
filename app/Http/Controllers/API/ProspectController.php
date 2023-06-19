@@ -32,7 +32,7 @@ use Carbon\Carbon;
 
 class ProspectController extends Controller
 {
-    public function all(Request $request){  
+    public function all(Request $request){
         $leads = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')
                         ->join('sumber_platform as sp','sp.id','prospect.sumber_platform_id')
                         ->select('prospect.id','prospect.nama_prospect','prospect.hp','prospect.email','prospect.is_pin','prospect.date_pin','prospect.created_at','prospect.status_id','sp.nama_platform','prospect.catatan_admin','fu.created_at as fudate')
@@ -49,7 +49,7 @@ class ProspectController extends Controller
             $leads->join('project','project.id','hp.project_id')
                     ->join('status','status.id','prospect.status_id')
                     ->where('prospect.id',$request->id)
-                    ->addSelect('project.nama_project','prospect.catatan_admin','status.status','prospect.message','prospect.hp')
+                    ->addSelect('project.nama_project','prospect.catatan_admin','status.status','prospect.*')
                     ->with(['historyFollowUp' => function ($query) {
                         $query->with('media');
                     }])
@@ -77,7 +77,7 @@ class ProspectController extends Controller
 
             if($request->id){
                 $historyChangeStatus = $lead->historyChangeStatus;
-            
+
                 if (!empty($historyChangeStatus)) {
                     foreach ($historyChangeStatus as $changeStatus) {
                         $changeStatus->chat_file = Config::get('app.url').'/public/storage/ChatEvidenceFile/'.$changeStatus->chat_file;
@@ -86,19 +86,19 @@ class ProspectController extends Controller
             }
 
         }
-        
+
         return ResponseFormatter::success($leads);
-        
+
     }
 
     public function store(Request $request){
-        
+
         $prospect = Prospect::join('history_prospect as hpr','hpr.prospect_id','prospect.id')
                             ->where('prospect.hp', $request->hp)
                             ->where('prospect.is_disable',0)
                             ->where('hpr.project_id',$request->project_id)
                             ->get();
-                            
+
         if(count($prospect) > 0) {
             return ResponseFormatter::error(null, 'Nomor Handphone Sudah terdaftar');
         }
@@ -174,10 +174,10 @@ class ProspectController extends Controller
             'subject_dev' => 'New Prospect : '.$request->NamaProspect,
             'history_by ' => 'Sales'
         ]);
-        
-        
+
+
         return ResponseFormatter::success(null,'Prospect berhasil diinput');
-    
+
     }
 
     public function update(Request $request){
@@ -187,7 +187,7 @@ class ProspectController extends Controller
                         ->where('sales.project_id',$request->project_id)
                         ->select('sales.*')
                         ->get();
-                        
+
         $prospect = Prospect::find($request->prospect_id);
 
         $date_pin = null;
@@ -209,7 +209,7 @@ class ProspectController extends Controller
             'date_pin' => $date_pin
         ]);
 
-        
+
         HistorySales::create([
             'project_id' => $request->project_id,
             'sales_id'=> $sales[0]->id,
@@ -232,7 +232,7 @@ class ProspectController extends Controller
             'status' => Status::all(),
             'reason' => Standard::all()
         ];
-       
+
         return ResponseFormatter::success($data);
     }
 
@@ -247,7 +247,7 @@ class ProspectController extends Controller
         $ProspectID = $request->prospect_id;
 
         if($request->status_id == 5){
-            
+
             LeadsClosing::where(['prospect_id'=>$ProspectID])->update([
                 'prospect_id' => $ProspectID,
                 'agent_id' => $sales[0]->agent_id,
@@ -259,13 +259,13 @@ class ProspectController extends Controller
 
         }
 
-        $imgName = null; 
+        $imgName = null;
 
         if ($request->file('ChatEvidenceFile')) {
             $imgName = time().'.'.$request->file('ChatEvidenceFile')->extension();
             $request->ChatEvidenceFile->storeAs('public/ChatEvidenceFile', $imgName);
         }
-        
+
         $NoteStandard = str_replace('"','',$request->Note);
 
         Prospect::where(['id' => $ProspectID])->update([
@@ -284,7 +284,7 @@ class ProspectController extends Controller
             'role_id' => 6
         ]);
 
-        return ResponseFormatter::success($ProspectID,'Data berhasil di update'); 
+        return ResponseFormatter::success($ProspectID,'Data berhasil di update');
 
     }
 
@@ -350,19 +350,19 @@ class ProspectController extends Controller
     }
 
     public function destroy($id){
-        
+
         $leads = Prospect::find($id);
 
         if ($leads) {
-            if ($leads->role_by == 6) { 
+            if ($leads->role_by == 6) {
                 $hp = HistoryProspect::where('prospect_id', $id)->delete();
                 $p  = HistoryChangeStatus::where('prospect_id', $id)->delete();
                 $his = HistoryInputSales::where('prospect_id', $id)->delete();
                 $hi = HistoryProspectMove::where('prospect_id',$id)->delete();
-        
+
                 Prospect::destroy($id);
 
-                return ResponseFormatter::success($id,'Data berhasil di hapus'); 
+                return ResponseFormatter::success($id,'Data berhasil di hapus');
             }
         }
     }
