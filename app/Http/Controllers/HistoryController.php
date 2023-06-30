@@ -28,18 +28,18 @@ class HistoryController extends Controller
                     )
                     ->orderBy('history_change_status.created_at','desc')
                     ->get();
-      
+
         return response()->json($history);
     }
 
     public function historyMp(Request $request){
 
-        $history = HistoryProspectMove::join('sales','sales.id','history_prospect_move.sales_id_prev')
+        $history = HistoryProspectMove::join('sales','sales.id','history_prospect_move.prev_sales_id')
                                         ->where('history_prospect_move.prospect_id',$request->prospect_id)
                                         ->select('sales.nama_sales','history_prospect_move.created_at')
                                         ->orderBy('history_prospect_move.created_at','desc')
                                         ->get();
-      
+
 
         return response()->json($history);
     }

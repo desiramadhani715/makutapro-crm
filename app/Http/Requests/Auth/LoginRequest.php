@@ -53,12 +53,12 @@ class LoginRequest extends FormRequest
             ]);
 
         }else{
-            if(Auth::user()->role_id == 1){
+            if(Auth::user()->role_id == 1 || Auth::user()->role_id == 3){
 
                 RateLimiter::clear($this->throttleKey());
 
             }else{
-                
+
                 Auth::guard('web')->logout();
 
                 $this->session()->invalidate();

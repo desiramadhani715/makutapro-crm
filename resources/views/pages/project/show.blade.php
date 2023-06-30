@@ -7,6 +7,19 @@
 @endsection
 
 @section('style')
+<style>
+  .preview-image {
+      display: flex;
+      flex-wrap: wrap;
+  }
+
+  .preview-image img {
+      width: 200px;
+      height: auto;
+      margin-right: 10px;
+      margin-bottom: 10px;
+  }
+</style>
 @endsection
 
 @section('breadcrumb-title')
@@ -33,21 +46,32 @@
                         @method('PUT')
                         @csrf
 						<div class="row">
-							<div class="col-md-4 mb-3">
+							<div class="col mb-3">
 								<label for="validationCustom01">Kode Project</label>
 								<input class="form-control" id="validationCustom01" type="text" required="" name="kode_project" value="{{$project->kode_project}}" disabled>
 							</div>
-							<div class="col-md-4 mb-3">
+							<div class="col mb-3">
 								<label for="validationCustom02">Nama Project</label>
 								<input class="form-control" id="validationCustom02" type="text" required="" name="nama_project" value="{{$project->nama_project}}">
 							</div>
-							<div class="col-md-4 mb-3">
+						</div>
+                        <div class="row">
+                            <div class="col">
+                              <div class="mb-3">
+                                <label>Project Banner <sup> *Can Choose more than one</sup></label>
+                                <input class="form-control" type="file" id="banner" name="banner[]" multiple="multiple" required>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="preview-image"></div>
+                        <div class="row">
+                            <div class="col">
 								<label for="validationCustom02"></label>
 								<div class="input-group">
                                     <button class="btn btn-primary mt-2" type="submit">Save</button>
                                 </div>
                             </div>
-						</div>
+                        </div>
 					</form>
 				</div>
 			</div>
@@ -245,5 +269,29 @@
             }
         });
 </script>
+<script>
+    function previewImages() {
+        var previewContainer = document.querySelector('.preview-image');
+        var files = document.querySelector('#banner').files;
+
+        function readAndPreview(file) {
+            var reader = new FileReader();
+            reader.addEventListener('load', function() {
+                var image = new Image();
+                image.src = this.result;
+                image.width = 200;
+                image.height = 200;
+                previewContainer.appendChild(image);
+            });
+            reader.readAsDataURL(file);
+        }
+
+        if (files) {
+            [].forEach.call(files, readAndPreview);
+        }
+    }
+
+    document.querySelector('#banner').addEventListener('change', previewImages);
+  </script>
 
 @endsection

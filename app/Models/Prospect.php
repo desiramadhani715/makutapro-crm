@@ -71,10 +71,14 @@ class Prospect extends Model
         return $this->hasMany(NotesAdmin::class, 'prospect_id');
     }
 
+    public function remindStatus(){
+        return $this->hasOne(RemindStatus::class, 'prospect_id');
+    }
+
     public static function archieve(){
         // $data =  DB::select("select * from (
         //     select p.*, (select max(id) from fu f where f.prospect_id = p.id) as pid from prospect p
-        // ) p 
+        // ) p
         // left join fu f on f.id = p.pid");
 
         $leads = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')

@@ -16,6 +16,7 @@ class Sales extends Model
         'kode_sales',
         'nama_sales',
         'sort',
+        'active',
         'token_fcm',
         'device_id'
     ];

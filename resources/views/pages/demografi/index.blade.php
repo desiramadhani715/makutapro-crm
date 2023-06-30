@@ -37,11 +37,12 @@
 				</div>
 				<div class="card-body p-3
                 ">
-					<div class="apache-container" id="echart-pierich"></div>
+					<div class="apache-container" id="echart-pieric
+                    h"></div>
 				</div>
 			</div>
 		</div>
-        <div class="col-xl-12">
+        {{-- <div class="col-xl-12">
 			<div class="card">
 				<div class="card-header">
 					<h5>Leads Based on Average Earnings</h5>
@@ -50,7 +51,7 @@
 					<div class="apache-cotainer" id="dynamic-data"></div>
 				</div>
 			</div>
-		</div>
+		</div> --}}
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-header">
@@ -78,6 +79,7 @@
                                     <td>2</td>
                                     <td>Jakarta Timur</td>
                                     <td>80</td>
+
                                     <td>30%</td>
                                 </tr>
                                 <tr>
@@ -249,7 +251,7 @@ require(['echarts'/*, 'map/js/china' */], function (echarts) {
     let data = {!!JSON_encode($leadsByGender)!!}.sort((a, b) => {
         return b.value - a.value
     })
-    
+
     data.forEach((v, i) => {
         v.labelLine = {
             lineStyle: {

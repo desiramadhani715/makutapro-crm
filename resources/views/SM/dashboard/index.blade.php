@@ -311,7 +311,7 @@
 		var days = $days;
         $.ajax({
 			type:"GET",
-			url:`/loadLeadsChart?days=${days}`,
+			url:`/loadLeadsChartSm?days=${days}`,
 			dataType: 'JSON',
 			success:function(res){
 				if(res){

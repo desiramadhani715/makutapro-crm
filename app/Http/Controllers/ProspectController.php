@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Helper\Helper;
+use Carbon\Carbon;
 use \stdClass;
 
 class ProspectController extends Controller
@@ -34,17 +35,18 @@ class ProspectController extends Controller
      */
     public function index()
     {
+
         $data = HistoryProspect::leads()->get();
         $project = Project::get_project()->get();
         $platform = DB::table('sumber_platform')->get();
         $source = DB::table('sumber_data')->get();
         $status = DB::table('status')->get();
-        
+
         return view('pages.prospect.index',compact('project','platform','source','status'));
     }
 
     public function get_all(Request $request){
-        
+
         $query = HistoryProspect::all_leads()->where('prospect.nama_prospect','like','%'.$request->search['value'].'%');
 
         if($request->project != ""){
@@ -74,7 +76,7 @@ class ProspectController extends Controller
         if($request->to != ""){
             $query = $query->where('prospect.created_at','<=',$request->to);
         }
-        
+
         $field = [
             'prospect.id',
             'prospect.id',
@@ -97,7 +99,7 @@ class ProspectController extends Controller
             'recordsTotal' => HistoryProspect::leads()->count(),
             // nampilin count data terfilter
             'recordsFiltered' => $query->count(),
-            // nampilin semua data 
+            // nampilin semua data
             'data' => $query->skip($request->start)->take($request->length)->get()
         ];
         // $data = HistoryProspect::leads()->get();
@@ -131,28 +133,28 @@ class ProspectController extends Controller
     public function store(Request $request)
     {
         $prospect = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')->where(['prospect.hp' => $request->hp, 'hp.project_id'=>$request->project_id])->select('*')->get();
-        
+
         if(count($prospect) > 0){
             return redirect()->back()->with('alert_hp',true)->withInput();
         }
-        
+
         $lastBlast = HistoryBlast::with('prospect')->where('project_id',$request->project_id)->get(); //cek apakah project ini sudah pernah di blast
 
         $NextAgent = Agent::with('user')->where([
                         'project_id' => $request->project_id,
-                        'urut_agent' => 1, 
+                        'urut_agent' => 1,
                         'active' => 1])->get();
 
         $NextSales = Sales::with('user')->where(['agent_id' => $NextAgent[0]->id, 'sort' => 1, 'active' => 1])->get();
 
         // dd($NextAgent[0], $NextSales[0]);
-        
+
         if(count($lastBlast)>0){
 
             $agent = Agent::with('user')->where(['project_id' => $lastBlast->max()->project_id, 'active' => 1])->get(); //get all agent dari project id
-            
+
             $NextAgent = Agent::with('user')->where(['project_id' => $lastBlast->max()->project_id,'urut_agent' => 1, 'active' => 1])->get();
-            
+
             $NextSales = Sales::with('user')->where(['agent_id' => $NextAgent[0]->id, 'sort' => 1, 'active' => 1])->get();
 
             if ($lastBlast->max()->blast_agent_id < $agent->max('urut_agent')) {
@@ -169,10 +171,10 @@ class ProspectController extends Controller
             $lastBlastAgent = HistoryBlast::with('prospect')->where('agent_id',$NextAgent[0]->id)->get();
 
             if(count($lastBlastAgent) > 0 && $lastBlastAgent->max()->blast_sales_id < $sales->max('sort')){
-                
+
                 $NextSales = Sales::with('user')->where([
-                    'agent_id' => $NextAgent[0]->id, 
-                    'sort' => $lastBlast->max()->blast_sales_id + 1, 
+                    'agent_id' => $NextAgent[0]->id,
+                    'sort' => $lastBlast->max()->blast_sales_id + 1,
                     'active' => 1])->get();
             }
 
@@ -188,24 +190,24 @@ class ProspectController extends Controller
         }
 
         // dd($NextAgent[0], $NextSales[0]);
-        
+
         $msg = '';
         $project = Project::find($request->project_id);
-    
+
         if($project->send_by == 'agent')
-    
+
             $msg = Helper::blastToAgent($request->all(),$NextAgent);
-    
+
         else
-    
+
             $msg = Helper::blastToSales($request->all(), $NextAgent, $NextSales);
-        
+
         return redirect()->route('prospect.index')->with('alert',true);
     }
 
     public function cek_hp(Request $request){
         $prospect = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')->where(['prospect.hp' => $request->hp, 'hp.project_id'=>$request->project_id])->select('*')->get();
-     
+
         if(count($prospect) > 0)
             return response()->json(['status' => false]);
         else
@@ -222,7 +224,7 @@ class ProspectController extends Controller
     {
         $units = DB::table('unit')->get();
         // dd(count($units));
-        // for ($i=0; $i < count($units); $i++) { 
+        // for ($i=0; $i < count($units); $i++) {
         //     $proj = Project::where('kode_project',$units[$i]->project_id)->get();
         //     if(count($proj)>0)
         //         DB::table('unit')->where('id',$units[$i]->id)->update([
@@ -297,13 +299,13 @@ class ProspectController extends Controller
             $st = Standard::find($history_status->standard_id);
             if($st){
                 $data->reason = $st->alasan;
-                $data->standard_id = $st->id;   
-                $data->note_standard = $history_status->note_standard;   
+                $data->standard_id = $st->id;
+                $data->note_standard = $history_status->note_standard;
             }
             // else{
             //     $data->reasons =  Standard::where('status_id',$data->status_id);
             // }
-            $data->last_updated_status = User::find($history_status->user_id)->name; 
+            $data->last_updated_status = User::find($history_status->user_id)->name;
         }
         if ($data->status_id == 5) {
             $closing_data = ClosingLeads::where('prospect_id',$prospect->id)->get()[0];
@@ -379,7 +381,7 @@ class ProspectController extends Controller
                     'agent_id' => $history->agent_id,
                     'sales_id' => $history->sales_id,
                     'unit_id' => $request->unit_id,
-                    'ket_unit' => $request->ket_unit,   
+                    'ket_unit' => $request->ket_unit,
                     'closing_amount' => str_replace('.','',str_replace('Rp. ','',$request->closing_amount))
                 ]);
             }
@@ -416,5 +418,5 @@ class ProspectController extends Controller
         return redirect()->back()->with('alert','Prospect berhasil di hapus !');
     }
 
-   
+
 }

@@ -51,12 +51,15 @@ class Helper
 
         $pt = pt::with('user')->where('user_id',Auth::user()->id)->get()[0];
 
+        $user = User::find($NextSales[0]->user_id);
+
         HistoryProspect::create([
             'prospect_id' => $prospect->id,
             'pt_id' => $pt->id,
             'project_id' => $request['project_id'],
             'agent_id' => $NextAgent[0]->id,
             'sales_id' => $NextSales[0]->id,
+            'user_id' => $user->id,
             'blast_agent_id' => $NextAgent[0]->urut_agent,
             'blast_sales_id' => $NextSales[0]->sort
         ]);
@@ -75,7 +78,7 @@ class Helper
         $message = "Hallo ".strtoupper($NextSales[0]->nama_sales)." Anda telah menerima database baru an. ".$request['nama_prospect']." untuk project $project->nama_project. Harap segera Follow Up database tersebut. \n\nKlik link dibawah ini untuk login :\nhttps://sales-beta.makutapro.id";
 
         // WA
-        // Helper::SendWA($destination, $message);
+        Helper::SendWA($destination, $message);
 
         // FCM
         $title = 'Prospect : '.ucwords($request['nama_prospect']);

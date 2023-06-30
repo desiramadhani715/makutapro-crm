@@ -11,7 +11,7 @@ class Project extends Model
 {
     use HasFactory;
     protected $table = 'project';
-    protected $fillable = ['pt_id','user_id','kode_project','nama_project','description','send_by','active'];
+    protected $fillable = ['pt_id','user_id','kode_project','nama_project','description','send_by','active','kodePt'];
 
 
     public function agent()
@@ -23,7 +23,7 @@ class Project extends Model
     {
         return $this->hasMany(Banner::class, 'project_id');
     }
-    
+
     public function pt()
     {
         return $this->belongsTo(Pt::class, 'pt_id');

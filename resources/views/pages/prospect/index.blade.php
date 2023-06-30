@@ -303,12 +303,12 @@
 <script src="{{asset('assets/js/datepicker/date-picker/datepicker.custom.js')}}"></script>
 <script src="{{asset('js/custom.js')}}"></script>
 <script>
-    // alert 
+    // alert
     window.setTimeout(function() {
 		$(".alert").fadeTo(200, 0).slideUp(200, function(){
-			$(this).remove(); 
+			$(this).remove();
 		});
-		
+
     }, 5000);
 </script>
 
@@ -371,7 +371,7 @@
 				},
 				{ data: 'nama_sumber' },
 				{ data: 'nama_platform' },
-				{ 
+				{
 					mRender: function(data, type, row) {
 
 						if(row.nama_campaign == null)
@@ -518,17 +518,15 @@
 					for (let i = 0; i < res.length; i++) {
 						var date = new Date(res[i].created_at);
 						var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-						var name = res[i].name;
-						if(res[i].standard_id == 24)
-							name = 'System';
-						if(res[i].role_id == 1)
-							name = 'Admin Internal'
+						var msg = `${res[i].name}  Merubah status menjadi`;
+						if(res[i].standard_id == 24 || res[i].role_id == 1)
+							msg = 'Perubahan status dari System menjadi';
 
 						$("#hcs").append(
-							`<div class="media"> 
+							`<div class="media">
 								<div class="activity-dot-secondary"></div>
 								<div class="media-body">
-									<span> ${name} Merubah Status menjadi <span class="badge badge-light-${res[i].id}">${res[i].status}</span></span>
+									<span> ${msg} <span class="badge badge-light-${res[i].id}">${res[i].status}</span></span>
 									<span class="pull-right f-12 font-dark me-2">`+ date.getHours()+':'+date.getMinutes() +' | '+ date.getDate() + ', ' + monthNames[date.getMonth()] + ' '+ date.getFullYear().toString().substring(2)+`.</span>
 									<p class="font-roboto">${res[i].alasan}.</p>
 								</div>
@@ -555,7 +553,7 @@
 						var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 						$("#hmp").append(
-							`<div class="media"> 
+							`<div class="media">
 								<div class="activity-dot-secondary"></div>
 								<div class="media-body">
 									<span>Prospect Move from sales ${res[i].nama_sales}</span>
@@ -584,7 +582,7 @@
 						var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 						$("#hfu").append(
-							`<div class="media"> 
+							`<div class="media">
 								<div class="activity-dot-secondary"></div>
 								<div class="media-body">
 									<span>${res[i].nama_sales} Follow up Konsumen Melalui ${res[i].nama_media}</span>
@@ -643,7 +641,7 @@
 				</div>
 			</div>
 		`);
-	
+
 	});
 
 	refreshDatatable();
@@ -665,8 +663,8 @@
 	}
 
 
-    
-	
-	
+
+
+
 </script>
 @endsection

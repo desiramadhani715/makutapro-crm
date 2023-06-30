@@ -144,8 +144,8 @@
                               </div>
                            </li>
                            {{-- <li class="nav-item"><span class="main-title"> Views</span></li> --}}
-                           <li><a id="general-tab" data-bs-toggle="pill" href="#general" role="tab" aria-controls="general" aria-selected="true"><span class="title"> General</span></a></li>
-                           <li><a class="show" id="unit-type-tab" data-bs-toggle="pill" href="#unit-type" role="tab" aria-controls="unit-type" aria-selected="false"><span class="title"> Unit Type</span></a></li>
+                           {{-- <li><a id="general-tab" data-bs-toggle="pill" href="#general" role="tab" aria-controls="general" aria-selected="true"><span class="title"> General</span></a></li> --}}
+                           <li><a id="unit-type-tab" data-bs-toggle="pill" href="#unit-type" role="tab" aria-controls="unit-type" aria-selected="true"><span class="title"> Unit Type</span></a></li>
                            <li><a class="show" id="roas-tab" data-bs-toggle="pill" href="#roas" role="tab" aria-controls="roas" aria-selected="false"><span class="title"> ROAS</span></a></li>
                            <li><a class="show" id="campaign-tab" data-bs-toggle="pill" href="#campaign" role="tab" aria-controls="campaign" aria-selected="false"><span class="title">Campaign</span></a></li>
                            <li><a class="show" id="app-logs-tab" data-bs-toggle="pill" href="#app-logs" role="tab" aria-controls="app-logs" aria-selected="false"><span class="title">App Logs</span></a></li>
@@ -163,7 +163,7 @@
                <div class="card email-body radius-left">
                   <div class="ps-0">
                      <div class="tab-content">
-                        <div class="tab-pane fade active show" id="general" role="tabpanel" aria-labelledby="general-tab">
+                        {{-- <div class="tab-pane fade active show" id="general" role="tabpanel" aria-labelledby="general-tab">
                            <div class="card mb-0">
                               <div class="card-header d-flex">
                                  <h5 class="mb-0">General Settings</h5>
@@ -284,12 +284,85 @@
                                 </div>
                               </div>
                            </div>
-                        </div>
-                        <div class="fade tab-pane" id="unit-type" role="tabpanel" aria-labelledby="unit-type-tab">
+                        </div> --}}
+                        <div class="fade tab-pane fade active show" id="unit-type" role="tabpanel" aria-labelledby="unit-type-tab">
                            <div class="card mb-0">
                               <div class="card-header d-flex">
                                  <h5 class="mb-0">Unit Type</h5>
                                  <a href="#"><i class="me-2 mb-1" data-feather="plus-square"></i>Add</a>
+                                 <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                       <div class="modal-content"  style="border-radius: 20px;">
+                                          <div class="modal-header" style="background-color: #6F9CD3; border-top-left-radius: 20px;border-top-right-radius: 20px;">
+                                            <h2 class="modal-title text-white" style="font-family: Montserrat ,
+                                            sans-serif Medium 500; font-size: 25px;"><strong>MAKUTA</strong> Pro</h2>
+                                             <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <form action="{{route('unit-type.store')}}" method="POST" enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="modal-body form">
+                                                <div class="row">
+                                                    <div class="user-profile">
+                                                        <div class="card hovercard text-center">
+                                                            <div class="user-image" style="margin-top: 80px">
+                                                                <div class="avatar"><img alt="photo" src="{{asset('assets/images/avtar/user.jpg')}}" id="photoPreview"></div>
+                                                                <div class="icon-wrapper" id="changePhoto"><i class="icofont icofont-pencil-alt-5"></i></div>
+                                                                <input type="file" id="photo" style="display:none;" accept="image/*" onchange="loadFile(event)" name="photo"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-xl-6">
+                                                        <label  style="color: #827575">Nick Name</label>
+                                                        <input class="form-control mb-2" type="text" name="nick_name">
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <label  style="color: #827575">Full Name</label>
+                                                        <input class="form-control mb-2" type="text" name="full_name" required>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-lg-6">
+                                                        <label  style="color: #827575">No. Handphone</label>
+                                                        <input class="form-control mb-2" type="text" name="hp" placeholder="cth: 0812345678" required>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <label  style="color: #827575">Email</label>
+                                                        <input class="form-control mb-2" type="email" name="email" required>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-2">
+                                                    <div class="col-lg-6">
+                                                        <label style="color: #827575">Birthday</label>
+                                                        <div class="col">
+                                                            <input class="datepicker-here form-control digits" type="text" data-language="en" data-position="top left" name="birthday">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <label style="color: #827575">Gender</label>
+                                                        <div class="col">
+                                                            <div class="m-t-10 m-checkbox-inline custom-radio-ml">
+                                                                <div class="form-check form-check-inline radio radio-primary">
+                                                                    <input class="form-check-input" id="radioinline1" type="radio" name="gender" value="Female">
+                                                                    <label class="form-check-label mb-0" for="radioinline1">Female</label>
+                                                                </div>
+                                                                <div class="form-check form-check-inline radio radio-primary">
+                                                                    <input class="form-check-input" id="radioinline2" type="radio" name="gender" value="Male">
+                                                                    <label class="form-check-label mb-0" for="radioinline2">Male</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                          <div class="modal-footer">
+                                            <button class="btn  modal-close " style="background-color: #6F9CD3; border-radius: 50px; color: #fff;" type="submit">Save Change</button>
+                                          </div>
+                                          </form>
+                                       </div>
+                                    </div>
+                                </div>
                               </div>
                               <div class="card-body">
                                  <div class="card-block row">
@@ -431,4 +504,97 @@
 <script src="{{asset('assets/js/typeahead/typeahead.custom.js')}}"></script>
 <script src="{{asset('assets/js/typeahead-search/handlebars.js')}}"></script>
 <script src="{{asset('assets/js/typeahead-search/typeahead-custom.js')}}"></script>
+
+<script>
+    document.getElementById("unitTypeForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent form submission
+
+    // Get the input values
+    var name = document.getElementById("name").value;
+    var email = document.getElementById("email").value;
+
+    // Create a new table row
+    var row = document.createElement("tr");
+
+    // Create the row cells
+    var idCell = document.createElement("td");
+    var nameCell = document.createElement("td");
+    var emailCell = document.createElement("td");
+    var actionsCell = document.createElement("td");
+
+    // Set the cell values
+    idCell.textContent = generateUniqueId(); // Replace this with the actual ID
+    nameCell.textContent = name;
+    emailCell.textContent = email;
+    actionsCell.innerHTML = '<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>';
+
+    // Append cells to the row
+    row.appendChild(idCell);
+    row.appendChild(nameCell);
+    row.appendChild(emailCell);
+    row.appendChild(actionsCell);
+
+    // Append the row to the table
+    document.getElementById("myTable").getElementsByTagName('tbody')[0].appendChild(row);
+
+    // Clear the form inputs
+    document.getElementById("name").value = '';
+    document.getElementById("email").value = '';
+
+    // Store the data in the database
+    storeData(name, email);
+});
+
+function editRow(button) {
+    var row = button.parentNode.parentNode;
+
+    // Get the cell values
+    var id = row.cells[0].textContent;
+    var name = row.cells[1].textContent;
+    var email = row.cells[2].textContent;
+
+    // Populate the form with the selected row's data
+    document.getElementById("name").value = name;
+    document.getElementById("email").value = email;
+
+    // Remove the row from the table
+    row.parentNode.removeChild(row);
+}
+
+    function deleteRow(button) {
+        var row = button.parentNode.parentNode;
+
+        // Remove the row from the table
+        row.parentNode.removeChild(row);
+    }
+
+    function generateUniqueId() {
+        // Generate a unique ID here (e.g., using a UUID library)
+        // Replace this with your actual implementation or use a backend-generated ID
+        return Math.random().toString(36).substr(2, 9);
+    }
+
+    function storeData(name, email) {
+        var data = {
+            name: name,
+            email: email
+        };
+
+        fetch('/store-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log(result);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
 @endsection

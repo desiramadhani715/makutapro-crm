@@ -12,13 +12,16 @@ class HistoryProspectMove extends Model
     protected $fillable = [
         'prospect_id',
         'project_id',
-        'agent_id',
-        'move_agent_id',
-        'agent_id_prev',
-        'move_agent_id_prev',
-        'sales_id',
-        'move_sales_id',
-        'sales_id_prev',
-        'move_sales_id_prev'
+        'next_agent_id',
+        'next_sort_agent',
+        'prev_agent_id',
+        'prev_sort_agent',
+        'next_sales_id',
+        'next_sort_sales',
+        'prev_sales_id',
+        'prev_sort_sales'
     ];
+    public $timestamps = ["created_at"];
+    const UPDATED_AT = NULL;
+
 }

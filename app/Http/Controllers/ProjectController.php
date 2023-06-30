@@ -18,7 +18,7 @@ class ProjectController extends Controller
     use GlobalTrait;
 
     private $pt;
- 
+
     public function __construct()
     {
         $this->pt = $this->pt();
@@ -34,24 +34,24 @@ class ProjectController extends Controller
         $data = Pt::with('project')
                 ->where('user_id',Auth::user()->id)
                 ->get();
-                
+
         if(count($data) > 0){
-            for ($i=0; $i < count($data[0]->project) ; $i++) { 
+            for ($i=0; $i < count($data[0]->project) ; $i++) {
                 $data[0]->project[$i]->new = HistoryProspect::leads()
                                     ->where('prospect.status_id',1)
                                     ->where('history_prospect.project_id','=',$data[0]->project[$i]->id)
                                     ->count();
-    
+
                 $data[0]->project[$i]->process = HistoryProspect::leads()
                                     ->whereBetween('prospect.status_id',[2,3,4])
                                     ->where('history_prospect.project_id','=',$data[0]->project[$i]->id)
                                     ->count();
-    
+
                 $data[0]->project[$i]->notinterested = HistoryProspect::leads()
                                     ->where('prospect.status_id',6)
                                     ->where('history_prospect.project_id','=',$data[0]->project[$i]->id)
                                     ->count();
-    
+
                 $data[0]->project[$i]->closing = HistoryProspect::leads()
                                     ->where('prospect.status_id',5)
                                     ->where('history_prospect.project_id','=',$data[0]->project[$i]->id)
@@ -85,7 +85,7 @@ class ProjectController extends Controller
         $data = Pt::with('project')
                 ->where('user_id',Auth::user()->id)
                 ->get();
-                
+
         // dd($request->all());
 
         // =====> Generate Kode Project <===== //
@@ -98,7 +98,7 @@ class ProjectController extends Controller
         // }
         // $kode_project = $data[0]->kode_pt.'-'.$kode_project;
         // dd($kode_project);
-        
+
         // =====> End of Generate Kode Project <===== //
 
         $newproject = new Project();
@@ -115,10 +115,10 @@ class ProjectController extends Controller
                 $file->storeAs('public/banner', $bannerName);
                 $newBanner = new Banner();
                 $newBanner->project_id = $projectId;
-                $newBanner->banner = $bannerName;   
+                $newBanner->banner = $bannerName;
                 $newBanner->sort = $sort+1;
                 $newBanner->save();
-            }); 
+            });
         }
 
         return redirect('/project')->with('status','Success !');
@@ -134,6 +134,7 @@ class ProjectController extends Controller
     {
         $agent = Agent::where('project_id',$project->id)->get();
         $status = DB::table('status')->get();
+        $project = $project::with('banner')->find($project->id);
 
         return view('pages.project.show', compact('project','agent','status'));
     }
@@ -161,7 +162,20 @@ class ProjectController extends Controller
         $project->nama_project = $request->nama_project;
         $project->save();
 
-        return redirect()->back();
+        if ($request->hasFile('banner')) {
+            $projectId = $project->id;
+            collect($request->file('banner'))->each(function ($file, $sort) use ($projectId){
+                $bannerName =time() . rand(1, 100) . '.' . $file->getClientOriginalExtension();
+                $file->storeAs('public/banner', $bannerName);
+                $newBanner = new Banner();
+                $newBanner->project_id = $projectId;
+                $newBanner->banner = $bannerName;
+                $newBanner->sort = $sort+1;
+                $newBanner->save();
+            });
+        }
+
+        return redirect()->route('project.index ');
     }
 
     /**
@@ -212,7 +226,7 @@ class ProjectController extends Controller
             'recordsTotal' => HistoryProspect::leads()->count(),
             // nampilin count data
             'recordsFiltered' => $query->count(),
-            // nampilin semua data 
+            // nampilin semua data
             'data' => $query->skip($request->start)->take($request->length)->get()
         ];
         // $data = HistoryProspect::leads()->get();

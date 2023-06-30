@@ -21,11 +21,11 @@ class AppointmentController extends Controller
     {
         $appointments = Appointment::where('user_id',Auth::user()->id)
                                     ->orderBy('appointment.id','desc');
-                                    
+
         if ($request->has('project_id')) {
             $projectIds = explode(',', $request->input('project_id'));
             $appointments->whereIn('project_id', $projectIds);
-        } 
+        }
 
         $appointments = $appointments->get()
                         ->map(function ($item) {
@@ -65,7 +65,7 @@ class AppointmentController extends Controller
             $appReminder = new AppReminder();
             $appReminder->appointment_id = $appointment->id;
             $appReminder->time_period = $reminder['time_period'];
-            $appReminder->app_time = $reminder['app_time'];
+            $appReminder->app_time = $reminder['start_app_time'];
             $appReminder->app_date = $reminder['app_date'];
             $appReminder->save();
         }
@@ -83,10 +83,12 @@ class AppointmentController extends Controller
     {
         $appointment = Appointment::with('reminders')->findOrFail($appointmentId);
 
-        if($appointment){
-            $appointment->prospect = Prospect::find($appointment->prospect_id,'nama_prospect');
-            $appointment->project = Project::find($appointment->project_id,'nama_project');
+        if(!$appointment){
+            return ResponseFormatter::error($appointmentId);
         }
+
+        $appointment->prospect = Prospect::find($appointment->prospect_id,'nama_prospect');
+        $appointment->project = Project::find($appointment->project_id,'nama_project');
 
         return ResponseFormatter::success($appointment);
     }
