@@ -78,7 +78,7 @@ sans-serif;">
                     {{-- <img src="{{asset('images/makuta-01.png')}}" alt="" class="img-fluid pt-5"> --}}
                     {{-- <lottie-player id="firstLottie" src="https://lottiefiles.com/share/1l2kqjrh" style="width:100%; height: auto;"></lottie-player> --}}
                     <!--<lottie-player src="https://assets3.lottiefiles.com/packages/lf20_p2puhbpy.json"  background="transparent"  speed="1"  style="width: 100%; height: auto;"  loop  autoplay></lottie-player>-->
-                    
+
                     <img src="{{asset('Makuta-admin.png')}}" class="w-100 mt-5" alt="">
 
                 </div>
@@ -93,8 +93,9 @@ sans-serif;">
                               <label for="">Category</label>
                             </div>
                             <div class="col-8">
-                              <select name="category" id="" class="form-control" style="border-radius: 25px;" disabled>
+                              <select name="category" id="" class="form-select" style="border-radius: 25px;">
                                 <option value="">Developer</option>
+                                <option value="">Sales Manager</option>
                               </select>
                             </div>
                           </div>

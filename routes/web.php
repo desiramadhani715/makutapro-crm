@@ -58,7 +58,6 @@ Route::group(['middleware' => ['auth', 'role:1']], function () {
     Route::get('/historyMp', [HistoryController::class, 'historyMp']);
     Route::get('/historyFu', [HistoryController::class, 'historyFu']);
     Route::get('/loadLeadsChart', [DashboardController::class, 'loadLeadsChart']);
-    Route::get('/loadSrcLeadsChart', [DashboardController::class, 'loadSrcLeadsChart']);
 
     Route::get('/settings', [SettingController::class, 'index'])->name('setting.index');
     Route::resource('unit-type', UnitController::class)->middleware(['auth']);
@@ -67,6 +66,12 @@ Route::group(['middleware' => ['auth', 'role:1']], function () {
 // Role untuk Sales Manager
 Route::group(['middleware' => ['auth', 'role:3']], function () {
     Route::match(['get', 'post'], '/', [App\Http\Controllers\SM\DashboardController::class, 'index'])->name('sm.dashboard');
+
+
+    Route::get('/loadLeadsChartSM', [App\Http\Controllers\SM\DashboardController::class, 'loadLeadsChart']);
+
+    Route::get('prospect/getall', [App\Http\Controllers\SM\ProspectController::class, 'get_all'])->name('sm.prospect.all');
+    Route::resource('prospect', App\Http\Controllers\SM\ProspectController::class)->names('sm.prospect');
 });
 
 Route::get('/reset', function () {

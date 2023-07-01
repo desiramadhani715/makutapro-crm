@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SM;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Prospect;
 use App\Models\User;
@@ -25,19 +26,12 @@ use App\Helper\Helper;
 
 class DashboardController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         $all = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')
-                                ->join('pt','pt.id','hp.pt_id')
-                                ->join('users','users.id','pt.user_id')
-                                ->where('pt.user_id',Auth::user()->id)
-                                ->select(DB::raw('count(*) as total_prospect'),DB::raw('YEAR(prospect.created_at) year, MONTHNAME(prospect.created_at) month, DAY(prospect.created_at) day'))
-                                ->groupBy('year','month','day');
+                        ->join('agent','agent.id','hp.agent_id')
+                        ->where('agent.user_id',Auth::user()->id)
+                        ->select(DB::raw('count(*) as total_prospect'),DB::raw('YEAR(prospect.created_at) year, MONTHNAME(prospect.created_at) month, DAY(prospect.created_at) day'))
+                        ->groupBy('year','month','day');
 
         // dd($all->get());
         $digitalSrc = $all->whereNotIn('prospect.role_by',[6,7])->get();
@@ -54,31 +48,31 @@ class DashboardController extends Controller
         }
 
         // dd($all->get(), $totalDs, $totalSs);
-
-        $total = HistoryProspect::leads()->count();
-        $process = HistoryProspect::leads()
+        $leads = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')->join('agent','agent.id','hp.agent_id')->where('agent.user_id', Auth::user()->id);
+        $total = $leads->count();
+        $process = $leads
                 ->whereBetween('prospect.status_id',[2, 4])
                 ->count();
-        $closing = HistoryProspect::leads()
+        $closing = $leads
                 ->where('prospect.status_id',5)
                 ->count();
-        $notinterest = HistoryProspect::leads()
+        $notinterest = $leads
                 ->where('prospect.status_id',6)
                 ->count();
         // dd($closing,$notinterest);
 
 
-        $platformLeads = HistoryProspect::count_leads_by_src("Platform","Developer");
+        $platformLeads = HistoryProspect::count_leads_by_src("Platform", "Agent");
         $categoryPlatform = $platformLeads->pluck('nama_platform')->toArray();
         $countPlatform = $platformLeads->pluck('total')->toArray();
 
-        $sourceLeads = HistoryProspect::count_leads_by_src("Source", "Developer");
+        $sourceLeads = HistoryProspect::count_leads_by_src("Source", "Agent");
         $categorySource= $sourceLeads->pluck('nama_sumber')->toArray();
         $countSource= $sourceLeads->pluck('total')->toArray();
 
         $historySales = HistorySales::SalesActivity()->take(10);
 
-        return view('pages.dashboard.index',compact(
+        return view('SM.dashboard.index',compact(
             'total',
             'process',
             'closing',
@@ -89,6 +83,8 @@ class DashboardController extends Controller
             'countSource',
             'historySales'
         ));
+
+
     }
 
     public function loadLeadsChart(Request $request){
@@ -148,7 +144,8 @@ class DashboardController extends Controller
         $start_date = Carbon::now()->subDays($request->days);
         $end_date = Carbon::now();
 
-        $leads = HistoryProspect::leads()->whereBetween('prospect.created_at', [$start_date, $end_date]);
+        $leads = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')->join('agent','agent.id','hp.agent_id')->where('agent.user_id', Auth::user()->id)
+                                ->whereBetween('prospect.created_at', [$start_date, $end_date]);
 
         $data = [
             "summaryLabel" => $summaryLabel,

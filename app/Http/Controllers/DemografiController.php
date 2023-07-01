@@ -15,13 +15,13 @@ class DemografiController extends Controller
 
     public function index(){
 
-        $leadsByAge = HistoryProspect::count_leads_by_src("Age");
+        $leadsByAge = HistoryProspect::count_leads_by_src("Age", "Developer");
         $categoryAge= $leadsByAge->pluck('name')->toArray();
 
-        $leadsByGender = HistoryProspect::count_leads_by_src("Gender");
+        $leadsByGender = HistoryProspect::count_leads_by_src("Gender", "Developer");
         $categoryGender= $leadsByGender->pluck('name')->toArray();
 
-        
+
 
         return view('pages.demografi.index', compact(
             'leadsByAge',

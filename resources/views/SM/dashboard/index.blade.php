@@ -1,4 +1,4 @@
-@extends('layouts.simple.master')
+@extends('SM.layouts.simple.master')
 
 @section('title', 'Dashboard')
 
@@ -311,7 +311,7 @@
 		var days = $days;
         $.ajax({
 			type:"GET",
-			url:`/loadLeadsChartSm?days=${days}`,
+			url:`/loadLeadsChartSM?days=${days}`,
 			dataType: 'JSON',
 			success:function(res){
 				if(res){
