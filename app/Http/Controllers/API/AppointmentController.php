@@ -65,7 +65,7 @@ class AppointmentController extends Controller
             $appReminder = new AppReminder();
             $appReminder->appointment_id = $appointment->id;
             $appReminder->time_period = $reminder['time_period'];
-            $appReminder->app_time = $reminder['start_app_time'];
+            $appReminder->app_time = $reminder['app_time'];
             $appReminder->app_date = $reminder['app_date'];
             $appReminder->save();
         }
