@@ -86,7 +86,7 @@ sans-serif;">
                   <div class="d-inline-flex p-2 bd-highlight mt-lg-5 mt-0" style="border-radius: 30px; background-color: #6F9CD3;">
                     <form action="{{ route('login') }}" method="POST" role="form" style="color: #fff;" class="py-3 mx-2">
                       @csrf
-                        <h3 class="mb-3"><strong>Makutapro CRM</strong></h3>
+                        {{-- <h3 class="mb-3"><strong>Makutapro CRM</strong></h3> --}}
                         <div class="form-group">
                           <div class="row">
                             <div class="col-4 d-flex align-self-center">

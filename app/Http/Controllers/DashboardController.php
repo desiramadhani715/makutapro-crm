@@ -32,6 +32,7 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
+        
         $all = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')
                                 ->join('pt','pt.id','hp.pt_id')
                                 ->join('users','users.id','pt.user_id')

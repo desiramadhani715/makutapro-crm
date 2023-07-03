@@ -77,7 +77,7 @@
 				 </div>
 				 <div class="col-md-6">
 					<div class="form-group mb-0 me-0"></div>
-					<a class="btn btn-info px-2" onclick="moveProspect()"> <i data-feather="move"> </i>Move Prospect</a>
+					{{-- <a class="btn btn-info px-2" onclick="moveProspect()"> <i data-feather="move"> </i>Move Prospect</a> --}}
 					{{-- <a class="btn btn-primary px-2" href="{{ route('prospect.create') }}"> <i data-feather="plus-square"> </i>Add Manual</a> --}}
 					<a class="btn btn-primary px-2" href="{{ route('sm.prospect.create') }}" id="addButton"> <i data-feather="plus-square"> </i>Add New</a>
 				 </div>

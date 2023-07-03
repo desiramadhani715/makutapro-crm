@@ -41,6 +41,7 @@ class ProspectController extends Controller
         $platform = DB::table('sumber_platform')->get();
         $source = DB::table('sumber_data')->get();
         $status = DB::table('status')->get();
+        // dd( Auth::user());
 
         return view('pages.prospect.index',compact('project','platform','source','status'));
     }
@@ -118,8 +119,6 @@ class ProspectController extends Controller
         $data->projects = Project::get_project()->get();
         $data->source = DB::table('sumber_data')->get();
         $data->platform = DB::table('sumber_platform')->get();
-
-        // dd($data);
 
         return view('pages.prospect.create', compact('data'));
     }

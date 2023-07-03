@@ -13,6 +13,7 @@ use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\UnitController;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,12 +32,12 @@ Route::get('/email', function (){
 
 // Route::match(['get', 'post'], '/', [DashboardController::class, 'index'])->name('/')->middleware(['auth', 'role:1']);
 
-// Role Admin Internal
+// Role for Internal Admin
 Route::group(['middleware' => ['auth', 'role:1']], function () {
-    Route::match(['get', 'post'], '/', [DashboardController::class, 'index'])->name('/');
+    Route::match(['get', 'post'], '/developer', [DashboardController::class, 'index'])->name('/');
     Route::get('prospect/getall', [ProspectController::class, 'get_all'])->name('prospect.all');
     Route::get('project/prospect', [ProjectController::class, 'get_prospect'])->name('project.prospect');
-    Route::resource('prospect', ProspectController::class);
+    Route::resource('prospect', ProspectController::class)->names('prospect');
     Route::resource('project', ProjectController::class);
     Route::resource('agent', AgentController::class);
     Route::resource('demografi', DemografiController::class);
@@ -61,17 +62,19 @@ Route::group(['middleware' => ['auth', 'role:1']], function () {
 
     Route::get('/settings', [SettingController::class, 'index'])->name('setting.index');
     Route::resource('unit-type', UnitController::class)->middleware(['auth']);
+
 });
 
-// Role untuk Sales Manager
+// Role for Sales Manager
 Route::group(['middleware' => ['auth', 'role:3']], function () {
-    Route::match(['get', 'post'], '/', [App\Http\Controllers\SM\DashboardController::class, 'index'])->name('sm.dashboard');
+    Route::match(['get', 'post'], '/sales-manager', [App\Http\Controllers\SM\DashboardController::class, 'index'])->name('sm.dashboard');
 
 
     Route::get('/loadLeadsChartSM', [App\Http\Controllers\SM\DashboardController::class, 'loadLeadsChart']);
 
     Route::get('prospect/getall', [App\Http\Controllers\SM\ProspectController::class, 'get_all'])->name('sm.prospect.all');
-    Route::resource('prospect', App\Http\Controllers\SM\ProspectController::class)->names('sm.prospect');
+    Route::resource('sm-prospect', App\Http\Controllers\SM\ProspectController::class)->names('sm.prospect');
+
 });
 
 Route::get('/reset', function () {
@@ -80,11 +83,6 @@ Route::get('/reset', function () {
     Artisan::call('config:clear');
     Artisan::call('config:cache');
 });
-
-// Route::get('/dashboard', function () {
-//     return view('pages.index');
-// })->middleware(['auth'])->name('dashboard');
-
 
 
 

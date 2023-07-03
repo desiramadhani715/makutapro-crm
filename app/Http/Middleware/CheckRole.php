@@ -22,15 +22,12 @@ class CheckRole
 
         $user = auth()->user();
 
-        // dd($user);
 
         foreach ($roles as $role) {
-
             if ($user->role_id === (int)$role) {
                 return $next($request);
             }
         }
-
 
         abort(403, 'Unauthorized action.');
     }

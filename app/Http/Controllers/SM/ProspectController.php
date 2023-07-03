@@ -106,4 +106,58 @@ class ProspectController extends Controller
         // $data = HistoryProspect::leads()->get();
         return response()->json($data);
     }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $data = new \stdClass();
+        $data->countries = DB::table('countries')->get();
+        $data->sales = Sales::where(['agent_id' => Auth::user()->agent->id, 'active' => 1])->get();
+        $data->source = DB::table('sumber_data')->get();
+        $data->platform = DB::table('sumber_platform')->get();
+
+
+        return view('SM.prospect.create', compact('data'));
+    }
+
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $prospect = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')->where(['prospect.hp' => $request->hp, 'hp.project_id'=>$request->project_id])->select('*')->get();
+
+        if(count($prospect) > 0){
+            return redirect()->back()->with('alert_hp',true)->withInput();
+        }
+
+        $NextAgent = Agent::where('id', Auth::user()->agent->id)->get();
+
+        if($request->sales_id){
+            $NextSales = Sales::with('user')->where('id',$request->sales_id)->get();
+        }
+
+        // dd($NextAgent[0], $NextSales[0]);
+
+        $msg = '';
+        $project = Project::find($request->project_id);
+
+        if($project->send_by == 'agent')
+
+            $msg = Helper::blastToAgent($request->all(),$NextAgent);
+
+        else
+
+            $msg = Helper::blastToSales($request->all(), $NextAgent, $NextSales);
+
+        return redirect()->route('sm.prospect.index')->with('alert',true);
+    }
 }
