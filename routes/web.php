@@ -72,8 +72,8 @@ Route::group(['middleware' => ['auth', 'role:3']], function () {
 
     Route::get('/loadLeadsChartSM', [App\Http\Controllers\SM\DashboardController::class, 'loadLeadsChart']);
 
-    Route::get('prospect/getall', [App\Http\Controllers\SM\ProspectController::class, 'get_all'])->name('sm.prospect.all');
-    Route::resource('sm-prospect', App\Http\Controllers\SM\ProspectController::class)->names('sm.prospect');
+    Route::get('sm/prospect/getall', [App\Http\Controllers\SM\ProspectController::class, 'get_all'])->name('sm.prospect.all');
+    Route::resource('sm/prospect', App\Http\Controllers\SM\ProspectController::class)->names('sm.prospect');
 
 });
 
