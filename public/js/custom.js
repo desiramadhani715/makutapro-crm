@@ -147,16 +147,22 @@ $('#agent').change(function(){
         }
 });
 
-var cekHp = function(){
+var cekHp = function($role){
     var hp = $("input[name=hp]").val();
-    var project = $("#project").val();
+    if ($role == 1) {
+        var project = $("#project").val();
+        var url = "/cek_hp";
+    }
+    if ($role == 3) {
+        var url = "/sm/cek_hp";
+    }
     if(hp!=""){
     //    $('.status').html("Tunggu sebentar..");
         $.ajax({
-            url: "/cek_hp",
+            url: url,
             type: 'GET',
             data: {hp : hp, project_id : project},
-            success: function(data) {  
+            success: function(data) {
                 $('.pesan').html('');
                 if(!data.status){
                     $('.pesan').html('<p class="text-danger"> Nomor hp <b>'+hp+'</b> sudah terdaftar ..! </p>');
@@ -164,13 +170,13 @@ var cekHp = function(){
                 }else{
                     $('#add').prop('disabled', false);
                 }
-                
+
             },
             error: function(e) {
                 $('.pesan').html('Ada gangguan koneksi !');
             }
         });
-    
+
     }
 }
 

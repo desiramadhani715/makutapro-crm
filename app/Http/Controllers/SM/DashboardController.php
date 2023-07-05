@@ -27,6 +27,7 @@ use App\Helper\Helper;
 class DashboardController extends Controller
 {
     public function index(Request $request){
+        // dd(Pt::with('user')->where('user_id',Auth::user()->agent->user_id)->get());
         $all = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')
                         ->join('agent','agent.id','hp.agent_id')
                         ->where('agent.user_id',Auth::user()->id)

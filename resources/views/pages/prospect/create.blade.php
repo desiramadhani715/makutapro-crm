@@ -160,7 +160,7 @@
                                           @endforeach
                                       </select>
                                   </div>
-                                  <input class="col-7 form-control" type="number"  name="hp" id="hp" placeholder="0812xxxxx" required oninput="cekHp()" value="{{old('hp')}}">
+                                  <input class="col-7 form-control" type="number"  name="hp" id="hp" placeholder="0812xxxxx" required oninput="cekHp({{ Auth::user()->role_id }})" value="{{old('hp')}}">
                                   <div class="pesan"></div>
                                   @if(session('alert_hp'))
                                   <p class="text-danger"> Nomor hp <b>{{old('hp')}}</b> sudah terdaftar ..! </p>

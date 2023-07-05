@@ -49,6 +49,7 @@ class ProspectController extends Controller
             ->select('prospect.id', 'prospect.nama_prospect', 'prospect.hp', 'prospect.email', 'prospect.is_pin', 'prospect.date_pin', 'prospect.created_at', 'prospect.status_id', 'sp.nama_platform', 'prospect.catatan_admin')
             ->where('hp.project_id', $request->project_id)
             ->where('hp.user_id', Auth::user()->id)
+            ->where('prospect.verified_status',1)
             ->whereIn('prospect.status_id', [1, 7]);
 
         $leads = $oldLeads->union($newLeads);

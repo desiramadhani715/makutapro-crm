@@ -49,13 +49,21 @@ class Helper
             'blast_sales_id' => $NextSales[0]->sort,
         ]);
 
-        $pt = pt::with('user')->where('user_id',Auth::user()->id)->get()[0];
+        $pt_id = 0;
+        
+        if (Auth::user()->role_id == 1) {
+            $pt_id = Pt::with('user')->where('user_id',Auth::user()->id)->get()[0]->id;
+        }
+        if (Auth::user()->role_id == 3) {
+            $project = Project::find($request['project_id']);
+            $pt_id = $project->pt_id;
+        }
 
         $user = User::find($NextSales[0]->user_id);
 
         HistoryProspect::create([
             'prospect_id' => $prospect->id,
-            'pt_id' => $pt->id,
+            'pt_id' => $pt_id,
             'project_id' => $request['project_id'],
             'agent_id' => $NextAgent[0]->id,
             'sales_id' => $NextSales[0]->id,

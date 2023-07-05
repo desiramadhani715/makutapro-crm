@@ -440,7 +440,7 @@
 						// 			</div>
 						// 		</td>`
 						var btn_detail = `<a href="prospect/${row.id}"><img src="{{asset('assets/images/button/info.png')}}" class="me-2 mt-1" alt="info"></a>`
-						var btn_delete = `<form action="{{url('prospect/${row.id}')}}" method="post" onsubmit="return confirm('Apakah anda yakin ?')">
+						var btn_delete = `<form action="{{url('sm/prospect/${row.id}')}}" method="post" onsubmit="return confirm('Apakah anda yakin ?')">
 										@method('delete')
 										@csrf
 										<button type="submit" class="btn p-0"><a><img src="{{asset('assets/images/button/trash.png')}}" alt="Delete Prospect"></a></button>

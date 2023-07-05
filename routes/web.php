@@ -51,13 +51,8 @@ Route::group(['middleware' => ['auth', 'role:1']], function () {
 
     Route::get('/getsales', [AgentController::class, 'getSales'])->name('agent.getsales');
     Route::get('/get_agent', [AgentController::class, 'get_agent'])->name('agent.getagent');
-    Route::get('/getkota', [DemografiController::class, 'getkota']);
-    Route::get('/getstandard', [StatusController::class, 'getstandard']);
     Route::get('/cek_hp', [ProspectController::class, 'cek_hp']);
     Route::get('/get_campaign', [CampaignController::class, 'get_campaign']);
-    Route::get('/historyCs', [HistoryController::class, 'historyCs']);
-    Route::get('/historyMp', [HistoryController::class, 'historyMp']);
-    Route::get('/historyFu', [HistoryController::class, 'historyFu']);
     Route::get('/loadLeadsChart', [DashboardController::class, 'loadLeadsChart']);
 
     Route::get('/settings', [SettingController::class, 'index'])->name('setting.index');
@@ -74,6 +69,19 @@ Route::group(['middleware' => ['auth', 'role:3']], function () {
 
     Route::get('sm/prospect/getall', [App\Http\Controllers\SM\ProspectController::class, 'get_all'])->name('sm.prospect.all');
     Route::resource('sm/prospect', App\Http\Controllers\SM\ProspectController::class)->names('sm.prospect');
+
+    Route::get('/sm/cek_hp', [App\Http\Controllers\SM\ProspectController::class, 'cek_hp']);
+
+});
+
+Route::group(['middleware' => ['auth', 'role:1,3']], function () {
+
+    Route::get('/getkota', [DemografiController::class, 'getkota']);
+    Route::get('/getstandard', [StatusController::class, 'getstandard']);
+
+    Route::get('/historyCs', [HistoryController::class, 'historyCs']);
+    Route::get('/historyMp', [HistoryController::class, 'historyMp']);
+    Route::get('/historyFu', [HistoryController::class, 'historyFu']);
 
 });
 

@@ -1,4 +1,4 @@
-@extends('layouts.simple.master')
+@extends('SM.layouts.simple.master')
 @section('title', 'Project List')
 
 @section('css')
@@ -22,7 +22,7 @@
 
 @section('content')
 <div class="container-fluid">
-<form action="{{route('prospect.update',$data->id)}}" method="POST" role="form">
+<form action="{{route('sm.prospect.update',$data->id)}}" method="POST" role="form">
     @method('PUT')
     @csrf
   <div class="row">

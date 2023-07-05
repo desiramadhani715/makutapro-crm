@@ -319,17 +319,6 @@ class ProspectController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Prospect  $prospect
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Prospect $prospect)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -362,8 +351,9 @@ class ProspectController extends Controller
         $prospect->catatan_admin = $request->catatan_admin;
 
         if($request->status_id != $prospect->status_id){
+            $user_id = Sales::find($request->sales_id)->user_id;
             HistoryChangeStatus::create([
-                'user_id' => Auth::user()->id,
+                'user_id' => $user_id,
                 'prospect_id' => $prospect->id,
                 'status_id' => $request->status_id,
                 'standard_id' => $request->standard_id,

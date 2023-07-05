@@ -14,8 +14,9 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\ChangeStatus::class,
+        Commands\AppointmentReminder::class,
     ];
-    
+
     /**
      * Define the application's command schedule.
      *
@@ -24,17 +25,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->call(function () {
-        //     $my_apikey = "ZJFOVG1W5TTL3OEPVEQK";
-        //     $api_url = "http://panel.rapiwha.com/send_message.php";
-        //     $api_url .= "?apikey=". urlencode ($my_apikey);
-        //     $api_url .= "&number=". urlencode ("6289508867687");
-        //     $api_url .= "&text=". urlencode ("hallo");
-        //     $my_result_object = json_decode(file_get_contents($api_url, false));
-        // })->everyMinute()->runInBackground()
-        // ->emailOutputTo('desirmd3012@gmail.com');
-
-        $schedule->command('status:check')->everyMinute()->runInBackground();
+        $schedule->command('appointment:reminder')->everyMinute()->runInBackground()->evenInMaintenanceMode();
+        // $schedule->command('status:check')->everyFiveMinutes()->runInBackground()->evenInMaintenanceMode();
     }
 
     /**

@@ -57,7 +57,7 @@ class ChangeStatus extends Command
 
         foreach ($leads as $prospect) {
 
-            if ($prospect->status_id == 1 || $prospect->status_id == 7) {
+            if (($prospect->status_id == 1 && $prospect->verified_status == 1) || $prospect->status_id == 7) {
                 $moveDate = Carbon::parse($prospect->historyProspect->move_date);
                 $twoHoursAgo = Carbon::now()->subHours(2);
 
