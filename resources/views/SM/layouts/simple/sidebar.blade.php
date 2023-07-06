@@ -20,7 +20,7 @@
 							<img src="{{ Auth::user()->photo != null ? asset('images/logo/'.Auth::user()->photo) : asset('assets/img/user.jpg') }}" class="rounded-circle img-thumbnail mt-3" alt="logo" width="100px" style="border-color: #3177B6">
 						</div>
 						<div class="text-center profile-details mb-2">
-							<h6 style="color: #2c323f">{{Auth::user()->name}}</h6>
+							<h6 style="color: #2c323f">{{Auth::user()->agent->nama_agent}}</h6>
 							<span class="font-roboto" style="color:#999">Sales Manager</span>
 						 </div>
 						 {{-- <hr style="background-color: #F09236"> --}}
@@ -30,7 +30,7 @@
 
 					<li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav {{ Route::is('sm.prospect.*') ? 'active' : '' }}" href="{{route('sm.prospect.index')}}"><i data-feather="list"> </i><span>Prospect</span></a></li>
 
-					<li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav {{ Route::is('sales.*') || Route::is('sales.*') ? 'active' : '' }}" href="{{route('agent.index')}}"><i data-feather="users"> </i><span>Sales</span></a></li>
+					<li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav {{ Route::is('sm.sales.*') || Route::is('sales.*') ? 'active' : '' }}" href="{{route('sm.sales.index')}}"><i data-feather="users"> </i><span>Sales</span></a></li>
 
 					<li class="sidebar-list"><a class="sidebar-link sidebar-title link-nav {{ Route::is('setting.*') ? 'active' : '' }}" href="{{route('setting.index')}}"><i data-feather="settings"> </i><span>Setting</span></a></li>
 

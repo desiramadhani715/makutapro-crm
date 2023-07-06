@@ -69,6 +69,7 @@ Route::group(['middleware' => ['auth', 'role:3']], function () {
 
     Route::get('sm/prospect/getall', [App\Http\Controllers\SM\ProspectController::class, 'get_all'])->name('sm.prospect.all');
     Route::resource('sm/prospect', App\Http\Controllers\SM\ProspectController::class)->names('sm.prospect');
+    Route::resource('sm/sales', App\Http\Controllers\SM\SalesController::class)->names('sm.sales');
 
     Route::get('/sm/cek_hp', [App\Http\Controllers\SM\ProspectController::class, 'cek_hp']);
 
