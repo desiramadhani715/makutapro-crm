@@ -155,4 +155,11 @@ class AppointmentController extends Controller
 
         return ResponseFormatter::success('Appointment berhasil dihapus');
     }
+
+    public function delete_reminder($id){
+        // Hapus semua reminder yang terkait dengan appointment ini
+        AppReminder::where('id', $id)->delete();
+
+        return ResponseFormatter::success('Appointment Reminder berhasil dihapus');
+    }
 }
