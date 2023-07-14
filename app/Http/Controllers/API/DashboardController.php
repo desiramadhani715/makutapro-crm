@@ -26,10 +26,12 @@ class DashboardController extends Controller
                             ->get();
 
         return ResponseFormatter::success(['projects' => $projects]);
-                    
+
     }
 
     public function project_detail(Request $request, $project_id){
+
+        $project = Project::find($project_id);
 
         $teams = Sales::join('users','users.id','sales.user_id')
                         ->where('project_id',$project_id)
@@ -51,13 +53,14 @@ class DashboardController extends Controller
                                     ->where('history_prospect.project_id', $project_id);})
                             ->select(DB::raw('count(history_prospect.id) as total'), 'status.status')
                             ->groupBy('status.status');
-        
+
         if($request->start_date && $request->end_date)
             $leadSum->whereBetween('prospect.created_at',[$request->start_date, $request->end_date]);
         else
             $leadSum->whereRaw('prospect.created_at >= DATE_ADD(NOW(), INTERVAL -30 DAY) OR prospect.id IS NULL');
 
         return ResponseFormatter::success([
+            'project' => $project,
             'teams' => $teams,
             'banner' => $banner,
             'leadSum' => $leadSum->get()

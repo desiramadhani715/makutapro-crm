@@ -44,8 +44,10 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::get('/projects', [DashboardController::class, 'projects']);
     Route::get('/project_detail/{project_id}', [DashboardController::class, 'project_detail']);
+    Route::get('/banner/{project_id}', [DashboardController::class, 'banner']);
 
     Route::get('/leads/{project_id}', [ProspectController::class, 'all']);
+    Route::get('/leads/get/{project_id}', [ProspectController::class, 'get']);
     Route::post('/leads/{project_id}', [ProspectController::class, 'store']);
     Route::post('/leads/{project_id}/update', [ProspectController::class, 'update']);
     Route::delete('/leads/{id}', [ProspectController::class, 'destroy']);
