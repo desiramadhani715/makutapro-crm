@@ -12,6 +12,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\RoasController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
@@ -56,7 +57,18 @@ Route::group(['middleware' => ['auth', 'role:1']], function () {
     Route::get('/loadLeadsChart', [DashboardController::class, 'loadLeadsChart']);
 
     Route::get('/settings', [SettingController::class, 'index'])->name('setting.index');
-    Route::resource('unit-type', UnitController::class)->middleware(['auth']);
+
+    Route::post('/unit-type', [UnitController::class, 'store'])->name('unit.store');
+    Route::put('/unit-type/{id}', [UnitController::class, 'update'])->name('unit.update');
+    Route::get('/unit-type', [UnitController::class, 'index'])->name('unit.index');
+    Route::get('/unit-type/{id}', [UnitController::class, 'show'])->name('unit.show');
+    Route::delete('/unit-type/{id}', [UnitController::class, 'destroy'])->name('unit.destroy');
+
+    Route::post('/roas', [RoasController::class, 'store'])->name('roas.store');
+    Route::put('/roas/{id}', [RoasController::class, 'update'])->name('roas.update');
+    Route::get('/roas', [RoasController::class, 'index'])->name('roas.index');
+    Route::get('/roas/{id}', [RoasController::class, 'show'])->name('roas.show');
+    Route::delete('/roas/{id}', [RoasController::class, 'destroy'])->name('roas.destroy');
 
 });
 

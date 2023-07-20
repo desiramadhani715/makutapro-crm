@@ -80,6 +80,16 @@ class User extends Authenticatable
         return $this->hasOne(Agent::class, 'user_id');
     }
 
+    public function project()
+    {
+        return $this->hasMany(Project::class, 'user_id');
+    }
+
+    public function pt()
+    {
+        return $this->hasOne(Pt::class, 'user_id');
+    }
+
     public function role()
     {
         return $this->belongsTo(Role::class);

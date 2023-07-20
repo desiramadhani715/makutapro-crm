@@ -11,6 +11,19 @@ class Roas extends Model
 {
     use HasFactory;
     protected $table = 'roas';
+    protected $fillable = [
+        'project_id',
+        'google',
+        'sosmed',
+        'detik',
+        'budget',
+        'bulan',
+        'tahun',
+        'received_budget',
+        'received_date',
+        'cpl',
+        'cpa'
+    ];
 
     public static function getRoas(){
         return DB::table('roas as r')

@@ -4,6 +4,7 @@
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/select2.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/date-picker.css')}}">
+<meta name="csrf-token" content="{{ csrf_token() }}" />
 @endsection
 
 @section('style')
@@ -26,6 +27,9 @@
             -webkit-transform: rotate(-45deg);
             transform: rotate(-45deg);
             right: -30px;
+        }
+        .btn-action:hover {
+            cursor: pointer;
         }
     </style>
 @endsection
@@ -57,91 +61,7 @@
                         <hr class="mb-0">
                         <ul class="nav main-menu" role="tablist">
                            <li class="nav-item">
-                              <button class="badge-light-primary btn-block btn-mail w-100" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="me-2" data-feather="check-circle"></i>Add Setting</button>
-                              <div class="modal fade modal-bookmark" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                 <div class="modal-dialog modal-lg" role="document">
-                                    <div class="modal-content">
-                                       <div class="modal-header">
-                                          <h5 class="modal-title" id="exampleModalLabel">Add Task</h5>
-                                          <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
-                                       </div>
-                                       <div class="modal-body">
-                                          <form class="form-bookmark needs-validation" id="bookmark-form" novalidate="">
-                                             <div class="row">
-                                                <div class="mb-3 mt-0 col-md-12">
-                                                   <label for="task-title">Task Title</label>
-                                                   <input class="form-control" id="task-title" type="text" required="" autocomplete="off">
-                                                </div>
-                                                <div class="mb-3 mt-0 col-md-12">
-                                                   <label for="sub-task">Sub task</label>
-                                                   <input class="form-control" id="sub-task" type="text" required="" autocomplete="off">
-                                                </div>
-                                                <div class="mb-3 mt-0 col-md-12">
-                                                   <div class="d-flex date-details">
-                                                      <div class="d-inline-block">
-                                                         <label class="d-block mb-0" for="chk-ani">
-                                                         <input class="checkbox_animated" id="chk-ani" type="checkbox">Remind on
-                                                         </label>
-                                                      </div>
-                                                      <div class="d-inline-block">
-                                                         <input class="datepicker-here form-control" type="text" data-language="en" placeholder="Date">
-                                                      </div>
-                                                      <div class="d-inline-block">
-                                                         <select class="form-control">
-                                                            <option>7:00 am</option>
-                                                            <option>7:30 am</option>
-                                                            <option>8:00 am</option>
-                                                            <option>8:30 am</option>
-                                                            <option>9:00 am</option>
-                                                            <option>9:30 am</option>
-                                                            <option>10:00 am</option>
-                                                            <option>10:30 am</option>
-                                                            <option>11:00 am</option>
-                                                            <option>11:30 am</option>
-                                                            <option>12:00 pm</option>
-                                                            <option>12:30 pm</option>
-                                                            <option>1:00 pm</option>
-                                                            <option>2:00 pm</option>
-                                                            <option>3:00 pm</option>
-                                                            <option>4:00 pm</option>
-                                                            <option>5:00 pm</option>
-                                                            <option>6:00 pm</option>
-                                                         </select>
-                                                      </div>
-                                                      <div class="d-inline-block">
-                                                         <label class="d-block mb-0" for="chk-ani1">
-                                                         <input class="checkbox_animated" id="chk-ani1" type="checkbox">notification
-                                                         </label>
-                                                      </div>
-                                                      <div class="d-inline-block">
-                                                         <label class="d-block mb-0" for="chk-ani2">
-                                                         <input class="checkbox_animated" id="chk-ani2" type="checkbox">Mail
-                                                         </label>
-                                                      </div>
-                                                   </div>
-                                                </div>
-                                                <div class="mb-3 mt-0 col-md-6">
-                                                   <select class="js-example-basic-single">
-                                                      <option value="task">My Task</option>
-                                                   </select>
-                                                </div>
-                                                <div class="mb-3 mt-0 col-md-6">
-                                                   <select class="js-example-disabled-results" id="bm-collection">
-                                                      <option value="general">General</option>
-                                                   </select>
-                                                </div>
-                                                <div class="mb-3 col-md-12 my-0">
-                                                   <textarea class="form-control" required="" autocomplete="off">  </textarea>
-                                                </div>
-                                             </div>
-                                             <input id="index_var" type="hidden" value="6">
-                                             <button class="btn btn-secondary" id="Bookmark" onclick="submitBookMark()" type="submit">Save</button>
-                                             <button class="btn btn-primary" type="button" data-bs-dismiss="modal">Cancel</button>
-                                          </form>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
+                              <button class="badge-light-primary btn-block btn-mail w-100" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="me-2" data-feather="check-circle"></i>All Setting</button>
                            </li>
                            {{-- <li class="nav-item"><span class="main-title"> Views</span></li> --}}
                            {{-- <li><a id="general-tab" data-bs-toggle="pill" href="#general" role="tab" aria-controls="general" aria-selected="true"><span class="title"> General</span></a></li> --}}
@@ -289,91 +209,51 @@
                            <div class="card mb-0">
                               <div class="card-header d-flex">
                                  <h5 class="mb-0">Unit Type</h5>
-                                 <a href="#"><i class="me-2 mb-1" data-feather="plus-square"></i>Add</a>
-                                 <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+                                 <a href="" type="button" data-bs-toggle="modal" data-bs-target="#unitTypeModalAdd"><i class="me-2 mb-1" data-feather="plus-square" onclick="createUnitType()"></i>Add</a>
+                                 <div class="modal fade modal-bookmark" id="unitTypeModalAdd" tabindex="-1" role="dialog" aria-labelledby="unitTypeModalAddLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg" role="document">
-                                       <div class="modal-content"  style="border-radius: 20px;">
-                                          <div class="modal-header" style="background-color: #6F9CD3; border-top-left-radius: 20px;border-top-right-radius: 20px;">
-                                            <h2 class="modal-title text-white" style="font-family: Montserrat ,
-                                            sans-serif Medium 500; font-size: 25px;"><strong>MAKUTA</strong> Pro</h2>
+                                       <div class="modal-content">
+                                          <div class="modal-header">
+                                             <h5 class="modal-title" id="exampleModalLabel">Add Unit Type</h5>
                                              <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                                           </div>
-                                          <form action="{{route('unit-type.store')}}" method="POST" enctype="multipart/form-data">
-                                            @csrf
-                                            <div class="modal-body form">
+                                          <div class="modal-body">
+                                             <form class="form-bookmark needs-validation" method="POST" id="unitTypeForm">
+                                                @csrf
                                                 <div class="row">
-                                                    <div class="user-profile">
-                                                        <div class="card hovercard text-center">
-                                                            <div class="user-image" style="margin-top: 80px">
-                                                                <div class="avatar"><img alt="photo" src="{{asset('assets/images/avtar/user.jpg')}}" id="photoPreview"></div>
-                                                                <div class="icon-wrapper" id="changePhoto"><i class="icofont icofont-pencil-alt-5"></i></div>
-                                                                <input type="file" id="photo" style="display:none;" accept="image/*" onchange="loadFile(event)" name="photo"/>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                   <div class="mb-3 mt-0 col-md-12">
+                                                      <label for="task-title">Project</label>
+                                                      <select name="project_id" id="project_id" class="form-control" required>
+                                                        <option value="">Choose Project</option>
+                                                        @foreach ($projects as $item)
+                                                            <option value="{{$item->id}}">{{$item->nama_project}}</option>
+                                                        @endforeach
+                                                      </select>
+                                                   </div>
+                                                   <div class="mb-3 mt-0 col-md-12">
+                                                      <label for="sub-task">Unit Name</label>
+                                                      <input class="form-control" id="unit_name" type="text" required="" name="unit_name">
+                                                   </div>
                                                 </div>
-                                                <div class="row mb-2">
-                                                    <div class="col-xl-6">
-                                                        <label  style="color: #827575">Nick Name</label>
-                                                        <input class="form-control mb-2" type="text" name="nick_name">
-                                                    </div>
-                                                    <div class="col-lg-6">
-                                                        <label  style="color: #827575">Full Name</label>
-                                                        <input class="form-control mb-2" type="text" name="full_name" required>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-2">
-                                                    <div class="col-lg-6">
-                                                        <label  style="color: #827575">No. Handphone</label>
-                                                        <input class="form-control mb-2" type="text" name="hp" placeholder="cth: 0812345678" required>
-                                                    </div>
-                                                    <div class="col-lg-6">
-                                                        <label  style="color: #827575">Email</label>
-                                                        <input class="form-control mb-2" type="email" name="email" required>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-2">
-                                                    <div class="col-lg-6">
-                                                        <label style="color: #827575">Birthday</label>
-                                                        <div class="col">
-                                                            <input class="datepicker-here form-control digits" type="text" data-language="en" data-position="top left" name="birthday">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-6">
-                                                        <label style="color: #827575">Gender</label>
-                                                        <div class="col">
-                                                            <div class="m-t-10 m-checkbox-inline custom-radio-ml">
-                                                                <div class="form-check form-check-inline radio radio-primary">
-                                                                    <input class="form-check-input" id="radioinline1" type="radio" name="gender" value="Female">
-                                                                    <label class="form-check-label mb-0" for="radioinline1">Female</label>
-                                                                </div>
-                                                                <div class="form-check form-check-inline radio radio-primary">
-                                                                    <input class="form-check-input" id="radioinline2" type="radio" name="gender" value="Male">
-                                                                    <label class="form-check-label mb-0" for="radioinline2">Male</label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                          <div class="modal-footer">
-                                            <button class="btn  modal-close " style="background-color: #6F9CD3; border-radius: 50px; color: #fff;" type="submit">Save Change</button>
+                                                <button class="btn btn-secondary" id="Bookmark" type="submit" >Save</button>
+                                                <button class="btn btn-primary" type="button" data-bs-dismiss="modal">Cancel</button>
+                                             </form>
                                           </div>
-                                          </form>
                                        </div>
                                     </div>
-                                </div>
+                                 </div>
                               </div>
                               <div class="card-body">
                                  <div class="card-block row">
                                     <div class="col-sm-12 col-lg-12 col-xl-12">
                                        <div class="table-responsive">
-                                          <table class="table">
+                                          <table class="table" id="unitTypeTable">
                                              <thead class="thead-dark">
                                                 <tr>
                                                    <th scope="col">No</th>
                                                    <th scope="col">Unit Name</th>
                                                    <th scope="col">Project</th>
+                                                   <th scope="col"></th>
                                                 </tr>
                                              </thead>
                                              <tbody>
@@ -382,6 +262,10 @@
                                                       <th scope="row">{{ $loop->iteration }}</th>
                                                       <td>{{ $unit->unit_name }}</td>
                                                       <td>{{ $unit->nama_project }}</td>
+                                                      <td>
+                                                        <a><i class="me-2 mb-1 btn-action" data-feather="edit-2" onclick="editUnitType({{ $unit->id }})" style="width: 16px; height: 16px;"></i></a>
+                                                        <a><i class="me-2 mb-1 btn-action" data-feather="x" onclick="deleteUnitType({{ $unit->id }})" onsubmit="return confirm('Apakah anda yakin ?')" style="width: 16px; height: 16px;"></i></a>
+                                                      </td>
                                                    </tr>
                                                 @empty
                                                    <tr>
@@ -402,13 +286,71 @@
                            <div class="card mb-0">
                               <div class="card-header d-flex">
                                  <h5 class="mb-0">Return on Ad Spend</h5>
-                                 <a href="#"><i class="me-2 mb-1" data-feather="plus-square"></i>Add</a>
+                                 <a href="" type="button" data-bs-toggle="modal" data-bs-target="#roasModal"><i class="me-2 mb-1" data-feather="plus-square" onclick="createRoas()"></i>Add</a>
+                                 <div class="modal fade modal-bookmark" id="roasModal" tabindex="-1" role="dialog" aria-labelledby="roasModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg" role="document">
+                                       <div class="modal-content">
+                                          <div class="modal-header">
+                                             <h5 class="modal-title" id="exampleModalLabel">Add ROAS</h5>
+                                             <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                             <form class="form-bookmark needs-validation" method="POST" id="roasForm">
+                                                @csrf
+                                                <div class="row">
+                                                   <div class="mb-3 mt-0 col-md-12">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <select name="project_id" id="project_id" class="form-control" required>
+                                                                  <option value="">Choose Project</option>
+                                                                  @foreach ($projects as $item)
+                                                                      <option value="{{$item->id}}">{{$item->nama_project}}</option>
+                                                                  @endforeach
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <input class="datepicker-here form-control" name="month" type="text" data-language="en" placeholder="Month" data-min-view="months" data-view="months" data-date-format="MM yyyy">
+                                                            </div>
+                                                        </div>
+                                                   </div>
+                                                   <div class="mb-3 mt-0 col-md-12">
+                                                      <label for="sub-task">Google Ads Spend</label>
+                                                      <input class="form-control rupiah-input" id="google" type="text" required="" name="google">
+                                                   </div>
+                                                   <div class="mb-3 mt-0 col-md-12">
+                                                      <label for="sub-task">Sosial Media Spend</label>
+                                                      <input class="form-control rupiah-input" id="sosmed" type="text" required="" name="sosmed">
+                                                   </div>
+                                                   <div class="mb-3 mt-0 col-md-12">
+                                                      <label for="sub-task">Detik Ads Spend</label>
+                                                      <input class="form-control rupiah-input" id="detik" type="text" required="" name="detik">
+                                                   </div>
+                                                   <div class="mb-3 mt-0 col-md-12">
+                                                      <div class="row">
+                                                        <div class="col-md-6">
+                                                            <label for="sub-task">Received Budget</label>
+                                                            <input class="form-control rupiah-input" id="received_budget" type="text" required="" name="received_budget">
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label for="sub-task">Received Date</label>
+                                                            <input class="datepicker-here form-control" name="received_date" type="text" data-language="en">
+                                                        </div>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-secondary" id="Bookmark" type="submit" >Save</button>
+                                                <button class="btn btn-primary" type="button" data-bs-dismiss="modal">Cancel</button>
+                                             </form>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
                               </div>
                               <div class="card-body">
                                  <div class="card-block row">
                                     <div class="col-sm-12 col-lg-12 col-xl-12">
                                        <div class="table-responsive">
-                                          <table class="table">
+                                          <table class="table" id="roasTable">
                                              <thead class="thead-dark">
                                                 <tr>
                                                    <th scope="col">No.</th>
@@ -417,6 +359,7 @@
                                                    <th scope="col">Project</th>
                                                    <th scope="col" class="text-center">CPL <br> <small>(Cost Per Leads)</small></th>
                                                    <th scope="col" class="text-center">CPA <br> <small>(Cost Per Acquisition)</small></th>
+                                                   <th scope="col" ></th>
                                                 </tr>
                                              </thead>
                                              <tbody>
@@ -426,7 +369,7 @@
                                                 @forelse ($roas as $item)
                                                    <tr>
                                                       <th scope="row">{{ $loop->iteration }}</th>
-                                                      <td>Rp. {{ number_format($item->budget == null ? $item->google + $item->sosmed + $item->detik : $item->budget, 0,',','.') }}</td>
+                                                      <td>Rp. {{ number_format(($item->google + $item->sosmed + $item->detik) , 0,',','.') }}</td>
                                                       @php
                                                          if ($item->bulan != "10" and $item->bulan != "11" and $item->bulan != "12")
                                                                $idxbulan = str_replace('0','',$item->bulan);
@@ -437,6 +380,10 @@
                                                       <td>{{ $item->nama_project }}</td>
                                                       <td class="text-center">Rp. {{number_format($item->cpl,0, ',' , '.')}}</td>
                                                       <td class="text-center">Rp. {{number_format($item->cpa,0, ',' , '.')}}</td>
+                                                      <td>
+                                                        <a><i class="me-2 mb-1 btn-action" data-feather="edit-2" onclick="editRoas({{ $item->id }})" style="width: 16px; height: 16px;"></i></a>
+                                                        <a><i class="me-2 mb-1 btn-action" data-feather="x" onclick="deleteRoas({{ $item->id }})" onsubmit="return confirm('Apakah anda yakin ?')" style="width: 16px; height: 16px;"></i></a>
+                                                      </td>
                                                    </tr>
                                                 @empty
                                                    <tr>
@@ -505,96 +452,346 @@
 <script src="{{asset('assets/js/typeahead-search/handlebars.js')}}"></script>
 <script src="{{asset('assets/js/typeahead-search/typeahead-custom.js')}}"></script>
 
+{{-- unit type script--}}
 <script>
-    document.getElementById("unitTypeForm").addEventListener("submit", function(event) {
-    event.preventDefault(); // Prevent form submission
+    var editMode = false;
+    var unitId = null;
+    // JavaScript function to submit the form and reload the table using AJAX
+    function saveUnitType() {
+        event.preventDefault();
+        var form = $('#unitTypeForm');
+        var url = '/unit-type';
+        var formData = form.serialize();
 
-    // Get the input values
-    var name = document.getElementById("name").value;
-    var email = document.getElementById("email").value;
+        var method = editMode ? 'PUT' : 'POST';
+        if (method == 'PUT') {
+            url = '/unit-type/'+unitId;
+        }
 
-    // Create a new table row
-    var row = document.createElement("tr");
-
-    // Create the row cells
-    var idCell = document.createElement("td");
-    var nameCell = document.createElement("td");
-    var emailCell = document.createElement("td");
-    var actionsCell = document.createElement("td");
-
-    // Set the cell values
-    idCell.textContent = generateUniqueId(); // Replace this with the actual ID
-    nameCell.textContent = name;
-    emailCell.textContent = email;
-    actionsCell.innerHTML = '<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>';
-
-    // Append cells to the row
-    row.appendChild(idCell);
-    row.appendChild(nameCell);
-    row.appendChild(emailCell);
-    row.appendChild(actionsCell);
-
-    // Append the row to the table
-    document.getElementById("myTable").getElementsByTagName('tbody')[0].appendChild(row);
-
-    // Clear the form inputs
-    document.getElementById("name").value = '';
-    document.getElementById("email").value = '';
-
-    // Store the data in the database
-    storeData(name, email);
-});
-
-function editRow(button) {
-    var row = button.parentNode.parentNode;
-
-    // Get the cell values
-    var id = row.cells[0].textContent;
-    var name = row.cells[1].textContent;
-    var email = row.cells[2].textContent;
-
-    // Populate the form with the selected row's data
-    document.getElementById("name").value = name;
-    document.getElementById("email").value = email;
-
-    // Remove the row from the table
-    row.parentNode.removeChild(row);
-}
-
-    function deleteRow(button) {
-        var row = button.parentNode.parentNode;
-
-        // Remove the row from the table
-        row.parentNode.removeChild(row);
-    }
-
-    function generateUniqueId() {
-        // Generate a unique ID here (e.g., using a UUID library)
-        // Replace this with your actual implementation or use a backend-generated ID
-        return Math.random().toString(36).substr(2, 9);
-    }
-
-    function storeData(name, email) {
-        var data = {
-            name: name,
-            email: email
-        };
-
-        fetch('/store-data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        $.ajax({
+            type: method,
+            url: url,
+            data: formData,
+            dataType: 'json',
+            success: function (data) {
+                // On successful save, close the modal and reload the table
+                $('#unitTypeModalAdd').modal('hide');
+                editMode = false;
+                unitId = null;
+                reloadTable();
             },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(result => {
-            console.log(result);
-        })
-        .catch(error => {
-            console.error('Error:', error);
+            error: function (data) {
+                console.log('Error:', data);
+            }
         });
     }
+
+    function resetForm() {
+        // Reset the form and remove validation classes
+        var form = $('#unitTypeForm');
+        form[0].reset();
+
+        // Remove Bootstrap's "was-validated" class
+        form.removeClass('was-validated');
+
+        // Remove the validation classes from each form element
+        form.find('.form-control').removeClass('is-valid is-invalid');
+    }
+
+    // JavaScript function to reload the table using AJAX
+    function reloadTable() {
+        var table = $('#unitTypeTable');
+        var url = '{{ route("unit.index") }}';
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (response) {
+                // Check if the response has valid data
+                if (response && response.data && Array.isArray(response.data)) {
+                    var data = response.data;
+
+                    // Clear the existing table rows before adding the new ones
+                    table.find('tbody').empty();
+
+                    // Loop through the data and add rows to the table
+                    $.each(data, function (index, item) {
+                        var newRow = $('<tr>').append(
+                            $('<td>').text(index + 1),
+                            $('<td>').text(item.unit_name),
+                            $('<td>').text(item.nama_project),
+                            $('<td>').append(
+                                $('<a>').append(
+                                    $('<i>').addClass('me-2 mb-1').attr({
+                                        'data-feather': 'edit-2',
+                                        'onclick': 'editUnitType(' + item.id + ')',
+                                        'style': 'width: 16px; height: 16px;'
+                                    })
+                                ),
+                                $('<a>').append(
+                                    $('<i>').addClass('me-2 mb-1').attr({
+                                        'data-feather': 'x',
+                                        'onclick': 'deleteUnitType(' + item.id + ')',
+                                        'style': 'width: 16px; height: 16px;'
+                                    })
+                                )
+                            )
+                        );
+                        table.find('tbody').append(newRow);
+                    });
+
+                    // Reinitialize Feather icons after updating the table
+                    feather.replace();
+
+                    resetForm();
+                } else {
+                    console.log('Invalid or missing data in the AJAX response.');
+                }
+            },
+            error: function (data) {
+                console.log('Error:', data);
+            }
+        });
+    }
+
+    // Submit the form when it's submitted
+    $('#unitTypeForm').on('submit', saveUnitType);
+
+    function createUnitType() {
+        resetForm();
+        editMode = false; // Set the flag to indicate create mode
+    }
+
+    function editUnitType(id) {
+        editMode = true;
+        unitId = id;
+
+        // You may also want to fetch the existing data for the unit type and populate the form fields
+        $.get('/unit-type/' + id, function (data) {
+            $('#project_id').val(data.data.project_id);
+            $('#unit_name').val(data.data.unit_name);
+        });
+
+        // Show the modal for editing
+        $('#unitTypeModalAdd').modal('show');
+    }
+
+    function deleteUnitType(id) {
+        // Show a confirmation dialog to the user
+        var confirmDelete = confirm('Are you sure you want to delete this unit type?');
+
+        // If the user confirms the delete action, proceed with the AJAX request
+        if (confirmDelete) {
+            var url = '/unit-type/' + id;
+
+            $.ajax({
+                type: 'DELETE',
+                url: url,
+                data: {
+                    _token: "{{ csrf_token() }}" // Include the CSRF token in the request data
+                },
+                dataType: 'json',
+                success: function (data) {
+                    // On successful delete, reload the table
+                    reloadTable();
+                },
+                error: function (data) {
+                    console.log('Error:', data);
+                }
+            });
+        }
+    }
+
 </script>
+
+{{-- roas script--}}
+<script>
+
+    var rupiahInputs = document.querySelectorAll(".rupiah-input");
+
+    // Attach event listener to each input element
+    rupiahInputs.forEach(function(input) {
+        input.addEventListener("keyup", function(e) {
+            // Call the reusable formatRupiah function with this input element and prefix "Rp. "
+            input.value = formatRupiah(this.value, "Rp. ");
+        });
+    });
+
+    /* Reusable function formatRupiah */
+    function formatRupiah(angka, prefix) {
+        // The same code as in your original function remains unchanged
+        var number_string = angka.replace(/[^,\d]/g, "").toString(),
+            split = number_string.split(","),
+            sisa = split[0].length % 3,
+            rupiah = split[0].substr(0, sisa),
+            ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+        if (ribuan) {
+            separator = sisa ? "." : "";
+            rupiah += separator + ribuan.join(".");
+        }
+
+        rupiah = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
+        return prefix == undefined ? rupiah : rupiah ? prefix + rupiah : "";
+    }
+
+    // Submit the form when it's submitted
+    $('#roasForm').on('submit', saveRoas);
+
+    var editMode = false;
+    var roasId = null;
+    // JavaScript function to submit the form and reload the table using AJAX
+    function saveRoas() {
+        event.preventDefault();
+        var form = $('#roasForm');
+        var url = '/roas';
+        var formData = form.serialize();
+
+        var method = editMode ? 'PUT' : 'POST';
+        if (method == 'PUT') {
+            url = '/roas/'+roasId;
+        }
+
+        $.ajax({
+            type: method,
+            url: url,
+            data: formData,
+            dataType: 'json',
+            success: function (data) {
+                // On successful save, close the modal and reload the table
+                $('#roasModal').modal('hide');
+                editMode = false;
+                roasId = null;
+                reloadTable();
+            },
+            error: function (data) {
+                console.log('Error:', data);
+            }
+        });
+    }
+
+    function resetForm() {
+        // Reset the form and remove validation classes
+        var form = $('#roasForm');
+        form[0].reset();
+
+        // Remove Bootstrap's "was-validated" class
+        form.removeClass('was-validated');
+
+        // Remove the validation classes from each form element
+        form.find('.form-control').removeClass('is-valid is-invalid');
+    }
+
+    // JavaScript function to reload the table using AJAX
+    function reloadTable() {
+        var table = $('#roasTable');
+        var url = '{{ route("roas.index") }}';
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (response) {
+                // Check if the response has valid data
+                if (response && response.data && Array.isArray(response.data)) {
+                    var data = response.data;
+
+                    // Clear the existing table rows before adding the new ones
+                    table.find('tbody').empty();
+
+                    // Loop through the data and add rows to the table
+                    $.each(data, function (index, item) {
+                        var newRow = $('<tr>').append(
+                            $('<td>').text(index + 1),
+                            $('<td>').text((item.google + item.sosmed + item.detik)),
+                            $('<td>').text(item.bulan + item.tahun
+                                ),
+                            $('<td>').text(item.nama_project),
+                            $('<td>').text(item.cpl),
+                            $('<td>').text(item.cpa),
+                            $('<td>').append(
+                                $('<a>').append(
+                                    $('<i>').addClass('me-2 mb-1').attr({
+                                        'data-feather': 'edit-2',
+                                        'onclick': 'editUnitType(' + item.id + ')',
+                                        'style': 'width: 16px; height: 16px;'
+                                    })
+                                ),
+                                $('<a>').append(
+                                    $('<i>').addClass('me-2 mb-1').attr({
+                                        'data-feather': 'x',
+                                        'onclick': 'deleteUnitType(' + item.id + ')',
+                                        'style': 'width: 16px; height: 16px;'
+                                    })
+                                )
+                            )
+                        );
+                        table.find('tbody').append(newRow);
+                    });
+
+                    // Reinitialize Feather icons after updating the table
+                    feather.replace();
+
+                    resetForm();
+                } else {
+                    console.log('Invalid or missing data in the AJAX response.');
+                }
+            },
+            error: function (data) {
+                console.log('Error:', data);
+            }
+        });
+    }
+
+    function createRoas() {
+        resetForm();
+        editMode = false; // Set the flag to indicate create mode
+    }
+
+    function editRoas(id) {
+        editMode = true;
+        roasId = id;
+
+        // You may also want to fetch the existing data for the unit type and populate the form fields
+        $.get('/roas/' + id, function (data) {
+            $('#project_id').val(data.data.project_id);
+            $('#google').val(data.data.google);
+            $('#sosmed').val(data.data.sosmed);
+            $('#detik').val(data.data.detik);
+        });
+
+        // Show the modal for editing
+        $('#roasModal').modal('show');
+    }
+
+    function deleteUnitType(id) {
+        // Show a confirmation dialog to the user
+        var confirmDelete = confirm('Are you sure you want to delete this unit type?');
+
+        // If the user confirms the delete action, proceed with the AJAX request
+        if (confirmDelete) {
+            var url = '/unit-type/' + id;
+
+            $.ajax({
+                type: 'DELETE',
+                url: url,
+                data: {
+                    _token: "{{ csrf_token() }}" // Include the CSRF token in the request data
+                },
+                dataType: 'json',
+                success: function (data) {
+                    // On successful delete, reload the table
+                    reloadTable();
+                },
+                error: function (data) {
+                    console.log('Error:', data);
+                }
+            });
+        }
+    }
+
+</script>
+
+
 @endsection

@@ -14,17 +14,9 @@ class UnitController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $units = Unit::getUnits();
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return response()->json(['message' => 'Unit type saved successfully.', 'data' => $units]);
     }
 
     /**
@@ -35,7 +27,12 @@ class UnitController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $unitType = new Unit();
+        $unitType->project_id = $request->project_id;
+        $unitType->unit_name = $request->unit_name;
+        $unitType->save();
+
+        return response()->json(['message' => 'Unit type saved successfully.']);
     }
 
     /**
@@ -44,20 +41,10 @@ class UnitController extends Controller
      * @param  \App\Models\Unit  $unit
      * @return \Illuminate\Http\Response
      */
-    public function show(Unit $unit)
+    public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Unit  $unit
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Unit $unit)
-    {
-        //
+        $unitType = Unit::find($id);
+        return response()->json(['data' => $unitType]);
     }
 
     /**
@@ -67,9 +54,14 @@ class UnitController extends Controller
      * @param  \App\Models\Unit  $unit
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Unit $unit)
+    public function update(Request $request, $id)
     {
-        //
+        $unit = Unit::find($id);
+        $unit->project_id = $request->project_id;
+        $unit->unit_name = $request->unit_name;
+        $unit->save();
+
+        return response()->json(['msg' => 'Unit Type updated successfully']);
     }
 
     /**
@@ -78,8 +70,9 @@ class UnitController extends Controller
      * @param  \App\Models\Unit  $unit
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Unit $unit)
+    public function destroy($id)
     {
-        //
+        $unit = Unit::where('id', $id)->delete();
+        return response()->json(['msg' => 'Unit Type deleted successfully']);
     }
 }
