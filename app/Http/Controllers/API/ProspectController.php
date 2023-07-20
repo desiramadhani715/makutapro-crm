@@ -107,6 +107,13 @@ class ProspectController extends Controller
         foreach ($leads as $lead) {
             $lead->project = Project::find($request->project_id);
             $lead->status = Status::find($lead->status_id);
+            $lead->gender = DB::table('gender')->where('id',$lead->gender_id)->get();
+            $lead->usia = DB::table('usia')->where('id',$lead->usia_id)->get();
+            $lead->domisili = DB::table('city')->where('id',$lead->domisili_id)->get();
+            $lead->tempatKerja = DB::table('city')->where('id',$lead->tempat_kerja_id)->get();
+            $lead->tempatKerja = DB::table('city')->where('id',$lead->tempat_kerja_id)->get();
+            $lead->pekerjaan = DB::table('pekerjaan')->where('id',$lead->pekerjaan_id)->get();
+            $lead->penghasilan = DB::table('penghasilan')->where('id',$lead->penghasilan_id)->get();
 
             if($request->id){
                 $historyChangeStatus = $lead->historyChangeStatus;
