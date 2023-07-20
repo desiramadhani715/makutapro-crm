@@ -43,7 +43,6 @@ class ProspectController extends Controller
             ->where('hp.user_id', Auth::user()->id)
             ->with('notesAdmin');
 
-
         $newLeads = Prospect::join('history_prospect as hp', 'hp.prospect_id', 'prospect.id')
             ->join('sumber_platform as sp', 'sp.id', 'prospect.sumber_platform_id')
             ->select('prospect.id', 'prospect.nama_prospect', 'prospect.hp', 'prospect.email', 'prospect.is_pin', 'prospect.date_pin', 'prospect.created_at', 'prospect.status_id', 'sp.nama_platform', 'prospect.catatan_admin')
@@ -53,9 +52,10 @@ class ProspectController extends Controller
             ->whereIn('prospect.status_id', [1, 7]);
 
         $leads = $oldLeads->union($newLeads);
+
         $leads->orderBy('date_pin', 'desc')
                 ->orderBy('id', 'desc');
-                
+
         $leads = $leads->get();
 
         foreach ($leads as $lead) {
@@ -71,15 +71,12 @@ class ProspectController extends Controller
 
         $leads = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')
                         ->join('sumber_platform as sp','sp.id','prospect.sumber_platform_id')
-                        ->select('prospect.id','prospect.nama_prospect','prospect.hp','prospect.email','prospect.is_pin','prospect.date_pin','prospect.created_at','prospect.status_id','sp.nama_platform','prospect.catatan_admin','fu.created_at as fudate')
-                        ->leftJoin('fu','fu.id',DB::raw('(select max(`id`) as fuid from fu where fu.prospect_id = prospect.id)'))
-                        ->whereRaw('(fu.created_at >= DATE_ADD(NOW(), INTERVAL -30 DAY))')
+                        ->select('prospect.id','prospect.nama_prospect','prospect.hp','prospect.email','prospect.is_pin','prospect.date_pin','prospect.created_at','prospect.status_id','sp.nama_platform','prospect.catatan_admin')
                         ->where('hp.project_id', $request->project_id)
                         ->where('hp.user_id', Auth::user()->id)
                         ->with('notesAdmin')
                         ->orderBy('prospect.date_pin','desc')
                         ->orderBy('prospect.id','desc');
-
 
         if($request->id){
             $leads->join('project','project.id','hp.project_id')
@@ -139,6 +136,12 @@ class ProspectController extends Controller
             return ResponseFormatter::error(null, 'Nomor Handphone Sudah terdaftar');
         }
 
+        $sumber_platform_id = 8;
+
+        if ($request->verified_status == 0) {
+            $sumber_platform_id = 1;
+        }
+
         $sales = Sales::join('users','users.id','sales.user_id')
                         ->where('users.id',Auth::user()->id)
                         ->where('sales.project_id',$request->project_id)
@@ -173,11 +176,10 @@ class ProspectController extends Controller
             'role_by' => 6,
             'input_by' => Auth::user()->username,
             'status_id' => 3,
-            'sumber_platform_id' => 8,
-            'accept_status' => 1,
+            'sumber_platform_id' => $sumber_platform_id,
+            'accept_status' => 0,
             'accept_at' => date(now())
         ]);
-
 
         HistoryInputSales::create([
             'prospect_id' => Prospect::max('id'),
