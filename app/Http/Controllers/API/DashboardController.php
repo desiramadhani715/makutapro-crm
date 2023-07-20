@@ -66,4 +66,18 @@ class DashboardController extends Controller
             'leadSum' => $leadSum->get()
         ]);
     }
+
+    public function banner_detail($banner_id){
+
+        $banner = Banner::where('id', $banner_id)->get()->map(function ($item) {
+                    $item->banner = Config::get('app.url').'/public/storage/banner/'.$item->banner;
+                    return $item;
+                });
+
+        if ($banner->isEmpty()) {
+            return ResponseFormatter::error('Banner Not Found.');
+        }
+
+        return ResponseFormatter::success($banner);
+    }
 }
