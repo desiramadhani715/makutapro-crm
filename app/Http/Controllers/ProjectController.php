@@ -34,6 +34,7 @@ class ProjectController extends Controller
         $data = Pt::with('project')
                 ->where('user_id',Auth::user()->id)
                 ->get();
+        // dd($data);
 
         if(count($data) > 0){
             for ($i=0; $i < count($data[0]->project) ; $i++) {
@@ -108,6 +109,7 @@ class ProjectController extends Controller
         $newproject->send_by = $request->send_by;
         $newproject->save();
 
+
         if ($request->hasFile('banner')) {
             $projectId = $newproject->id;
             collect($request->file('banner'))->each(function ($file, $sort) use ($projectId){
@@ -175,7 +177,7 @@ class ProjectController extends Controller
             });
         }
 
-        return redirect()->route('project.index ');
+        return redirect()->route('project.index');
     }
 
     /**
