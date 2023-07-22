@@ -143,12 +143,6 @@ class ProspectController extends Controller
             return ResponseFormatter::error(null, 'Nomor Handphone Sudah terdaftar');
         }
 
-        $sumber_platform_id = 8;
-
-        if ($request->verified_status == 0) {
-            $sumber_platform_id = 1;
-        }
-
         $sales = Sales::join('users','users.id','sales.user_id')
                         ->where('users.id',Auth::user()->id)
                         ->where('sales.project_id',$request->project_id)
@@ -183,8 +177,8 @@ class ProspectController extends Controller
             'role_by' => 6,
             'input_by' => Auth::user()->username,
             'status_id' => 3,
-            'sumber_platform_id' => $sumber_platform_id,
-            'accept_status' => 0,
+            'sumber_platform_id' => 8,
+            'accept_status' => 1,
             'accept_at' => date(now())
         ]);
 
