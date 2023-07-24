@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Sales;
 use App\Models\Project;
+use App\Models\Prospect;
 use App\Models\Banner;
 use App\Models\Status;
 use App\Models\HistoryProspect;
@@ -47,23 +48,41 @@ class DashboardController extends Controller
                             return $item;
                         });
 
-        $leadSum = Status::leftJoin('prospect', 'status.id', 'prospect.status_id')
-                            ->leftJoin('history_prospect', function ($join) use ($project_id) {
-                                $join->on('history_prospect.prospect_id', 'prospect.id')
-                                    ->where('history_prospect.project_id', $project_id);})
-                            ->select(DB::raw('count(history_prospect.id) as total'), 'status.status')
-                            ->groupBy('status.status');
+        $leads = Status::leftJoin('prospect', 'prospect.status_id', 'status.id')
+                            ->leftJoin('history_prospect as hp', function ($join) use ($project_id) {
+                                $join->on('hp.prospect_id', 'prospect.id')
+                                    ->where('hp.project_id', $project_id)
+                                    ->where('hp.user_id', Auth::user()->id);});
 
-        if($request->start_date && $request->end_date)
-            $leadSum->whereBetween('prospect.created_at',[$request->start_date, $request->end_date]);
-        else
-            $leadSum->whereRaw('prospect.created_at >= DATE_ADD(NOW(), INTERVAL -30 DAY) OR prospect.id IS NULL');
+        $ownLeads = Prospect::with('historyProspect')
+                    ->whereHas('historyProspect', function ($query) use ($project_id){
+                        $query->where('project_id', $project_id)->where('user_id', Auth::user()->id);
+                    })
+                    ->where('sumber_platform_id',8);
+
+        if($request->start_date && $request->end_date){
+            $leads->whereBetween('prospect.created_at',[$request->start_date, $request->end_date]);
+            $ownLeads->whereBetween('prospect.created_at',[$request->start_date, $request->end_date]);
+        }
+        else {
+            $leads->whereRaw('prospect.created_at >= DATE_ADD(NOW(), INTERVAL -30 DAY) OR prospect.id IS NULL');
+            $ownLeads->whereRaw('prospect.created_at >= DATE_ADD(NOW(), INTERVAL -30 DAY) OR prospect.id IS NULL');
+        }
+
+        $leadSum = $leads->select(DB::raw('count(hp.id) as total'), 'status.status')->groupBy('status.status')->get();
+
+        $ownLeadsCount = (object) [
+            'total' => $ownLeads->count(),
+            'status' => 'Own Leads',
+        ];
+
+        $leadSum[] = $ownLeadsCount;
 
         return ResponseFormatter::success([
             'project' => $project,
             'teams' => $teams,
             'banner' => $banner,
-            'leadSum' => $leadSum->get()
+            'leadSum' => $leadSum
         ]);
     }
 

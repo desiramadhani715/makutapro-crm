@@ -38,10 +38,10 @@ Route::group(['middleware' => ['auth', 'role:1']], function () {
     Route::match(['get', 'post'], '/developer', [DashboardController::class, 'index'])->name('/');
     Route::get('prospect/getall', [ProspectController::class, 'get_all'])->name('prospect.all');
     Route::get('project/prospect', [ProjectController::class, 'get_prospect'])->name('project.prospect');
-    Route::resource('prospect', ProspectController::class)->names('prospect');
-    Route::resource('project', ProjectController::class);
-    Route::resource('agent', AgentController::class);
-    Route::resource('demografi', DemografiController::class);
+    Route::resource('prospect', App\Http\Controllers\ProspectController::class)->names('prospect');
+    Route::resource('project', App\Http\Controllers\ProjectController::class);
+    Route::resource('agent', App\Http\Controllers\AgentController::class);
+    Route::resource('demografi', App\Http\Controllers\DemografiController::class);
     Route::post('agent/active', [AgentController::class, 'active'])->name('agent.active');
     Route::post('agent/nonactive', [AgentController::class, 'nonactive'])->name('agent.nonactive');
     Route::get('sales/{agent_id}', [SalesController::class, 'index'])->name('sales.index');

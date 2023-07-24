@@ -103,6 +103,10 @@ class DashboardController extends Controller
         if($request->days == 365)
             $summaryLabel = "a Year ago";
 
+        // if ($request->since) {
+        //     $since =
+        // }
+
         $start_date = Carbon::now()->subDays($request->days);
         $end_date = Carbon::now();
 
@@ -174,9 +178,5 @@ class DashboardController extends Controller
         ];
 
         return $data;
-    }
-
-    public function banner(Request $request){
-        
     }
 }

@@ -29,9 +29,9 @@ class RoasController extends Controller
         $received_budget = str_replace('.', '', str_replace('Rp. ', '', $request->received_budget));
 
         list($monthName, $tahun) = explode(" ", $request->month);
-        $bulan = date('n', strtotime($monthName));
+        // $bulan = date('n', strtotime($monthName));
 
-        $lead = Prospect::whereRaw('month(prospect.created_at) = '.'"'.$bulan.'" && year(prospect.created_at) = '.'"'.$tahun.'"')
+        $lead = Prospect::whereRaw('month(prospect.created_at) = '.'"'.$monthName.'" && year(prospect.created_at) = '.'"'.$tahun.'"')
                 ->with(['historyProspect' => function ($query) {
                     $query->where('project_id', $request->project_id);
                 }]);
@@ -48,7 +48,7 @@ class RoasController extends Controller
         $roas->detik = intval($detik);
         $roas->cpl = $lead->count() == 0 ? 0 : round((intval($google) + intval($sosmed) + intval($detik)) / $lead->count() , 2);
         $roas->cpa = $lead->where('prospect.status_id', 5)->count() == 0 ? 0 : round((intval($google) + intval($sosmed) + intval($detik)) / $lead->count() , 2);
-        $roas->bulan = $bulan;
+        $roas->bulan = $monthName;
         $roas->tahun = $tahun;
         $roas->received_budget = intval($received_budget);
         $roas->received_date = $received_date;
@@ -67,6 +67,49 @@ class RoasController extends Controller
     {
         $roas = Roas::find($id);
         return response()->json(['data' => $roas]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Roas  $unit
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $google = str_replace('.', '', str_replace('Rp. ', '', $request->google));
+        $sosmed = str_replace('.', '', str_replace('Rp. ', '', $request->sosmed));
+        $detik = str_replace('.', '', str_replace('Rp. ', '', $request->detik));
+        $received_budget = str_replace('.', '', str_replace('Rp. ', '', $request->received_budget));
+
+        list($monthName, $tahun) = explode(" ", $request->month);
+        // $bulan = date('n', strtotime($monthName));
+
+        $lead = Prospect::whereRaw('month(prospect.created_at) = '.'"'.$monthName.'" && year(prospect.created_at) = '.'"'.$tahun.'"')
+                ->with(['historyProspect' => function ($query) {
+                    $query->where('project_id', $request->project_id);
+                }]);
+
+        $received_date = null;
+        if($request->received_date){
+            $received_date = Carbon::createFromFormat('m/d/Y', $request->received_date)->format('Y-m-d');
+        }
+
+        $roas = Roas::find($id);
+        $roas->project_id = $request->project_id;
+        $roas->google = intval($google);
+        $roas->sosmed = intval($sosmed);
+        $roas->detik = intval($detik);
+        $roas->cpl = $lead->count() == 0 ? 0 : round((intval($google) + intval($sosmed) + intval($detik)) / $lead->count() , 2);
+        $roas->cpa = $lead->where('prospect.status_id', 5)->count() == 0 ? 0 : round((intval($google) + intval($sosmed) + intval($detik)) / $lead->count() , 2);
+        $roas->bulan = $monthName;
+        $roas->tahun = $tahun;
+        $roas->received_budget = intval($received_budget);
+        $roas->received_date = $received_date;
+        $roas->save();
+
+        return response()->json(['msg' => 'Roas updated successfully']);
     }
 
 }

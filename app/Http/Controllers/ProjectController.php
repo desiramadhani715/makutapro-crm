@@ -137,6 +137,7 @@ class ProjectController extends Controller
         $agent = Agent::where('project_id',$project->id)->get();
         $status = DB::table('status')->get();
         $project = $project::with('banner')->find($project->id);
+        // dd($project);
 
         return view('pages.project.show', compact('project','agent','status'));
     }

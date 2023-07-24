@@ -12,6 +12,22 @@
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/owlcarousel.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/prism.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/whether-icon.css')}}">
+<script>
+    // Get the input element by its ID
+    const inputElement = document.getElementById('since');
+
+    // Add an event listener to the input element
+    inputElement.addEventListener('change', function() {
+      // Get the new value of the input element
+      const newValue = inputElement.value;
+
+      // Display the prompt with the new value
+      alert('New date selected: ' + newValue);
+
+      // If you want to call the refreshDatatableWithParam() function with the new value, you can do it here
+      // refreshDatatableWithParam(newValue);
+    });
+</script>
 @endsection
 
 @section('style')
@@ -162,7 +178,7 @@
 										<div class="inner-top-right">
 											<div class="row d-flex list-unstyled justify-content-end">
 												<div class="col-6">
-													<input class="form-control form-control-sm datepicker-here since" name="since" id="since" placeholder="Since" type="text" data-language="en" onchange="refreshDatatable()">
+													<input class="form-control form-control-sm datepicker-here since" name="since" id="since" placeholder="Since" type="text" data-language="en">
 												</div>
 												<div class="col-6">
 													<input class="form-control form-control-sm datepicker-here " name="to" id="to" placeholder="To" type="text" data-language="en" onchange="refreshDatatable()">
@@ -449,6 +465,8 @@
 	refreshChart(7);
 
 </script>
+
+
 
 <script>
 	// platform chart

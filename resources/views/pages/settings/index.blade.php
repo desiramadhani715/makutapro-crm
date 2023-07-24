@@ -209,7 +209,7 @@
                            <div class="card mb-0">
                               <div class="card-header d-flex">
                                  <h5 class="mb-0">Unit Type</h5>
-                                 <a href="" type="button" data-bs-toggle="modal" data-bs-target="#unitTypeModalAdd"><i class="me-2 mb-1" data-feather="plus-square" onclick="createUnitType()"></i>Add</a>
+                                 <a href="" onclick="createUnitType()" type="button" data-bs-toggle="modal" data-bs-target="#unitTypeModalAdd"><i class="me-2 mb-1" data-feather="plus-square"></i>Add</a>
                                  <div class="modal fade modal-bookmark" id="unitTypeModalAdd" tabindex="-1" role="dialog" aria-labelledby="unitTypeModalAddLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg" role="document">
                                        <div class="modal-content">
@@ -286,7 +286,7 @@
                            <div class="card mb-0">
                               <div class="card-header d-flex">
                                  <h5 class="mb-0">Return on Ad Spend</h5>
-                                 <a href="" type="button" data-bs-toggle="modal" data-bs-target="#roasModal"><i class="me-2 mb-1" data-feather="plus-square" onclick="createRoas()"></i>Add</a>
+                                 <a href="" type="button" onclick="createRoas()" data-bs-toggle="modal" data-bs-target="#roasModal"><i class="me-2 mb-1" data-feather="plus-square"></i>Add</a>
                                  <div class="modal fade modal-bookmark" id="roasModal" tabindex="-1" role="dialog" aria-labelledby="roasModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-lg" role="document">
                                        <div class="modal-content">
@@ -301,7 +301,8 @@
                                                    <div class="mb-3 mt-0 col-md-12">
                                                         <div class="row">
                                                             <div class="col-md-6">
-                                                                <select name="project_id" id="project_id" class="form-control" required>
+                                                                <label for="sub-task">Project</label>
+                                                                <select name="project_id" id="project_id_roas" class="form-control" required>
                                                                   <option value="">Choose Project</option>
                                                                   @foreach ($projects as $item)
                                                                       <option value="{{$item->id}}">{{$item->nama_project}}</option>
@@ -309,7 +310,8 @@
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-6">
-                                                                <input class="datepicker-here form-control" name="month" type="text" data-language="en" placeholder="Month" data-min-view="months" data-view="months" data-date-format="MM yyyy">
+                                                                <label for="sub-task">Bulan</label>
+                                                                <input class="datepicker-here form-control" id="month" name="month" type="text" data-language="en" placeholder="Month" data-min-view="months" data-view="months" data-date-format="MM yyyy">
                                                             </div>
                                                         </div>
                                                    </div>
@@ -333,7 +335,7 @@
                                                         </div>
                                                         <div class="col-md-6">
                                                             <label for="sub-task">Received Date</label>
-                                                            <input class="datepicker-here form-control" name="received_date" type="text" data-language="en">
+                                                            <input class="datepicker-here form-control" id="received_date" name="received_date" type="text" data-language="en">
                                                         </div>
                                                     </div>
                                                     </div>
@@ -354,30 +356,23 @@
                                              <thead class="thead-dark">
                                                 <tr>
                                                    <th scope="col">No.</th>
-                                                   <th scope="col">Budget</th>
-                                                   <th scope="col">Bulan/Tahun</th>
+                                                   {{-- <th scope="col">Budget Spent</th> --}}
+                                                   {{-- <th scope="col">Budget Received</th> --}}
                                                    <th scope="col">Project</th>
+                                                   <th scope="col">Bulan/Tahun</th>
                                                    <th scope="col" class="text-center">CPL <br> <small>(Cost Per Leads)</small></th>
                                                    <th scope="col" class="text-center">CPA <br> <small>(Cost Per Acquisition)</small></th>
                                                    <th scope="col" ></th>
                                                 </tr>
                                              </thead>
                                              <tbody>
-                                                @php
-                                                   $bulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-                                                @endphp
                                                 @forelse ($roas as $item)
                                                    <tr>
                                                       <th scope="row">{{ $loop->iteration }}</th>
-                                                      <td>Rp. {{ number_format(($item->google + $item->sosmed + $item->detik) , 0,',','.') }}</td>
-                                                      @php
-                                                         if ($item->bulan != "10" and $item->bulan != "11" and $item->bulan != "12")
-                                                               $idxbulan = str_replace('0','',$item->bulan);
-                                                         else
-                                                               $idxBulan = $item->bulan;
-                                                      @endphp
-                                                      <td>{{ $bulan[$item->bulan - 1] , $item->tahun }}</td>
+                                                      {{-- <td>Rp. {{ number_format(($item->google + $item->sosmed + $item->detik) , 0,',','.') }}</td> --}}
+                                                      {{-- <td>Rp. {{ number_format(($item->received_budget) , 0,',','.') }}</td> --}}
                                                       <td>{{ $item->nama_project }}</td>
+                                                      <td>{{ $item->bulan}} {{ $item->tahun }}</td>
                                                       <td class="text-center">Rp. {{number_format($item->cpl,0, ',' , '.')}}</td>
                                                       <td class="text-center">Rp. {{number_format($item->cpa,0, ',' , '.')}}</td>
                                                       <td>
@@ -605,7 +600,6 @@
 
 </script>
 
-{{-- roas script--}}
 <script>
 
     var rupiahInputs = document.querySelectorAll(".rupiah-input");
@@ -621,7 +615,7 @@
     /* Reusable function formatRupiah */
     function formatRupiah(angka, prefix) {
         // The same code as in your original function remains unchanged
-        var number_string = angka.replace(/[^,\d]/g, "").toString(),
+        var number_string = angka.toString().replace(/[^,\d]/g, "").toString(),
             split = number_string.split(","),
             sisa = split[0].length % 3,
             rupiah = split[0].substr(0, sisa),
@@ -639,7 +633,7 @@
     // Submit the form when it's submitted
     $('#roasForm').on('submit', saveRoas);
 
-    var editMode = false;
+    var editModeRoas = false;
     var roasId = null;
     // JavaScript function to submit the form and reload the table using AJAX
     function saveRoas() {
@@ -648,7 +642,7 @@
         var url = '/roas';
         var formData = form.serialize();
 
-        var method = editMode ? 'PUT' : 'POST';
+        var method = editModeRoas ? 'PUT' : 'POST';
         if (method == 'PUT') {
             url = '/roas/'+roasId;
         }
@@ -661,9 +655,9 @@
             success: function (data) {
                 // On successful save, close the modal and reload the table
                 $('#roasModal').modal('hide');
-                editMode = false;
+                editModeRoas = false;
                 roasId = null;
-                reloadTable();
+                reloadTableRoas();
             },
             error: function (data) {
                 console.log('Error:', data);
@@ -671,7 +665,7 @@
         });
     }
 
-    function resetForm() {
+    function resetFormRoas() {
         // Reset the form and remove validation classes
         var form = $('#roasForm');
         form[0].reset();
@@ -684,7 +678,7 @@
     }
 
     // JavaScript function to reload the table using AJAX
-    function reloadTable() {
+    function reloadTableRoas() {
         var table = $('#roasTable');
         var url = '{{ route("roas.index") }}';
 
@@ -704,12 +698,11 @@
                     $.each(data, function (index, item) {
                         var newRow = $('<tr>').append(
                             $('<td>').text(index + 1),
-                            $('<td>').text((item.google + item.sosmed + item.detik)),
-                            $('<td>').text(item.bulan + item.tahun
-                                ),
+                            // $('<td>').text(item.received_budget),
                             $('<td>').text(item.nama_project),
-                            $('<td>').text(item.cpl),
-                            $('<td>').text(item.cpa),
+                            $('<td>').text(item.bulan +' '+ item.tahun),
+                            $('<td>').text(formatRupiah(item.cpl)),
+                            $('<td>').text(formatRupiah(item.cpa)),
                             $('<td>').append(
                                 $('<a>').append(
                                     $('<i>').addClass('me-2 mb-1').attr({
@@ -733,7 +726,7 @@
                     // Reinitialize Feather icons after updating the table
                     feather.replace();
 
-                    resetForm();
+                    resetFormRoas();
                 } else {
                     console.log('Invalid or missing data in the AJAX response.');
                 }
@@ -745,27 +738,30 @@
     }
 
     function createRoas() {
-        resetForm();
-        editMode = false; // Set the flag to indicate create mode
+        resetFormRoas();
+        editModeRoas = false; // Set the flag to indicate create mode
     }
 
     function editRoas(id) {
-        editMode = true;
+        editModeRoas = true;
         roasId = id;
 
         // You may also want to fetch the existing data for the unit type and populate the form fields
         $.get('/roas/' + id, function (data) {
-            $('#project_id').val(data.data.project_id);
-            $('#google').val(data.data.google);
-            $('#sosmed').val(data.data.sosmed);
-            $('#detik').val(data.data.detik);
+            $('#project_id_roas').val(data.data.project_id);
+            $('#month').val(data.data.bulan +' '+ data.data.tahun);
+            $('#google').val(formatRupiah(data.data.google, "Rp. "));
+            $('#sosmed').val(formatRupiah(data.data.sosmed, "Rp. "));
+            $('#detik').val(formatRupiah(data.data.detik, "Rp. "));
+            $('#received_budget').val(formatRupiah(data.data.received_budget, "Rp. "));
+            $('#received_date').val(data.data.received_date);
         });
 
         // Show the modal for editing
         $('#roasModal').modal('show');
     }
 
-    function deleteUnitType(id) {
+    function deleteRoas(id) {
         // Show a confirmation dialog to the user
         var confirmDelete = confirm('Are you sure you want to delete this unit type?');
 
@@ -782,7 +778,7 @@
                 dataType: 'json',
                 success: function (data) {
                     // On successful delete, reload the table
-                    reloadTable();
+                    reloadTableRoas();
                 },
                 error: function (data) {
                     console.log('Error:', data);
@@ -792,6 +788,7 @@
     }
 
 </script>
+
 
 
 @endsection
