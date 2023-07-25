@@ -13,6 +13,7 @@ use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\RoasController;
+use App\Http\Controllers\AdvertiserController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
@@ -69,6 +70,18 @@ Route::group(['middleware' => ['auth', 'role:1']], function () {
     Route::get('/roas', [RoasController::class, 'index'])->name('roas.index');
     Route::get('/roas/{id}', [RoasController::class, 'show'])->name('roas.show');
     Route::delete('/roas/{id}', [RoasController::class, 'destroy'])->name('roas.destroy');
+
+    Route::post('/campaign', [CampaignController::class, 'store'])->name('campaign.store');
+    Route::put('/campaign/{id}', [CampaignController::class, 'update'])->name('campaign.update');
+    Route::get('/campaign', [CampaignController::class, 'index'])->name('campaign.index');
+    Route::get('/campaign/{id}', [CampaignController::class, 'show'])->name('campaign.show');
+    Route::delete('/campaign/{id}', [CampaignController::class, 'destroy'])->name('campaign.destroy');
+
+    Route::post('/advertiser', [AdvertiserController::class, 'store'])->name('advertiser.store');
+    Route::put('/advertiser/{id}', [AdvertiserController::class, 'update'])->name('advertiser.update');
+    Route::get('/advertiser', [AdvertiserController::class, 'index'])->name('advertiser.index');
+    Route::get('/advertiser/{id}', [AdvertiserController::class, 'show'])->name('advertiser.show');
+    Route::delete('/advertiser/{id}', [AdvertiserController::class, 'destroy'])->name('advertiser.destroy');
 
 });
 

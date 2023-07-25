@@ -112,4 +112,16 @@ class RoasController extends Controller
         return response()->json(['msg' => 'Roas updated successfully']);
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Roas  $unit
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $unit = Roas::where('id', $id)->delete();
+        return response()->json(['msg' => 'Roas Type deleted successfully']);
+    }
+
 }

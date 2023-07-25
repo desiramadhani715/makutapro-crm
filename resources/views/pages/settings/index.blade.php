@@ -68,6 +68,7 @@
                            <li><a id="unit-type-tab" data-bs-toggle="pill" href="#unit-type" role="tab" aria-controls="unit-type" aria-selected="true"><span class="title"> Unit Type</span></a></li>
                            <li><a class="show" id="roas-tab" data-bs-toggle="pill" href="#roas" role="tab" aria-controls="roas" aria-selected="false"><span class="title"> ROAS</span></a></li>
                            <li><a class="show" id="campaign-tab" data-bs-toggle="pill" href="#campaign" role="tab" aria-controls="campaign" aria-selected="false"><span class="title">Campaign</span></a></li>
+                           <li><a class="show" id="advertiser-tab" data-bs-toggle="pill" href="#advertiser" role="tab" aria-controls="advertiser" aria-selected="false"><span class="title">Advertiser</span></a></li>
                            <li><a class="show" id="app-logs-tab" data-bs-toggle="pill" href="#app-logs" role="tab" aria-controls="app-logs" aria-selected="false"><span class="title">App Logs</span></a></li>
                            <li>
                               <hr>
@@ -214,7 +215,7 @@
                                     <div class="modal-dialog modal-lg" role="document">
                                        <div class="modal-content">
                                           <div class="modal-header">
-                                             <h5 class="modal-title" id="exampleModalLabel">Add Unit Type</h5>
+                                             <h5 class="modal-title" id="exampleModalLabel">Unit Type</h5>
                                              <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                                           </div>
                                           <div class="modal-body">
@@ -291,7 +292,7 @@
                                     <div class="modal-dialog modal-lg" role="document">
                                        <div class="modal-content">
                                           <div class="modal-header">
-                                             <h5 class="modal-title" id="exampleModalLabel">Add ROAS</h5>
+                                             <h5 class="modal-title" id="exampleModalLabel">Return on Ad Spend</h5>
                                              <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
                                           </div>
                                           <div class="modal-body">
@@ -399,15 +400,147 @@
                            </div>
                         </div>
                         <div class="fade tab-pane" id="campaign" role="tabpanel" aria-labelledby="campaign-tab">
-                           <div class="card mb-0">
-                              <div class="card-header d-flex">
-                                 <h5 class="mb-0">Campaign Management</h5>
-                                 <a href="#"><i class="me-2" data-feather="printer"></i>Print</a>
-                              </div>
-                              <div class="card-body">
-                                 <div class="details-bookmark text-center"><span>No tasks found.</span></div>
-                              </div>
-                           </div>
+                            <div class="card mb-0">
+                                <div class="card-header d-flex">
+                                   <h5 class="mb-0">Campaign</h5>
+                                   <a href="" onclick="createCampaign()" type="button" data-bs-toggle="modal" data-bs-target="#campaignModal"><i class="me-2 mb-1" data-feather="plus-square"></i>Add</a>
+                                   <div class="modal fade modal-bookmark" id="campaignModal" tabindex="-1" role="dialog" aria-labelledby="campaignModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog modal-lg" role="document">
+                                         <div class="modal-content">
+                                            <div class="modal-header">
+                                               <h5 class="modal-title" id="exampleModalLabel">Campaign</h5>
+                                               <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                               <form class="form-bookmark needs-validation" method="POST" id="campaignForm">
+                                                  @csrf
+                                                  <div class="row">
+                                                     <div class="mb-3 mt-0 col-md-12">
+                                                        <label for="task-title">Project</label>
+                                                        <select name="project_id" id="project_id_campaign" class="form-control" required>
+                                                          <option value="">Choose Project</option>
+                                                          @foreach ($projects as $item)
+                                                              <option value="{{$item->id}}">{{$item->nama_project}}</option>
+                                                          @endforeach
+                                                        </select>
+                                                     </div>
+                                                     <div class="mb-3 mt-0 col-md-12">
+                                                        <label for="sub-task">Campaign Name</label>
+                                                        <input class="form-control" id="nama_campaign" type="text" required="" name="nama_campaign">
+                                                     </div>
+                                                  </div>
+                                                  <button class="btn btn-secondary" id="Bookmark" type="submit" >Save</button>
+                                                  <button class="btn btn-primary" type="button" data-bs-dismiss="modal">Cancel</button>
+                                               </form>
+                                            </div>
+                                         </div>
+                                      </div>
+                                   </div>
+                                </div>
+                                <div class="card-body">
+                                   <div class="card-block row">
+                                      <div class="col-sm-12 col-lg-12 col-xl-12">
+                                         <div class="table-responsive">
+                                            <table class="table" id="campaignTable">
+                                               <thead class="thead-dark">
+                                                  <tr>
+                                                     <th scope="col">No</th>
+                                                     <th scope="col">Campaign Name</th>
+                                                     <th scope="col">Project</th>
+                                                     <th scope="col"></th>
+                                                  </tr>
+                                               </thead>
+                                               <tbody>
+                                                  @forelse ($campaign as $item)
+                                                     <tr>
+                                                        <th scope="row">{{ $loop->iteration }}</th>
+                                                        <td>{{ $item->nama_campaign }}</td>
+                                                        <td>{{ $item->nama_project }}</td>
+                                                        <td>
+                                                          <a><i class="me-2 mb-1 btn-action" data-feather="edit-2" onclick="editCampaign({{ $item->id }})" style="width: 16px; height: 16px;"></i></a>
+                                                          <a><i class="me-2 mb-1 btn-action" data-feather="x" onclick="deleteCampaign({{ $item->id }})" onsubmit="return confirm('Apakah anda yakin ?')" style="width: 16px; height: 16px;"></i></a>
+                                                        </td>
+                                                     </tr>
+                                                  @empty
+                                                     <tr>
+                                                        <th></th>
+                                                        <td class="text-center">Campaign Not Available.</td>
+                                                        <td></td>
+                                                     </tr>
+                                                  @endforelse
+                                               </tbody>
+                                            </table>
+                                         </div>
+                                      </div>
+                                   </div>
+                                </div>
+                             </div>
+                        </div>
+                        <div class="fade tab-pane" id="advertiser" role="tabpanel" aria-labelledby="advertiser-tab">
+                            <div class="card mb-0">
+                                <div class="card-header d-flex">
+                                   <h5 class="mb-0">Advertiser</h5>
+                                   <a href="" onclick="createAdvertiser()" type="button" data-bs-toggle="modal" data-bs-target="#advertiserModal"><i class="me-2 mb-1" data-feather="plus-square"></i>Add</a>
+                                   <div class="modal fade modal-bookmark" id="advertiserModal" tabindex="-1" role="dialog" aria-labelledby="advertiserModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog modal-lg" role="document">
+                                         <div class="modal-content">
+                                            <div class="modal-header">
+                                               <h5 class="modal-title" id="exampleModalLabel">Advertiser</h5>
+                                               <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                               <form class="form-bookmark needs-validation" method="POST" id="advertiserForm">
+                                                  @csrf
+                                                  <div class="row">
+                                                     <div class="mb-3 mt-0 col-md-12">
+                                                        <label for="sub-task">Advertiser</label>
+                                                        <input class="form-control" id="advertiserName" type="text" required="" name="advertiser">
+                                                     </div>
+                                                  </div>
+                                                  <button class="btn btn-secondary" id="Bookmark" type="submit" >Save</button>
+                                                  <button class="btn btn-primary" type="button" data-bs-dismiss="modal">Cancel</button>
+                                               </form>
+                                            </div>
+                                         </div>
+                                      </div>
+                                   </div>
+                                </div>
+                                <div class="card-body">
+                                   <div class="card-block row">
+                                      <div class="col-sm-12 col-lg-12 col-xl-12">
+                                         <div class="table-responsive">
+                                            <table class="table" id="advertiserTable">
+                                               <thead class="thead-dark">
+                                                  <tr>
+                                                     <th scope="col">No</th>
+                                                     <th scope="col">Advertiser</th>
+                                                     <th scope="col"></th>
+                                                  </tr>
+                                               </thead>
+                                               <tbody>
+                                                  @forelse ($adv as $item)
+                                                     <tr>
+                                                        <th scope="row">{{ $loop->iteration }}</th>
+                                                        <td>{{ $item->advertiser }}</td>
+                                                        <td>
+                                                          <a><i class="me-2 mb-1 btn-action" data-feather="edit-2" onclick="editAdvertiser({{ $item->id }})" style="width: 16px; height: 16px;"></i></a>
+                                                          <a><i class="me-2 mb-1 btn-action" data-feather="x" onclick="deleteAdvertiser({{ $item->id }})" onsubmit="return confirm('Apakah anda yakin ?')" style="width: 16px; height: 16px;"></i></a>
+                                                        </td>
+                                                     </tr>
+                                                  @empty
+                                                     <tr>
+                                                        <th></th>
+                                                        <td class="text-center">Advertiser Not Available.</td>
+                                                        <td></td>
+                                                     </tr>
+                                                  @endforelse
+                                               </tbody>
+                                            </table>
+                                         </div>
+                                      </div>
+                                   </div>
+                                </div>
+                             </div>
                         </div>
                         <div class="fade tab-pane" id="app-logs" role="tabpanel" aria-labelledby="app-logs-tab">
                            <div class="card mb-0">
@@ -600,6 +733,7 @@
 
 </script>
 
+{{-- roas script --}}
 <script>
 
     var rupiahInputs = document.querySelectorAll(".rupiah-input");
@@ -707,14 +841,14 @@
                                 $('<a>').append(
                                     $('<i>').addClass('me-2 mb-1').attr({
                                         'data-feather': 'edit-2',
-                                        'onclick': 'editUnitType(' + item.id + ')',
+                                        'onclick': 'editRoas(' + item.id + ')',
                                         'style': 'width: 16px; height: 16px;'
                                     })
                                 ),
                                 $('<a>').append(
                                     $('<i>').addClass('me-2 mb-1').attr({
                                         'data-feather': 'x',
-                                        'onclick': 'deleteUnitType(' + item.id + ')',
+                                        'onclick': 'deleteRoas(' + item.id + ')',
                                         'style': 'width: 16px; height: 16px;'
                                     })
                                 )
@@ -754,7 +888,9 @@
             $('#sosmed').val(formatRupiah(data.data.sosmed, "Rp. "));
             $('#detik').val(formatRupiah(data.data.detik, "Rp. "));
             $('#received_budget').val(formatRupiah(data.data.received_budget, "Rp. "));
-            $('#received_date').val(data.data.received_date);
+            const receivedDate = new Date(data.data.received_date);
+            const formattedReceivedDate = `${receivedDate.getMonth() + 1}/${receivedDate.getDate()}/${receivedDate.getFullYear()}`;
+            $('#received_date').val(formattedReceivedDate);
         });
 
         // Show the modal for editing
@@ -767,7 +903,7 @@
 
         // If the user confirms the delete action, proceed with the AJAX request
         if (confirmDelete) {
-            var url = '/unit-type/' + id;
+            var url = '/roas/' + id;
 
             $.ajax({
                 type: 'DELETE',
@@ -789,6 +925,306 @@
 
 </script>
 
+{{-- campaign script --}}
+<script>
+    var editModeCampaign = false;
+    var campaignId = null;
+    // JavaScript function to submit the form and reload the table using AJAX
+    function saveCampaign() {
+        event.preventDefault();
+        var form = $('#campaignForm');
+        var url = '/campaign';
+        var formData = form.serialize();
 
+        var method = editModeCampaign ? 'PUT' : 'POST';
+        if (method == 'PUT') {
+            url = '/campaign/'+campaignId;
+        }
 
+        $.ajax({
+            type: method,
+            url: url,
+            data: formData,
+            dataType: 'json',
+            success: function (data) {
+                // On successful save, close the modal and reload the table
+                $('#campaignModal').modal('hide');
+                editModeCampaign = false;
+                campaignId = null;
+                reloadTableCampaign();
+            },
+            error: function (data) {
+                console.log('Error:', data);
+            }
+        });
+    }
+
+    function resetFormCampaign() {
+        // Reset the form and remove validation classes
+        var form = $('#campaignForm');
+        form[0].reset();
+
+        // Remove Bootstrap's "was-validated" class
+        form.removeClass('was-validated');
+
+        // Remove the validation classes from each form element
+        form.find('.form-control').removeClass('is-valid is-invalid');
+    }
+
+    // JavaScript function to reload the table using AJAX
+    function reloadTableCampaign() {
+        var table = $('#campaignTable');
+        var url = '{{ route("campaign.index") }}';
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (response) {
+                // Check if the response has valid data
+                if (response && response.data && Array.isArray(response.data)) {
+                    var data = response.data;
+
+                    // Clear the existing table rows before adding the new ones
+                    table.find('tbody').empty();
+
+                    // Loop through the data and add rows to the table
+                    $.each(data, function (index, item) {
+                        var newRow = $('<tr>').append(
+                            $('<td>').text(index + 1),
+                            $('<td>').text(item.nama_campaign),
+                            $('<td>').text(item.nama_project),
+                            $('<td>').append(
+                                $('<a>').append(
+                                    $('<i>').addClass('me-2 mb-1').attr({
+                                        'data-feather': 'edit-2',
+                                        'onclick': 'editCampaign(' + item.id + ')',
+                                        'style': 'width: 16px; height: 16px;'
+                                    })
+                                ),
+                                $('<a>').append(
+                                    $('<i>').addClass('me-2 mb-1').attr({
+                                        'data-feather': 'x',
+                                        'onclick': 'deleteCampaign(' + item.id + ')',
+                                        'style': 'width: 16px; height: 16px;'
+                                    })
+                                )
+                            )
+                        );
+                        table.find('tbody').append(newRow);
+                    });
+
+                    // Reinitialize Feather icons after updating the table
+                    feather.replace();
+
+                    resetFormCampaign();
+                } else {
+                    console.log('Invalid or missing data in the AJAX response.');
+                }
+            },
+            error: function (data) {
+                console.log('Error:', data);
+            }
+        });
+    }
+
+    // Submit the form when it's submitted
+    $('#campaignForm').on('submit', saveCampaign);
+
+    function createCampaign() {
+        resetFormCampaign();
+        editModeCampaign = false; // Set the flag to indicate create mode
+    }
+
+    function editCampaign(id) {
+        editModeCampaign = true;
+        campaignId = id;
+
+        // You may also want to fetch the existing data for the unit type and populate the form fields
+        $.get('/campaign/' + id, function (data) {
+            $('#nama_campaign').val(data.data.nama_campaign);
+            $('#project_id_campaign').val(data.data.project_id);
+        });
+
+        // Show the modal for editing
+        $('#campaignModal').modal('show');
+    }
+
+    function deleteCampaign(id) {
+        // Show a confirmation dialog to the user
+        var confirmDelete = confirm('Are you sure you want to delete this campaign?');
+
+        // If the user confirms the delete action, proceed with the AJAX request
+        if (confirmDelete) {
+            var url = '/campaign/' + id;
+
+            $.ajax({
+                type: 'DELETE',
+                url: url,
+                data: {
+                    _token: "{{ csrf_token() }}" // Include the CSRF token in the request data
+                },
+                dataType: 'json',
+                success: function (data) {
+                    // On successful delete, reload the table
+                    reloadTableCampaign();
+                },
+                error: function (data) {
+                    console.log('Error:', data);
+                }
+            });
+        }
+    }
+
+</script>
+
+{{-- advertiser script --}}
+<script>
+    var editModeAdvertiser = false;
+    var advId = null;
+    // JavaScript function to submit the form and reload the table using AJAX
+    function saveAdvertiser() {
+        event.preventDefault();
+        var form = $('#advertiserForm');
+        var url = '/advertiser';
+        var formData = form.serialize();
+
+        var method = editModeAdvertiser ? 'PUT' : 'POST';
+        if (method == 'PUT') {
+            url = '/advertiser/'+advId;
+        }
+
+        $.ajax({
+            type: method,
+            url: url,
+            data: formData,
+            dataType: 'json',
+            success: function (data) {
+                // On successful save, close the modal and reload the table
+                $('#advertiserModal').modal('hide');
+                editModeAdvertiser = false;
+                advId = null;
+                reloadTableAdvertiser();
+            },
+            error: function (data) {
+                console.log('Error:', data);
+            }
+        });
+    }
+
+    function resetFormAdvertiser() {
+        // Reset the form and remove validation classes
+        var form = $('#advertiserForm');
+        form[0].reset();
+
+        // Remove Bootstrap's "was-validated" class
+        form.removeClass('was-validated');
+
+        // Remove the validation classes from each form element
+        form.find('.form-control').removeClass('is-valid is-invalid');
+    }
+
+    // JavaScript function to reload the table using AJAX
+    function reloadTableAdvertiser() {
+        var table = $('#advertiserTable');
+        var url = '{{ route("advertiser.index") }}';
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (response) {
+                // Check if the response has valid data
+                if (response && response.data && Array.isArray(response.data)) {
+                    var data = response.data;
+
+                    // Clear the existing table rows before adding the new ones
+                    table.find('tbody').empty();
+
+                    // Loop through the data and add rows to the table
+                    $.each(data, function (index, item) {
+                        var newRow = $('<tr>').append(
+                            $('<td>').text(index + 1),
+                            $('<td>').text(item.advertiser),
+                            $('<td>').append(
+                                $('<a>').append(
+                                    $('<i>').addClass('me-2 mb-1').attr({
+                                        'data-feather': 'edit-2',
+                                        'onclick': 'editAdvertiser(' + item.id + ')',
+                                        'style': 'width: 16px; height: 16px;'
+                                    })
+                                ),
+                                $('<a>').append(
+                                    $('<i>').addClass('me-2 mb-1').attr({
+                                        'data-feather': 'x',
+                                        'onclick': 'deleteAdvertiser(' + item.id + ')',
+                                        'style': 'width: 16px; height: 16px;'
+                                    })
+                                )
+                            )
+                        );
+                        table.find('tbody').append(newRow);
+                    });
+
+                    // Reinitialize Feather icons after updating the table
+                    feather.replace();
+
+                    resetFormAdvertiser();
+                } else {
+                    console.log('Invalid or missing data in the AJAX response.');
+                }
+            },
+            error: function (data) {
+                console.log('Error:', data);
+            }
+        });
+    }
+
+    // Submit the form when it's submitted
+    $('#advertiserForm').on('submit', saveAdvertiser);
+
+    function createAdvertiser() {
+        resetFormAdvertiser();
+        editModeAdvertiser = false; // Set the flag to indicate create mode
+    }
+
+    function editAdvertiser(id) {
+        editModeAdvertiser = true;
+        advId = id;
+
+        // You may also want to fetch the existing data for the unit type and populate the form fields
+        $.get('/advertiser/' + id, function (data) {
+            $('#advertiserName').val(data.data.advertiser);
+        });
+
+        // Show the modal for editing
+        $('#advertiserModal').modal('show');
+    }
+
+    function deleteAdvertiser(id) {
+        // Show a confirmation dialog to the user
+        var confirmDelete = confirm('Are you sure you want to delete this campaign?');
+
+        // If the user confirms the delete action, proceed with the AJAX request
+        if (confirmDelete) {
+            var url = '/advertiser/' + id;
+
+            $.ajax({
+                type: 'DELETE',
+                url: url,
+                data: {
+                    _token: "{{ csrf_token() }}" // Include the CSRF token in the request data
+                },
+                dataType: 'json',
+                success: function (data) {
+                    // On successful delete, reload the table
+                    reloadTableAdvertiser();
+                },
+                error: function (data) {
+                    console.log('Error:', data);
+                }
+            });
+        }
+    }
+</script>
 @endsection
