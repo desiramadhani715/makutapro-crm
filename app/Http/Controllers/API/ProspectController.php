@@ -102,6 +102,10 @@ class ProspectController extends Controller
             $leads->where('prospect.status_id',$request->status_id);
         }
 
+        if ($request->sumber_platform_id) {
+            $leads->where('prospect.sumber_platform_id',$request->sumber_platform_id);
+        }
+
         $leads = $leads->get();
 
         foreach ($leads as $lead) {
