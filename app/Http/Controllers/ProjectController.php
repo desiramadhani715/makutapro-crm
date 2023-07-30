@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Http\Traits\GlobalTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 
 
 class ProjectController extends Controller
@@ -137,8 +138,11 @@ class ProjectController extends Controller
         $agent = Agent::where('project_id',$project->id)->get();
         $status = DB::table('status')->get();
         $project = $project::with('banner')->find($project->id);
+        foreach ($project->banner as $item) {
+            // $item->banner = Config::get('app.url').'/public/storage/banner/'.$item->banner;
+            $item->banner = 'https://developer-beta.makutapro.id/public/storage/banner/'.$item->banner;
+        }
         // dd($project);
-
         return view('pages.project.show', compact('project','agent','status'));
     }
 
