@@ -27,6 +27,7 @@ use App\Models\Income;
 use App\Models\Occupation;
 use App\Models\WorkLocation;
 use App\Models\Province;
+use App\Models\City;
 use Carbon\Carbon;
 
 
@@ -113,9 +114,8 @@ class ProspectController extends Controller
             $lead->status = Status::find($lead->status_id);
             $lead->gender = DB::table('gender')->where('id',$lead->gender_id)->get();
             $lead->usia = DB::table('usia')->where('id',$lead->usia_id)->get();
-            $lead->domisili = DB::table('city')->where('id',$lead->domisili_id)->get();
-            $lead->tempatKerja = DB::table('city')->where('id',$lead->tempat_kerja_id)->get();
-            $lead->tempatKerja = DB::table('city')->where('id',$lead->tempat_kerja_id)->get();
+            $lead->domisili = City::with('province')->where('id',$lead->domisili_id)->get();
+            $lead->tempatKerja = City::with('province')->where('id',$lead->tempat_kerja_id)->get();
             $lead->pekerjaan = DB::table('pekerjaan')->where('id',$lead->pekerjaan_id)->get();
             $lead->penghasilan = DB::table('penghasilan')->where('id',$lead->penghasilan_id)->get();
 
