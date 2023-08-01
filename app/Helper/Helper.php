@@ -50,7 +50,7 @@ class Helper
         ]);
 
         $pt_id = 0;
-        
+
         if (Auth::user()->role_id == 1) {
             $pt_id = Pt::with('user')->where('user_id',Auth::user()->id)->get()[0]->id;
         }
@@ -118,6 +118,7 @@ class Helper
             "notification" => [
                 "title" => $title,
                 "body" => $body,
+                "sound" => "https://makutapro.id/assets/sounds/notification.mp3",
             ]
         ];
         $encodedData = json_encode($data);
