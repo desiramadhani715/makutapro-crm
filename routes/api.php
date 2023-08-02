@@ -7,6 +7,7 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\ProspectController;
 use App\Http\Controllers\API\AppointmentController;
+use App\Http\Controllers\API\UnitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,6 +70,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::delete('/appointment/{appointment_id}',[AppointmentController::class, 'destroy']);
     Route::delete('/appointment/reminder/{id}',[AppointmentController::class, 'delete_reminder']);
 
+    Route::get('/units/{project_id}', [UnitController::class, 'index']);
 });
 
 // forget Password

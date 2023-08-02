@@ -291,14 +291,14 @@ class ProspectController extends Controller
 
         if($request->status_id == 5){
 
-            LeadsClosing::where(['prospect_id'=>$ProspectID])->update([
-                'prospect_id' => $ProspectID,
-                'agent_id' => $sales[0]->agent_id,
-                'sales_id' => $sales[0]->sales_id,
-                'unit_id' => $request->unit_id,
-                'ket_unit' =>$request->ket_unit,
-                'closing_amount' => $request->harga_jual
-            ]);
+            $leadsClosing = new LeadsClosing();
+            $leadsClosing->prospect_id = $ProspectID;
+            $leadsClosing->agent_id = $sales[0]->agent_id;
+            $leadsClosing->sales_id = $sales[0]->id;
+            $leadsClosing->unit_id = $request->unit_id;
+            $leadsClosing->ket_unit = $request->ket_unit;
+            $leadsClosing->closing_amount = $request->closing_amount;
+            $leadsClosing->save();
 
         }
 
