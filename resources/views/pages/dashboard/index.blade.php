@@ -12,22 +12,6 @@
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/owlcarousel.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/prism.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/whether-icon.css')}}">
-<script>
-    // Get the input element by its ID
-    const inputElement = document.getElementById('since');
-
-    // Add an event listener to the input element
-    inputElement.addEventListener('change', function() {
-      // Get the new value of the input element
-      const newValue = inputElement.value;
-
-      // Display the prompt with the new value
-      alert('New date selected: ' + newValue);
-
-      // If you want to call the refreshDatatableWithParam() function with the new value, you can do it here
-      // refreshDatatableWithParam(newValue);
-    });
-</script>
 @endsection
 
 @section('style')
@@ -164,26 +148,20 @@
 						<div class="col-xl-9 p-0">
 							<div class="chart-right">
 								<div class="row m-0 p-tb">
-									<div class="col-xl-8 col-md-8 col-sm-8 col-12 p-0">
+									<div class="col-xl-12 col-md-12 col-sm-12 col-12 p-0">
 										<div class="inner-top-left">
 											<ul class="d-flex list-unstyled" style="cursor: pointer;">
 												<li id="daily" onclick="refreshChart(1)">Daily</li>
 												<li id="weekly" onclick="refreshChart(7)">Weekly</li>
 												<li id="monthly" onclick="refreshChart(30)">Monthly</li>
 												<li id="yearly" onclick="refreshChart(365)">Yearly</li>
+                                                <li>
+                                                    <input class="form-control form-control-sm datepicker-here since" name="since" id="since" placeholder="Since" type="text" data-language="en">
+                                                </li>
+                                                <li>
+                                                    <input class="form-control form-control-sm datepicker-here " name="to" id="to" placeholder="To" type="text" data-language="en">
+                                                </li>
 											</ul>
-										</div>
-									</div>
-									<div class="col-xl-4 col-md-4 col-sm-4 col-12 p-0 justify-content-end">
-										<div class="inner-top-right">
-											<div class="row d-flex list-unstyled justify-content-end">
-												<div class="col-6">
-													<input class="form-control form-control-sm datepicker-here since" name="since" id="since" placeholder="Since" type="text" data-language="en">
-												</div>
-												<div class="col-6">
-													<input class="form-control form-control-sm datepicker-here " name="to" id="to" placeholder="To" type="text" data-language="en" onchange="refreshDatatable()">
-												</div>
-											</div>
 										</div>
 									</div>
 								</div>
@@ -252,10 +230,10 @@
 					<div class="header-top">
 						<h5 class="m-0">Sales Activity</h5>
 						<div class="card-header-right-icon">
-							<select class="button btn btn-primary">
+							{{-- <select class="button btn btn-primary">
 								<option>Today</option>
 								<option>Yesterday</option>
-							</select>
+							</select> --}}
 						</div>
 					</div>
 				</div>
@@ -264,7 +242,8 @@
 					<div class="media">
 						<div class="media-body">
 							<p>{{ date("M j, Y",strtotime($item->created_at)) }} <span>| {{ date('h:i:s A', strtotime($item->created_at)) }}</span></p>
-							<h6>{{ $item->subject_dev }}<span class="dot-notification"></span></h6>
+							{{-- <h6>{{ $item->subject_dev }}<span class="dot-notification"></span></h6> --}}
+							<h6>{{ $item->subject_dev }}</span></h6>
 							<span>{{ $item->notes_dev }}</span>
 						</div>
 					</div>
@@ -325,9 +304,13 @@
 		$("#chart-currently").empty();
 
 		var days = $days;
+        var url = `/loadLeadsChart?days=${days}`;
+        if (days != 1 && days != 7 && days != 30 && days != 365)
+            url = `/loadLeadsChart?${days}`
+
         $.ajax({
 			type:"GET",
-			url:`/loadLeadsChart?days=${days}`,
+			url: url,
 			dataType: 'JSON',
 			success:function(res){
 				if(res){
@@ -463,6 +446,44 @@
 	}
 
 	refreshChart(7);
+
+    $(document).ready(function() {
+        // Attach the datepicker with the onSelect option
+        $("#since").datepicker({
+            language: 'en',
+            onSelect: function(dateText, inst) {
+                var sinceValue = dateText;
+                const since = new Date(sinceValue);
+                sinceValue = `since=${since.getFullYear()}-${('0' + (since.getMonth() + 1)).slice(-2)}-${since.getDate()}`;
+                refreshChart(sinceValue);
+            },
+        });
+    });
+
+    $(document).ready(function() {
+        // Attach the 'since' datepicker with the onSelect option
+        $("#since").datepicker({
+            language: 'en',
+            onSelect: function(dateText, inst) {
+                const since = new Date(dateText);
+                sinceValue = `since=${since.getFullYear()}-${('0' + (since.getMonth() + 1)).slice(-2)}-${since.getDate()}`;
+                refreshChart(sinceValue);
+            },
+        });
+
+        // Attach the 'to' datepicker with the onSelect option
+        $("#to").datepicker({
+            language: 'en',
+            onSelect: function(dateText, inst) {
+                const to = new Date(dateText);
+                const toValue = `to=${to.getFullYear()}-${('0' + (to.getMonth() + 1)).slice(-2)}-${to.getDate()}`;
+
+                // Combine 'since' and 'to' values
+                const combinedValues = `${sinceValue}&${toValue}`;
+                refreshChart(combinedValues);
+            },
+        });
+    });
 
 </script>
 

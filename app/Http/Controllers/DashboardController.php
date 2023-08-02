@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Helper\Helper;
+use Illuminate\Support\Facades\Session;
 
 class DashboardController extends Controller
 {
@@ -32,7 +33,6 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-
         $all = Prospect::join('history_prospect as hp','hp.prospect_id','prospect.id')
                                 ->join('pt','pt.id','hp.pt_id')
                                 ->join('users','users.id','pt.user_id')
@@ -93,7 +93,6 @@ class DashboardController extends Controller
     }
 
     public function loadLeadsChart(Request $request){
-
         if($request->days == 1)
             $summaryLabel = "Today";
         if($request->days == 7)
@@ -103,12 +102,23 @@ class DashboardController extends Controller
         if($request->days == 365)
             $summaryLabel = "a Year ago";
 
-        // if ($request->since) {
-        //     $since =
-        // }
-
         $start_date = Carbon::now()->subDays($request->days);
+
+        if($request->since){
+            $summaryLabel = "since ".$request->since;
+            $start_date = Carbon::createFromFormat('Y-m-d', $request->since);
+            // Session::put('sinceDate', $start_date);
+        }
+
         $end_date = Carbon::now();
+        if ($request->since && $request->to) {
+            // $start_date = Session::get('sinceDate');
+            $start_date = Carbon::createFromFormat('Y-m-d', $request->since);
+            $summaryLabel = "since ".$start_date." to ".$request->to;
+            $end_date = Carbon::createFromFormat('Y-m-d', $request->to);
+        }
+
+        // Session::forget('since');
 
         $salesSource = HistoryProspect::count_leads_by_role('Sales Source', $start_date, $end_date);
         $digSource = HistoryProspect::count_leads_by_role('Digital Source', $start_date, $end_date);
