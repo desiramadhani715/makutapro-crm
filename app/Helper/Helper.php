@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 class Helper
 {
 
-    public function blastToAgent(Request $request, $NextAgent){
+    public static function blastToAgent($request, $NextAgent){
         dd($request->all());
     }
 

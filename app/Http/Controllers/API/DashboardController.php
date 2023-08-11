@@ -89,7 +89,7 @@ class DashboardController extends Controller
     public function banner_detail($banner_id){
 
         $banner = Banner::where('id', $banner_id)->get()->map(function ($item) {
-                    $item->banner = Config::get('app.url').'/public/storage/banner/'.$item->banner;
+                    $item->banner = asset('storage/banner/'.$item->banner);
                     return $item;
                 });
 

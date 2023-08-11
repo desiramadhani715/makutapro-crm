@@ -4,7 +4,8 @@
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/datatables.css')}}">
 <link rel="stylesheet" type="text/css" href="{{asset('assets/css/vendors/select2.css')}}">
-<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/summernote.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/quill.core.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/quill.snow.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/scrollbar.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/responsive.css') }}">
 
@@ -39,16 +40,17 @@
 @section('content')
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-12 col-xl-6 xl-100">
+        <div class="col-sm-12 col-xl-8 xl-100">
 			<div class="card">
 				<div class="card-header">
-					<h5>Project</h5>
+					<h5>Project {{ $project->nama_project }}</h5>
 					<span>can edit <code>project detail</code> and <code>move leads</code> here</span>
 				</div>
 				<div class="card-body">
 					<ul class="nav nav-tabs border-tab nav-primary" id="info-tab" role="tablist">
 						<li class="nav-item"><a class="nav-link active" id="info-detail-tab" data-bs-toggle="tab" href="#info-detail" role="tab" aria-controls="info-detail" aria-selected="true"><i class="icofont icofont-info-circle"></i>Detail Info</a></li>
 						<li class="nav-item"><a class="nav-link" id="move-prospect-tab" data-bs-toggle="tab" href="#move-prospect" role="tab" aria-controls="move-prospect" aria-selected="false"><i class="icofont icofont-hand-drag1"></i>Move Prospect</a></li>
+						<li class="nav-item"><a class="nav-link" id="image-banner-tab" data-bs-toggle="tab" href="#image-banner" role="tab" aria-controls="image-banner" aria-selected="false"><i class="icofont icofont-image"></i>Banner</a></li>
 					</ul>
 					<div class="tab-content" id="info-tabContent">
 						<div class="tab-pane fade show active" id="info-detail" role="tabpanel" aria-labelledby="info-detail-tab">
@@ -67,7 +69,7 @@
                                             <input class="form-control" id="validationCustom02" type="text" required="" name="nama_project" value="{{$project->nama_project}}">
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    {{-- <div class="row">
                                         <div class="col">
                                           <div class="mb-3">
                                             <label>Project Banner <sup> *Can Choose more than one</sup></label>
@@ -88,7 +90,7 @@
                                           </div>
                                         </div>
                                         @endforeach
-                                    </div>
+                                    </div> --}}
 
                                     <div class="preview-image"></div>
                                     <div class="row">
@@ -200,6 +202,93 @@
                                 </div>
                             </div>
 						</div>
+                        <div class="tab-pane fade" id="image-banner" role="tabpanel" aria-labelledby="image-banner-tab">
+                            {{-- <div class="card-body">
+                                <form method="POST" action="{{route('project.update',$project->id)}}" role="form" enctype="multipart/form-data">
+                                    @method('PUT')
+                                    @csrf
+                                    <input type="hidden" value="{{$project->id}}" id="project_id" name="project">
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <label for="title">Title</label>
+                                            <input class="form-control" id="title" type="text" required="" name="title" value="">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <label for="subtitle">Subtitle</label>
+                                            <input class="form-control" id="subtitle" type="text" required="" name="subtitle" value="">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                          <div class="mb-3">
+                                            <label>Banner</label>
+                                            <input class="form-control" type="file" id="banner" name="banner" required>
+                                          </div>
+                                        </div>
+                                    </div>
+                                    <div class="preview-image"></div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label for="validationCustom02">Description</label>
+                                                <div id="editor">
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="validationCustom02"></label>
+                                            <div class="input-group">
+                                                <button class="btn btn-primary mt-2" type="submit">Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div> --}}
+                            <div class="row">
+                                <div class="col-12 mb-4">
+                                    <a class="btn btn-primary" href="{{ route('project.banner.create', ['id_project' => $project->id]) }}">Create New Banner</a>
+                                </div>
+                                <div class="col-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-responsive table-striped table-hover" id="banner-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Title</th>
+                                                    <th>Subtitle</th>
+                                                    <th>Banner</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($project->banner as $banner)
+                                                    <tr>
+                                                        <td>{{ $loop->iteration }}</td>
+                                                        <td>{{ $banner->title }}</td>
+                                                        <td>{{ $banner->subtitle }}</td>
+                                                        <td><img src="{{ $banner->banner }}" alt="" width="100px"></td>
+                                                        <td>
+                                                            <form action="{{ route('project.banner.destroy', ['id_project' => $project->id, 'id_banner' => $banner->id]) }}" method="POST" onsubmit="return confirm('Are you sure want to delete this banner?')">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <a href="{{ route('project.banner.edit', ['id_project' => $project->id, 'id_banner' => $banner->id]) }}" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>
+                                                                <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 					</div>
 				</div>
 			</div>
@@ -219,10 +308,11 @@
 <!-- scrollbar js-->
 <script src="{{ asset('assets/js/scrollbar/simplebar.js') }}"></script>
 <script src="{{ asset('assets/js/scrollbar/custom.js') }}"></script>
-{{-- summernote --}}
-<script src="{{ asset('assets/js/sidebarzn.js') }}"></script>
-<script src="{{ asset('assets/js/editor/summernote/summernote.js') }}"></script>
-<script src="{{ asset('assets/js/editor/summernote/summernote.custom.js') }}"></script>
+{{-- quill --}}
+{{-- <script src="{{ asset('assets/js/sidebarzn.js') }}"></script> --}}
+<script src="{{ asset('assets/js/editor/quill/quill.min.js') }}"></script>
+<script src="{{ asset('assets/js/editor/quill/quill.config.js') }}"></script>
+{{-- <script src="{{ asset('assets/js/editor/summernote/summernote.custom.js') }}"></script> --}}
 <script src="{{ asset('assets/js/tooltip-init.js') }}"></script>
 
 <script>
@@ -300,6 +390,8 @@
 			"deferRender": true,
 		});
 	}
+
+    $('#banner-table').DataTable();
 
 	refreshDatatable();
 
