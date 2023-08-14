@@ -41,7 +41,7 @@ class DashboardController extends Controller
                         ->get();
 
         $banner = Banner::where('project_id', $project_id)
-                        ->select('id','banner')
+                        ->select('id', 'title', 'subtitle', 'banner', 'description')
                         ->get()
                         ->map(function ($item) {
                             $item->banner = Config::get('app.url').'/public/storage/banner/'.$item->banner;

@@ -17,6 +17,7 @@ use App\Http\Controllers\AdvertiserController;
 use App\Http\Controllers\BannerController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use Illuminate\Support\Facades\Session;
 
 /*
 |--------------------------------------------------------------------------

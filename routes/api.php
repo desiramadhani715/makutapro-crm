@@ -8,6 +8,7 @@ use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\ProspectController;
 use App\Http\Controllers\API\AppointmentController;
 use App\Http\Controllers\API\UnitController;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
