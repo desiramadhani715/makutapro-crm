@@ -653,14 +653,7 @@
 	// 	$(this).hide();
 	// });
 
-	$("#checkAllProspect").change(function(){
-		$('input:checkbox').not(this).prop('checked', this.checked);
-	});
-
-	function moveProspect(){
-		document.getElementById('AllRow').style.display = 'none';
-		document.getElementById('MoveRow').style.display = 'blok';
-	}
+	
 
 
 

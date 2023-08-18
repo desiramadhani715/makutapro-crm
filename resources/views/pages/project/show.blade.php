@@ -7,6 +7,7 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/summernote.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/scrollbar.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/responsive.css') }}">
+<meta name="csrf-token" content="{{ csrf_token() }}" />
 
 <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
 @endsection
@@ -108,7 +109,7 @@
                                     <label for="" style="text"><code>Filter Column</code></label>
                                     <div class="col-12 col-lg-3 table-filters ">
                                         <div class="filter-container">
-                                            <select id="agent" class="js-example-disabled-results" name="agent"  onchange="refreshDatatable()">
+                                            <select id="agent" class="js-example-disabled-results"  onchange="refreshDatatable()">
                                                 <option value="">Select Agent</option>
                                                 @foreach ($agent as $item)
                                                     <option value="{{$item->id}}">{{$item->nama_agent}}</option>
@@ -118,14 +119,14 @@
                                     </div>
                                     <div class="col-12 col-lg-3 table-filters ">
                                         <div class="filter-container">
-                                            <select id="sales" class="js-example-disabled-results" name="sales"  onchange="refreshDatatable()">
+                                            <select id="sales" class="js-example-disabled-results"  onchange="refreshDatatable()">
                                                 <option value="">Select Sales</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-12 col-lg-3 table-filters ">
                                         <div class="filter-container">
-                                            <select id="status" class="js-example-disabled-results" name="status"  onchange="refreshDatatable()">
+                                            <select id="status" class="js-example-disabled-results"  onchange="refreshDatatable()">
                                                 <option value="">Select Status</option>
                                                 @foreach ($status as $item)
                                                 <option value="{{$item->id}}">{{$item->status}}</option>
@@ -138,8 +139,8 @@
                                     <label for=""><code>Move To</code></label>
                                     <div class="col-12 col-lg-3 table-filters ">
                                         <div class="filter-container">
-                                            <select id="agent" class="js-example-disabled-results" name="agent"  onchange="refreshDatatable()">
-                                                <option value="">Select Agent</option>
+                                            <select id="agentNext" class="js-example-disabled-results" name="agentNext">
+                                                <option value="">Select Next Agent</option>
                                                 @foreach ($agent as $item)
                                                     <option value="{{$item->id}}">{{$item->nama_agent}}</option>
                                                 @endforeach
@@ -148,19 +149,14 @@
                                     </div>
                                     <div class="col-12 col-lg-3 table-filters ">
                                         <div class="filter-container">
-                                            <select id="sales" class="js-example-disabled-results" name="sales"  onchange="refreshDatatable()">
-                                                <option value="">Select Sales</option>
+                                            <select id="salesNext" class="js-example-disabled-results" name="salesNext">
+                                                <option value="">Select Next Sales</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-12 col-lg-3 table-filters ">
-                                        <div class="filter-container">
-                                            <select id="status" class="js-example-disabled-results" name="status"  onchange="refreshDatatable()">
-                                                <option value="">Select Status</option>
-                                                @foreach ($status as $item)
-                                                <option value="{{$item->id}}">{{$item->status}}</option>
-                                                @endforeach
-                                            </select>
+                                        <div class="filter-copntainer">
+                                            <a class="btn btn-primary btn-outline" id="move-prospects">Move</a>
                                         </div>
                                     </div>
                                 </div>
@@ -168,7 +164,9 @@
                                     <table class="display datatables" id="prospect-project-datatable"  style="font-size: 12px;width:100%">
                                         <thead>
                                             <tr>
-                                                <th></th>
+                                                <th>
+                                                    <input type="checkbox" class="data-checkbox" id="checkAllProspect">
+                                                </th>
                                                 <th>ID</th>
                                                 <th>Nama & No Hp</th>
                                                 <th>Source</th>
@@ -240,11 +238,15 @@
 					"status": $("#status").val(),
 				}
 			},
+			"aoColumnDefs": [
+				{ "bSortable": false, "aTargets": [ 0, 2, 3, 4, 5, 6, 7 ] },
+				// { "width" : "100%", "targets": 9}
+			],
 			"columns": [
                 {
                     data: null,
                     render: function(data, type, row) {
-                        return '<input type="checkbox" class="data-checkbox" value="' + row.id + '" name="prospect_id[]">';
+                        return '<input type="checkbox" class="prospect-checkbox" value="' + row.id + '" name="prospect_id[]">';
                     }
                 },
 				{ data: 'id' },
@@ -304,28 +306,113 @@
 	refreshDatatable();
 
 	$('#agent').change(function(){
-            var agent = $(this).val();
-            if(agent){
-                $.ajax({
-                type:"GET",
-                url:"/getsales?agent="+agent,
-                dataType: 'JSON',
-                success:function(res){
-                    if(res){
-                        $("#sales").empty();
-                        $("#sales").append('<option value="">All</option>');
-                        $.each(res,function(sales_id,nama_sales){
-                            $("#sales").append('<option value="'+sales_id+'">'+nama_sales+'</option>');
-                        });
-                    }else{
+        var agent = $(this).val();
+        if(agent){
+            $.ajax({
+            type:"GET",
+            url:"/getsales?agent="+agent,
+            dataType: 'JSON',
+            success:function(res){
+                if(res){
                     $("#sales").empty();
-                    }
-                }
-                });
-            }else{
+                    $("#sales").append('<option value="">All</option>');
+                    $.each(res,function(sales_id,nama_sales){
+                        $("#sales").append('<option value="'+sales_id+'">'+nama_sales+'</option>');
+                    });
+                }else{
                 $("#sales").empty();
+                }
             }
+            });
+        }else{
+            $("#sales").empty();
+        }
+    });
+
+	$('#agentNext').change(function(){
+        var agent = $(this).val();
+        if(agent){
+            $.ajax({
+            type:"GET",
+            url:"/getsales?agent="+agent,
+            dataType: 'JSON',
+            success:function(res){
+                if(res){
+                    $("#salesNext").empty();
+                    $("#salesNext").append('<option value="">All</option>');
+                    $.each(res,function(sales_id,nama_sales){
+                        $("#salesNext").append('<option value="'+sales_id+'">'+nama_sales+'</option>');
+                    });
+                }else{
+                $("#salesNext").empty();
+                }
+            }
+            });
+        }else{
+            $("#salesNext").empty();
+        }
+    });
+
+    $("#checkAllProspect").change(function(){
+		$('input:checkbox').not(this).prop('checked', this.checked);
+	});
+
+    $(document).ready(function() {
+        $("#move-prospects").click(function() {
+            var selectedProspects = [];
+            var agentNext = $('#agentNext').val();
+            var salesNext = $('#salesNext').val();
+
+            console.log(agentNext, salesNext);
+
+            // Iterate through the checkboxes to find selected prospects
+            $(".prospect-checkbox:checked").each(function() {
+                selectedProspects.push($(this).val());
+            });
+
+
+            // If no agent next are selected, do nothing
+            if (agentNext === '') {
+                alert("Please select at least the next agent to move.");
+                return;
+            }
+
+            // If no sales next are selected, do nothing
+            if (salesNext === '') {
+                alert("Please select at least the next sales to move.");
+                return;
+            }
+
+            // If no prospects are selected, do nothing
+            if (selectedProspects.length === 0) {
+                alert("Please select at least one prospect to move.");
+                return;
+            }
+
+
+            // AJAX request to post selected prospects
+            $.ajax({
+                url: "{{ route('prospect.move') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    prospects: selectedProspects,
+                    agentNext: agentNext,
+                    salesNext: salesNext
+                },
+                success: function(response) {
+                    alert(`response ${response}`);
+                    refreshDatatable();
+                    // Perform any additional actions after successful move
+                },
+                error: function(error) {
+                    alert("An error occurred while moving prospects.");
+                    console.error(error);
+                }
+            });
         });
+    });
+
 </script>
 <script>
     function previewImages() {
@@ -350,6 +437,8 @@
     }
 
     document.querySelector('#banner').addEventListener('change', previewImages);
-  </script>
+
+
+</script>
 
 @endsection

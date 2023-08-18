@@ -239,4 +239,6 @@ class ProjectController extends Controller
         // $data = HistoryProspect::leads()->get();
         return response()->json($data);
     }
+
+    
 }
