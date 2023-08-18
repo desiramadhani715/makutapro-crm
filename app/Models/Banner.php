@@ -11,8 +11,9 @@ class Banner extends Model
     protected $table = 'banner';
     protected $filable = [
         'project_id',
+        'title',
+        'subtitle',
         'banner',
         'description',
-        'sort'
     ];
 }

@@ -111,18 +111,18 @@ class ProjectController extends Controller
         $newproject->save();
 
 
-        if ($request->hasFile('banner')) {
-            $projectId = $newproject->id;
-            collect($request->file('banner'))->each(function ($file, $sort) use ($projectId){
-                $bannerName =time() . rand(1, 100) . '.' . $file->getClientOriginalExtension();
-                $file->storeAs('public/banner', $bannerName);
-                $newBanner = new Banner();
-                $newBanner->project_id = $projectId;
-                $newBanner->banner = $bannerName;
-                $newBanner->sort = $sort+1;
-                $newBanner->save();
-            });
-        }
+        // if ($request->hasFile('banner')) {
+        //     $projectId = $newproject->id;
+        //     collect($request->file('banner'))->each(function ($file, $sort) use ($projectId){
+        //         $bannerName =time() . rand(1, 100) . '.' . $file->getClientOriginalExtension();
+        //         $file->storeAs('public/banner', $bannerName);
+        //         $newBanner = new Banner();
+        //         $newBanner->project_id = $projectId;
+        //         $newBanner->banner = $bannerName;
+        //         $newBanner->sort = $sort+1;
+        //         $newBanner->save();
+        //     });
+        // }
 
         return redirect('/project')->with('status','Success !');
     }
@@ -140,7 +140,7 @@ class ProjectController extends Controller
         $project = $project::with('banner')->find($project->id);
         foreach ($project->banner as $item) {
             // $item->banner = Config::get('app.url').'/public/storage/banner/'.$item->banner;
-            $item->banner = 'https://developer-beta.makutapro.id/public/storage/banner/'.$item->banner;
+            $item->banner = asset('storage/banner/'.$item->banner);
         }
         // dd($project);
         return view('pages.project.show', compact('project','agent','status'));
@@ -169,18 +169,18 @@ class ProjectController extends Controller
         $project->nama_project = $request->nama_project;
         $project->save();
 
-        if ($request->hasFile('banner')) {
-            $projectId = $project->id;
-            collect($request->file('banner'))->each(function ($file, $sort) use ($projectId){
-                $bannerName =time() . rand(1, 100) . '.' . $file->getClientOriginalExtension();
-                $file->storeAs('public/banner', $bannerName);
-                $newBanner = new Banner();
-                $newBanner->project_id = $projectId;
-                $newBanner->banner = $bannerName;
-                $newBanner->sort = $sort+1;
-                $newBanner->save();
-            });
-        }
+        // if ($request->hasFile('banner')) {
+        //     $projectId = $project->id;
+        //     collect($request->file('banner'))->each(function ($file, $sort) use ($projectId){
+        //         $bannerName =time() . rand(1, 100) . '.' . $file->getClientOriginalExtension();
+        //         $file->storeAs('public/banner', $bannerName);
+        //         $newBanner = new Banner();
+        //         $newBanner->project_id = $projectId;
+        //         $newBanner->banner = $bannerName;
+        //         $newBanner->sort = $sort+1;
+        //         $newBanner->save();
+        //     });
+        // }
 
         return redirect()->route('project.index');
     }

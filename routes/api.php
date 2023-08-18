@@ -8,6 +8,7 @@ use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\ProspectController;
 use App\Http\Controllers\API\AppointmentController;
 use App\Http\Controllers\API\UnitController;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('prospect/website', [App\Http\Controller\ProspectController::class, 'store']);
 
 Route::middleware(['auth:api'])->group(function () {
+// Route::middleware([])->group(function () {
     Route::post('/store-token-fcm', [AuthController::class, 'storeTokenFcm']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/change-password', [AuthController::class, 'changePassword']);

@@ -14,8 +14,10 @@ use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\RoasController;
 use App\Http\Controllers\AdvertiserController;
+use App\Http\Controllers\BannerController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use Illuminate\Support\Facades\Session;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +44,10 @@ Route::group(['middleware' => ['auth', 'role:1']], function () {
     Route::post('project/prospect-move', [ProspectController::class, 'move_prospect'])->name('prospect.move');
     Route::resource('prospect', App\Http\Controllers\ProspectController::class)->names('prospect');
     Route::resource('project', App\Http\Controllers\ProjectController::class);
+    Route::resource('project.banner', BannerController::class )->parameters([
+        'project' => 'id_project',
+        'banner' => 'id_banner'
+    ]);
     Route::resource('agent', App\Http\Controllers\AgentController::class);
     Route::resource('demografi', App\Http\Controllers\DemografiController::class);
     Route::post('agent/active', [AgentController::class, 'active'])->name('agent.active');
