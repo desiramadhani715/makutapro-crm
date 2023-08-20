@@ -94,9 +94,7 @@ class BannerController extends Controller
     public function update(Request $request, $id_project, $id_banner)
     {
         $request->validate([
-            'title' => 'required',
-            'subtitle' => 'required',
-            'description' => 'required',
+            'title' => 'required'
         ]);
 
         $banner = Banner::findorfail($id_banner);

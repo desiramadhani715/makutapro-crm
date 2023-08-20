@@ -74,8 +74,9 @@ class DashboardController extends Controller
                         ->project()
                         ->select('id','nama_project')
                         ->get();
-        
+
         $data_prospect = [];
+
         foreach ($get_project as $key => $value) {
 
             $prospect = DB::table('history_prospect')
@@ -117,7 +118,7 @@ class DashboardController extends Controller
         //     // // ->selectRaw('count(*) as closing, prospect.status_id as status')
         //     // ->where('history_prospect.project_id','=', 22)
         //     // ->get()
-            
+
         //     // SELECT COUNT(*) as total, SUM(CASE WHEN prospect.status_id = 1 THEN 1 ELSE 0 END) as total_new, SUM(CASE WHEN prospect.status_id IN (2, 3, 4) THEN 1 ELSE 0 END) as total_process, SUM(CASE WHEN prospect.status_id = 5 THEN 1 ELSE 0 END) as total_closing, SUM(CASE WHEN prospect.status_id = 6 THEN 1 ELSE 0 END) as total_not_interest, SUM(CASE WHEN prospect.status_id = 7 THEN 1 ELSE 0 END) as total_expired, agent.nama_agent as agent_name FROM history_prospect JOIN prospect ON prospect.id = history_prospect.prospect_id JOIN pt ON pt.id = history_prospect.pt_id JOIN users ON users.id = pt.user_id JOIN agent ON agent.id = history_prospect.agent_id WHERE history_prospect.project_id = 22 GROUP BY agent_id;
         //     DB::table('history_prospect')
         //     ->join('prospect', 'prospect.id', '=', 'history_prospect.prospect_id')

@@ -39,7 +39,7 @@
       <div class="card">
         <div class="card-body">
           <div class="form theme-form">
-            
+
             <form id="form-banner" action="{{ route('project.banner.update', ['id_project' => $id_project, 'id_banner' => $banner->id]) }}" method="post" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
@@ -52,7 +52,7 @@
                 <div class="row">
                     <div class="col mb-3">
                         <label for="subtitle">Subtitle</label>
-                        <input class="form-control" id="subtitle" type="text" required="" name="subtitle" value="{{ @old('subtitle') ? @old('subtitle') : $banner->subtitle }}">
+                        <input class="form-control" id="subtitle" type="text" name="subtitle" value="{{ @old('subtitle') ? @old('subtitle') : $banner->subtitle }}">
                     </div>
                 </div>
                 <div class="row">
@@ -85,7 +85,7 @@
                     </div>
                 </div>
             </form>
-          
+
           </div>
         </div>
       </div>
@@ -127,7 +127,7 @@
     $(function () {
         $('#form-banner').on('submit', function () {
             let content = quill.root.innerHTML;
-            
+
             $('#description').val(content);
         });
     });

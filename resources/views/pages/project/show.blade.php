@@ -9,8 +9,15 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/scrollbar.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/responsive.css') }}">
 <meta name="csrf-token" content="{{ csrf_token() }}" />
+<!-- Include SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
 
-<script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
+<!-- Include SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+
+<!-- Include Lottie library -->
+<script src="https://cdn.jsdelivr.net/npm/lottie-web@5.7.13/build/player/lottie.min.js"></script>
+
 @endsection
 
 @section('style')
@@ -26,6 +33,25 @@
       margin-right: 10px;
       margin-bottom: 10px;
   }
+
+.loader-container {
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Latar belakang transparan */
+    display: none; /* Mulai dengan elemen tersembunyi */
+    z-index: 9999;
+}
 </style>
 @endsection
 
@@ -39,6 +65,7 @@
 @endsection
 
 @section('content')
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-12 col-xl-8 xl-100">
@@ -70,28 +97,6 @@
                                             <input class="form-control" id="validationCustom02" type="text" required="" name="nama_project" value="{{$project->nama_project}}">
                                         </div>
                                     </div>
-                                    {{-- <div class="row">
-                                        <div class="col">
-                                          <div class="mb-3">
-                                            <label>Project Banner <sup> *Can Choose more than one</sup></label>
-                                            <input class="form-control" type="file" id="banner" name="banner[]" multiple="multiple" required>
-                                          </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        @foreach ($project->banner as $item)
-                                        <div class="col-12">
-                                          <div class="mb-3 d-flex justify-content-between">
-                                            <img src="{{ $item->banner }}" class="img-thumbnail mt-3" alt="banner" width="200px">
-                                            <div class="summernote">
-                                                <p class="text-muted">
-                                                    {{ $item->description }}
-                                                </p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                        @endforeach
-                                    </div> --}}
 
                                     <div class="preview-image"></div>
                                     <div class="row">
@@ -107,6 +112,7 @@
 						</div>
 						<div class="tab-pane fade" id="move-prospect" role="tabpanel" aria-labelledby="move-prospect-tab">
 							<div class="card-body">
+
                                 <div class="row mb-4">
                                     <label for="" style="text"><code>Filter Column</code></label>
                                     <div class="col-12 col-lg-3 table-filters ">
@@ -163,6 +169,9 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
+                                    <div class="overlay">
+                                        <div id="loader-container" class="loader-container"></div>
+                                    </div>
                                     <table class="display datatables" id="prospect-project-datatable"  style="font-size: 12px;width:100%">
                                         <thead>
                                             <tr>
@@ -201,53 +210,6 @@
                             </div>
 						</div>
                         <div class="tab-pane fade" id="image-banner" role="tabpanel" aria-labelledby="image-banner-tab">
-                            {{-- <div class="card-body">
-                                <form method="POST" action="{{route('project.update',$project->id)}}" role="form" enctype="multipart/form-data">
-                                    @method('PUT')
-                                    @csrf
-                                    <input type="hidden" value="{{$project->id}}" id="project_id" name="project">
-                                    <div class="row">
-                                        <div class="col mb-3">
-                                            <label for="title">Title</label>
-                                            <input class="form-control" id="title" type="text" required="" name="title" value="">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col mb-3">
-                                            <label for="subtitle">Subtitle</label>
-                                            <input class="form-control" id="subtitle" type="text" required="" name="subtitle" value="">
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col">
-                                          <div class="mb-3">
-                                            <label>Banner</label>
-                                            <input class="form-control" type="file" id="banner" name="banner" required>
-                                          </div>
-                                        </div>
-                                    </div>
-                                    <div class="preview-image"></div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="mb-3">
-                                                <label for="validationCustom02">Description</label>
-                                                <div id="editor">
-                                                    
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col">
-                                            <label for="validationCustom02"></label>
-                                            <div class="input-group">
-                                                <button class="btn btn-primary mt-2" type="submit">Save</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div> --}}
                             <div class="row">
                                 <div class="col-12 mb-4">
                                     <a class="btn btn-primary" href="{{ route('project.banner.create', ['id_project' => $project->id]) }}">Create New Banner</a>
@@ -275,8 +237,8 @@
                                                             <form action="{{ route('project.banner.destroy', ['id_project' => $project->id, 'id_banner' => $banner->id]) }}" method="POST" onsubmit="return confirm('Are you sure want to delete this banner?')">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <a href="{{ route('project.banner.edit', ['id_project' => $project->id, 'id_banner' => $banner->id]) }}" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>
-                                                                <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                                                                <a href="{{ route('project.banner.edit', ['id_project' => $project->id, 'id_banner' => $banner->id]) }}"><img src="{{asset('assets/images/button/info.png')}}" alt="info" class="mt-2"></i></a>
+                                                                <button type="submit" class="btn p-0"><a title="Delete Agent" class="ms-1" href=""><img src="{{asset('assets/images/button/trash.png')}}" alt="Delete Agent"></a></button>
                                                             </form>
                                                         </td>
                                                     </tr>
@@ -455,8 +417,6 @@
             var agentNext = $('#agentNext').val();
             var salesNext = $('#salesNext').val();
 
-            console.log(agentNext, salesNext);
-
             // Iterate through the checkboxes to find selected prospects
             $(".prospect-checkbox:checked").each(function() {
                 selectedProspects.push($(this).val());
@@ -481,6 +441,7 @@
                 return;
             }
 
+            manageLoader(true);
 
             // AJAX request to post selected prospects
             $.ajax({
@@ -493,19 +454,53 @@
                     salesNext: salesNext
                 },
                 success: function(response) {
-                    alert(`response ${response}`);
-                    refreshDatatable();
-                    // Perform any additional actions after successful move
+
+                    manageLoader(false);
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: `Prospects moved successfully`,
+                        confirmButtonText: 'OK'
+                    }).then(function() {
+                        refreshDatatable();
+                    });
                 },
                 error: function(error) {
+
+                    manageLoader(false);
+
                     alert("An error occurred while moving prospects.");
                     console.error(error);
                 }
             });
         });
+
+        function manageLoader(show) {
+            var loaderContainer = $("#loader-container");
+
+            if (show) {
+                // Show the loader
+                lottie.loadAnimation({
+                    container: document.getElementById('loader-container'),
+                    path: 'https://lottie.host/41096fbe-efc9-4e23-9d3f-cf91d597f529/dzleVB0xL6.json', // Replace with your animation JSON path
+                    renderer: 'svg',
+                    loop: true,
+                    autoplay: true,
+                    responseType: 'text'
+                });
+                $(".overlay").show();
+                loaderContainer.show();
+            } else {
+                // Hide and destroy the loader
+                loaderContainer.empty().hide();
+                $(".overlay").hide();
+            }
+        }
     });
 
 </script>
+
 <script>
     function previewImages() {
         var previewContainer = document.querySelector('.preview-image');

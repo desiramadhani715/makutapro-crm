@@ -39,7 +39,7 @@
       <div class="card">
         <div class="card-body">
           <div class="form theme-form">
-            
+
             <form id="form-banner" action="{{ route('project.banner.store', ['id_project' => $id_project]) }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
@@ -51,7 +51,7 @@
                 <div class="row">
                     <div class="col mb-3">
                         <label for="subtitle">Subtitle</label>
-                        <input class="form-control" id="subtitle" type="text" required="" name="subtitle" value="">
+                        <input class="form-control" id="subtitle" type="text" name="subtitle" value="">
                     </div>
                 </div>
                 <div class="row">
@@ -69,7 +69,7 @@
                             <label for="validationCustom02">Description</label>
                             <input type="hidden" id="description" name="description">
                             <div id="editor">
-                                
+
                             </div>
                         </div>
                     </div>
@@ -82,7 +82,7 @@
                     </div>
                 </div>
             </form>
-          
+
           </div>
         </div>
       </div>
@@ -122,7 +122,7 @@
     $(function () {
         $('#form-banner').on('submit', function () {
             let content = quill.root.innerHTML;
-            
+
             $('#description').val(content);
         });
     });

@@ -413,58 +413,60 @@ class ProspectController extends Controller
         $nextSales = Sales::with('user')->find($request->salesNext);
 
         for ($i=0; $i < count($prospects); $i++) {
-            $prospect_detail = Prospect::with('historyProspect')->find($prospectId);
+            $prospect_detail = Prospect::with('historyProspect')->find($prospects[$i]);
 
-            $prev_agent = Agent::find($project_detail->historyProspect->agent_id);
-            $prev_sales = Sales::find($project_detail->historyProspect->sales_id);
+            $prev_agent = Agent::find($prospect_detail->historyProspect->agent_id);
+            $prev_sales = Sales::find($prospect_detail->historyProspect->sales_id);
 
-            if ($prospect_detail && $prospect_detail->status == 1) {
-                $historyMove = new HistoryProspectMove();
-                $historyMove->prospect_id = $prospect_detail->id;
-                $historyMove->project_id = $prospect_detail->historyProspect->project_id;
-                $historyMove->next_agent_id = $nextAgent->id;
-                $historyMove->next_sort_agent = $nextAgent->urut_agent;
-                $historyMove->prev_agent_id = $prev_agent->id;
-                $historyMove->prev_sort_agent = $prev_agent->urut_agent;
-                $historyMove->next_sales_id = $nextSales->id;
-                $historyMove->next_sort_sales = $nextSales->sort;
-                $historyMove->prev_sales_id = $prev_sales->id;
-                $historyMove->prev_sort_sales = $prev_sales->sort;
-                $historyMove->save();
+            $historyMove = new HistoryProspectMove();
+            $historyMove->prospect_id = $prospect_detail->id;
+            $historyMove->project_id = $prospect_detail->historyProspect->project_id;
+            $historyMove->next_agent_id = $nextAgent->id;
+            $historyMove->next_sort_agent = $nextAgent->urut_agent;
+            $historyMove->prev_agent_id = $prev_agent->id;
+            $historyMove->prev_sort_agent = $prev_agent->urut_agent;
+            $historyMove->next_sales_id = $nextSales->id;
+            $historyMove->next_sort_sales = $nextSales->sort;
+            $historyMove->prev_sales_id = $prev_sales->id;
+            $historyMove->prev_sort_sales = $prev_sales->sort;
+            $historyMove->save();
 
-                $historyProspect = $prospect_detail->historyProspect;
-                $historyProspect->move_id = $historyMove->id;
-                $historyProspect->number_move = $historyProspect->number_move + 1;
-                $historyProspect->agent_id = $nextAgent->id;
-                $historyProspect->sales_id = $nextSales->id;
-                $historyProspect->move_date = date(now());
-                $historyProspect->update();
+            $historyProspect = $prospect_detail->historyProspect;
+            $historyProspect->move_id = $historyMove->id;
+            $historyProspect->number_move = $historyProspect->number_move + 1;
+            $historyProspect->agent_id = $nextAgent->id;
+            $historyProspect->sales_id = $nextSales->id;
+            $historyProspect->user_id = $nextSales->user->id;
+            $historyProspect->move_date = date(now());
+            $historyProspect->update();
 
-                $project = Project::find($historyProspect->project_id);
+            $project = Project::find($historyProspect->project_id);
 
-                $historySales = new HistorySales();
-                $historySales->project_id = $historyProspect->project_id;
-                $historySales->sales_id = $nextSales->id;
-                $historySales->notes = 'Kamu menerima Prospect terusan dari sales an. '.$nextSales->nama_sales.', Follow Up sekarang!';
-                $historySales->subject = 'Get Move Prospect';
-                $historySales->history_by = 'Developer';
-                $historySales->save();
+            $historySales = new HistorySales();
+            $historySales->project_id = $historyProspect->project_id;
+            $historySales->sales_id = $nextSales->id;
+            $historySales->notes = 'Kamu menerima Prospect terusan dari sales an. '.$prev_sales->nama_sales.', Follow Up sekarang!';
+            $historySales->subject = 'Get Move Prospect';
+            $historySales->history_by = 'Developer';
+            $historySales->save();
 
-                $historySales = new HistorySales();
-                $historySales->project_id = $historyProspect->project_id;
-                $historySales->sales_id = $prev_sales->id;
-                $historySales->notes = 'Prospect Kamu dipindahkan ke sales an. '.$prev_sales->nama_sales;
-                $historySales->subject = 'Prospect Move';
-                $historySales->history_by = 'Developer';
-                $historySales->save();
+            $historySales = new HistorySales();
+            $historySales->project_id = $historyProspect->project_id;
+            $historySales->sales_id = $prev_sales->id;
+            $historySales->notes = 'Prospect Kamu dipindahkan ke sales an. '.$nextSales->nama_sales;
+            $historySales->subject = 'Prospect Move';
+            $historySales->history_by = 'Developer';
+            $historySales->save();
 
+            if ($prospect_detail && $prospect_detail->status_id == 1) {
                 $destination = '62'.substr($nextSales->user->hp,1);
-                $message = "Hallo ".strtoupper($nextSales->nama_sales)." Anda telah menerima database baru an. ".$project_detail->nama_prospect." untuk project $project->nama_project. Harap segera Follow Up database tersebut.";
-
+                $message = "Hallo ".strtoupper($nextSales->nama_sales)." Anda telah menerima database baru an. ".$prospect_detail->nama_prospect." untuk project $project->nama_project. Harap segera Follow Up database tersebut.";
                 // WA
                 Helper::SendWA($destination, $message);
             }
+
         }
+        return "";
 
     }
 
