@@ -289,6 +289,19 @@
 		</div>
 	</div>
 </div>
+<!-- Sub-modal (Image Preview) -->
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <img id="previewImage" src="" alt="Image Preview" class="img-fluid">
+            </div>
+            {{-- <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div> --}}
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('script')
@@ -527,9 +540,16 @@
 									<span> ${msg} <span class="badge badge-light-${res[i].id}">${res[i].status}</span></span>
 									<span class="pull-right f-12 font-dark me-2">`+ date.getHours()+':'+date.getMinutes() +' | '+ date.getDate() + ', ' + monthNames[date.getMonth()] + ' '+ date.getFullYear().toString().substring(2)+`.</span>
 									<p class="font-roboto">${res[i].alasan}.</p>
+									<img src="${res[i].chat_file}" alt="Chat Evidence" width="100px" class="img-thumbnail" id="hcs">
 								</div>
 							</div>`
 						);
+
+                        $("#hcs img").on('click', function() {
+                            var imageSrc = $(this).attr('src');
+                            $("#previewImage").attr('src', imageSrc);
+                            $("#imageModal").modal('show');
+                        });
 					}
 				}else{
 					$("#hcs").append(

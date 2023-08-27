@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use App\Models\Fu;
 use App\Models\Agent;
 use App\Models\Sales;
@@ -27,7 +28,11 @@ class HistoryController extends Controller
                         'history_change_status.role_id'
                     )
                     ->orderBy('history_change_status.created_at','desc')
-                    ->get();
+                    ->get()
+                    ->map(function ($item) {
+                        $item->chat_file = asset('storage/ChatEvidenceFile/'.$item->chat_file);
+                        return $item;
+                    });
 
         return response()->json($history);
     }
