@@ -448,19 +448,6 @@
 	refreshChart(7);
 
     $(document).ready(function() {
-        // Attach the datepicker with the onSelect option
-        $("#since").datepicker({
-            language: 'en',
-            onSelect: function(dateText, inst) {
-                var sinceValue = dateText;
-                const since = new Date(sinceValue);
-                sinceValue = `since=${since.getFullYear()}-${('0' + (since.getMonth() + 1)).slice(-2)}-${since.getDate()}`;
-                refreshChart(sinceValue);
-            },
-        });
-    });
-
-    $(document).ready(function() {
         // Attach the 'since' datepicker with the onSelect option
         $("#since").datepicker({
             language: 'en',

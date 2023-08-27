@@ -72,10 +72,13 @@ class ProspectController extends Controller
             $query = $query->where('prospect.role_by','=',$request->role);
         }
         if($request->since != ""){
-            $query = $query->where('prospect.created_at','>=',$request->since);
-        }
-        if($request->to != ""){
-            $query = $query->where('prospect.created_at','<=',$request->to);
+            $dates = explode('&', $request->since);
+            $since = $dates[0];
+            $to = Carbon::now();
+            if (!isset($dates[1]) && !empty($dates[1])) {
+                $to = $dates[1];
+            }
+            $query = $query->whereBetween('prospect.created_at',[$since, $to]);
         }
 
         $field = [

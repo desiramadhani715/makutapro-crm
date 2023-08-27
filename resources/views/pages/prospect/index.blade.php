@@ -153,7 +153,7 @@
 											<div class="row">
 												<div class="col-6">
 													<label class="control-label">Since:</label>
-													<input class="form-control form-control-sm datepicker-here since" name="since" id="since" type="text" data-language="en" onchange="refreshDatatable()">
+													<input class="form-control form-control-sm datepicker-here since" name="since" id="since" type="text" data-language="en">
 												</div>
 												<div class="col-6">
 													<label class="control-label">To:</label>
@@ -325,7 +325,7 @@
 		document.getElementById('loader-wrapper').style.display = 'none';
 
 	}
-	function refreshDatatable(){
+	function refreshDatatable(since){
 		$('#prospect-datatable').DataTable({
         	"scrollX": true,
 			"serverSide": true,
@@ -341,8 +341,7 @@
 					"source": $("#source").val(),
 					"status": $("#status").val(),
 					"role": $("#role").val(),
-					"since": $("#since").val(),
-					"to": $("#to").val(),
+					"since": since
 				},
 			},
 			"initComplete" : function(){
@@ -501,7 +500,6 @@
 						},
 			"deferRender": true,
 		});
-
 	}
 
 	$("#myModal").on('show.bs.modal', function (e) {
@@ -645,19 +643,31 @@
 	});
 
 	refreshDatatable();
-	// showLoading();
 
-	// $('.loader-wrapper').bind('ajaxStart', function(){
-	// 	$(this).show();
-	// }).bind('ajaxStop', function(){
-	// 	$(this).hide();
-	// });
+    $(document).ready(function() {
+        // Attach the 'since' datepicker with the onSelect option
+        $("#since").datepicker({
+            language: 'en',
+            onSelect: function(dateText, inst) {
+                const since = new Date(dateText);
+                sinceValue = `${since.getFullYear()}-${('0' + (since.getMonth() + 1)).slice(-2)}-${since.getDate()}`;
+                refreshDatatable(sinceValue);
+            },
+        });
 
-	
+        // Attach the 'to' datepicker with the onSelect option
+        $("#to").datepicker({
+            language: 'en',
+            onSelect: function(dateText, inst) {
+                const to = new Date(dateText);
+                const toValue = `${to.getFullYear()}-${('0' + (to.getMonth() + 1)).slice(-2)}-${to.getDate()}`;
 
-
-
-
+                // Combine 'since' and 'to' values
+                const combinedValues = `${sinceValue}&${toValue}`;
+                refreshDatatable(combinedValues);
+            },
+        });
+    });
 
 </script>
 @endsection
