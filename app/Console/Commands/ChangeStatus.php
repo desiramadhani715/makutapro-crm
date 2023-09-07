@@ -244,20 +244,21 @@ class ChangeStatus extends Command
                     }
 
                 } else {
-                    $prospect->update([
-                        'status_id' => 6,
-                        'status_date' => date(now()),
-                        'edit_by' => 'Auto System'
-                    ]);
+                    if ($statusDate->diff($now)->days >= 29 && $remindStatus->ColdDay3) {
+                        $prospect->update([
+                            'status_id' => 6,
+                            'status_date' => date(now()),
+                            'edit_by' => 'Auto System'
+                        ]);
 
-                    HistoryChangeStatus::create([
-                        'user_id' => $user->id,
-                        'prospect_id' => $prospect->id,
-                        'status_id' => 6,
-                        'standard_id' => 10,
-                        'role_id' => 1
-                    ]);
-
+                        HistoryChangeStatus::create([
+                            'user_id' => $user->id,
+                            'prospect_id' => $prospect->id,
+                            'status_id' => 6,
+                            'standard_id' => 10,
+                            'role_id' => 1
+                        ]);
+                    }
                 }
                 $this->info('Successfully Checked Status Prospect Cold');
             }
@@ -329,20 +330,21 @@ class ChangeStatus extends Command
                     }
 
                 } else {
+                    if ($statusDate->diff($now)->days >= 29 && $remindStatus->WarmDay19) {
+                        $prospect->update([
+                            'status_id' => 6,
+                            'status_date' => date(now()),
+                            'edit_by' => 'Auto System'
+                        ]);
 
-                    $prospect->update([
-                        'status_id' => 6,
-                        'status_date' => date(now()),
-                        'edit_by' => 'Auto System'
-                    ]);
-
-                    HistoryChangeStatus::create([
-                        'user_id' => $user->id,
-                        'prospect_id' => $prospect->id,
-                        'status_id' => 6,
-                        'standard_id' => 11,
-                        'role_id' => 1
-                    ]);
+                        HistoryChangeStatus::create([
+                            'user_id' => $user->id,
+                            'prospect_id' => $prospect->id,
+                            'status_id' => 6,
+                            'standard_id' => 11,
+                            'role_id' => 1
+                        ]);
+                    }
 
                 }
                 $this->info('Successfully Checked Status Prospect Warm');
@@ -415,20 +417,21 @@ class ChangeStatus extends Command
                     }
 
                 } else {
+                    if ($statusDate->diff($now)->days >= 29 && $remindStatus->HotDay19) {
+                        $prospect->update([
+                            'status_id' => 6,
+                            'status_date' => date(now()),
+                            'edit_by' => 'Auto System'
+                        ]);
 
-                    $prospect->update([
-                        'status_id' => 6,
-                        'status_date' => date(now()),
-                        'edit_by' => 'Auto System'
-                    ]);
-
-                    HistoryChangeStatus::create([
-                        'user_id' => $user->id,
-                        'prospect_id' => $prospect->id,
-                        'status_id' => 6,
-                        'standard_id' => 12,
-                        'role_id' => 1
-                    ]);
+                        HistoryChangeStatus::create([
+                            'user_id' => $user->id,
+                            'prospect_id' => $prospect->id,
+                            'status_id' => 6,
+                            'standard_id' => 12,
+                            'role_id' => 1
+                        ]);
+                    }
 
                 }
                 $this->info('Successfully Checked Status Prospect Hot');
